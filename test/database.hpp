@@ -76,6 +76,8 @@ namespace databases
 {
     struct project
     {
+        static constexpr auto name = "test";
+
         static constexpr struct alpha_ : ndb::database<project, models::library, ndb::mongo>{} alpha{};
         static constexpr struct zeta_ : ndb::database<project, models::library, ndb::sqlite>{} zeta{};
 

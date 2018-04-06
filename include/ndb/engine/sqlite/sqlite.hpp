@@ -28,11 +28,12 @@ namespace ndb
     class sqlite_connection
     {
     public:
-        sqlite_connection(int id) :
+        sqlite_connection(const std::string& db_name) :
             database_{ nullptr }
         {
             if (!fs::exists(setup<sqlite>::path)) fs::create_directory(setup<sqlite>::path);
-            std::string path = setup<sqlite>::path + std::string("D") + std::to_string(id) + setup<sqlite>::ext;
+
+            std::string path = setup<sqlite>::path + db_name + setup<sqlite>::ext;
             auto status = sqlite3_open(path.c_str(), &database_);
 
             if (status != SQLITE_OK) ndb_error("database connection failed");
@@ -61,7 +62,9 @@ namespace ndb
         template<class Database>
         void connect()
         {
-            auto conn = std::make_unique<sqlite_connection>(ndb::database_id<Database>);
+            std::string db_name = Database::group::name;
+            db_name += "_D" + std::to_string(ndb::database_id<Database>);
+            auto conn = std::make_unique<sqlite_connection>(db_name);
             connection_list_.emplace(ndb::database_id<Database>, std::move(conn));
 
             // database connected, add foreign keys and create model

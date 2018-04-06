@@ -22,11 +22,10 @@ namespace ndb
     class mongo_connection
     {
     public:
-        mongo_connection(int id) :
+        mongo_connection(const std::string& db_name) :
             client_{ nullptr },
             database_{ nullptr }
         {
-            std::string db_name = "D" + std::to_string(id);
             client_ = mongoc_client_new("mongodb://localhost:27017");
             database_ = mongoc_client_get_database(client_, db_name.c_str());
         }
@@ -70,7 +69,9 @@ namespace ndb
         template<class Database>
         void connect()
         {
-            auto conn = std::make_unique<mongo_connection>(ndb::database_id<Database>);
+            std::string db_name = Database::group::name;
+            db_name += "_D" + std::to_string(ndb::database_id<Database>);
+            auto conn = std::make_unique<mongo_connection>(db_name);
 
             // test server connection
             bson_t reply;
