@@ -1,0 +1,9 @@
+#ide files
+.idea/
+.vs/
+
+# binary root folder
+/bin/
+
+# cmake build foler
+/cmake-*/

@@ -1,0 +1,27 @@
+dist: trusty
+sudo: required
+language:
+  - cpp
+compiler:
+  - gcc
+addons:
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
+    packages:
+      - gcc-7
+      - g++-7
+      - cmake3
+      - libmongo-client-dev
+      - libmongo-client0
+
+install:
+    - export CC=gcc-7
+    - export CXX=g++-7
+
+script:
+  - export CC=gcc-7
+  - export CXX=g++-7
+  - cmake -DENGINE_MONGO=OFF -DENGINE_MYSQL=OFF -DBUILD_EXP=OFF -DCMAKE_BUILD_TYPE=Release
+  - make
+  - make test
