@@ -5,12 +5,15 @@
 
 #include <ndb/setup.hpp>
 #include <ndb/basic_engine.hpp>
-#include <ndb/model.hpp>
-#include <ndb/expression/sql.hpp>
+
+// engine specific implementation
 #include <ndb/engine/sqlite/type.hpp>
+#include <ndb/expression/sql.hpp>
+#include <ndb/function/sql.hpp>
+
+#include <ndb/model.hpp>
 #include <ndb/line.hpp>
 #include <ndb/result.hpp>
-
 #include <iostream>
 #include <memory>
 #include <unordered_map>
