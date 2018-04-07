@@ -8,13 +8,13 @@ namespace ndb
     template<class Database, class Table>
     void clear(Table table)
     {
-        ndb::functions::clear<typename Database::engine, Database, Table>::process();
+        ndb::functions::clear<Database::engine::expr_category(), Database, Table>::process();
     }
 
     template<class Database>
     void remove()
     {
-        ndb::functions::remove<typename Database::engine, Database>::process();
+        ndb::functions::remove<Database::engine::expr_category(), Database>::process();
     }
 } // ndb
 

@@ -8,7 +8,7 @@
 namespace ndb::functions
 {
     template<class Database, class Table>
-    struct clear<ndb::sqlite, Database, Table>
+    struct clear<ndb::expr_category_code::sql, Database, Table>
     {
         static void process()
         {
@@ -17,7 +17,7 @@ namespace ndb::functions
     };
 
     template<class Database>
-    struct remove<ndb::sqlite, Database>
+    struct remove<ndb::expr_category_code::sql, Database>
     {
         static void process()
         {
