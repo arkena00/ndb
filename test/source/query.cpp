@@ -17,11 +17,10 @@ SCENARIO_TEMPLATE("query", Engine, Engines)
     static constexpr const models::library library;
     const auto& movie = library.movie;
 
-    GIVEN("cleared database")
+    GIVEN("database connected and cleared")
     {
         ndb::result<Engine> result;
-
-        CHECK_NOTHROW( (ndb::connect<dbs::zeta, Engine>()) );
+        ndb::connect<dbs::zeta, Engine>();
 
         WHEN("ADD data")
         {
