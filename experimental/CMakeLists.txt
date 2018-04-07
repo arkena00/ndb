@@ -2,6 +2,15 @@
 
 project(ndb_experimental CXX C)
 
+# exp_main, global tests
+add_executable(exp_main main.cpp)
+target_link_libraries(exp_main ${NDB_LIB} ${SQLITE_LIB})
+add_dependencies(exp_main lib_sqlite)
+set_target_properties(exp_main PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY "${NDB_BIN_ROOT}/experimental"
+        OUTPUT_NAME  "exp_main")
+
+# exp_result
 if (ENGINE_MONGO)
     add_executable(exp_result result.cpp)
     target_link_libraries(exp_result ${NDB_LIB} ${MONGO_LIB} ${SQLITE_LIB})
