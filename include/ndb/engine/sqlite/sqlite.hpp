@@ -3,7 +3,7 @@
 
 #include <sqlite3.h>
 
-#include <ndb/basic_engine.hpp>
+#include <ndb/engine/basic.hpp>
 #include <ndb/error.hpp>
 #include <ndb/value.hpp>
 #include <ndb/result.hpp>

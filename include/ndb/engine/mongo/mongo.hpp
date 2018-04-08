@@ -4,7 +4,7 @@
 #define BSON_STATIC
 #define MONGOC_STATIC
 
-#include <ndb/basic_engine.hpp>
+#include <ndb/engine/basic.hpp>
 
 #include <ndb/expression/bson.hpp>
 #include <ndb/expression/utility.hpp>
