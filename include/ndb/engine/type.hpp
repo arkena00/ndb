@@ -4,16 +4,16 @@
 #define ENGINE_TYPE_H_NDB
 
 #include <cstddef>
-#include <ndb/value.hpp>
 
 namespace ndb
 {
+    class value;
 
     template<class Engine, class... Ts>
     struct type_list;
 
     template<class Engine, class T>
-    struct type_id { static constexpr int value = 0; } ;
+    struct type_id;
 
     template<class Engine, int>
     struct cpp_type;
