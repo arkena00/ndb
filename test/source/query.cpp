@@ -3,6 +3,7 @@
 
 #include <ndb/initializer.hpp>
 #include <ndb/query.hpp>
+#include <ndb/function.hpp>
 
 #include "../database.hpp"
 
@@ -21,6 +22,7 @@ SCENARIO_TEMPLATE("query", Engine, Engines)
     {
         ndb::result<Engine> result;
         ndb::connect<dbs::zeta, Engine>();
+        ndb::clear<dbs::zeta>(movie);
 
         WHEN("ADD data")
         {
