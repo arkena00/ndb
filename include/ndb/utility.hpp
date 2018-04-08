@@ -6,6 +6,7 @@
 #include <ndb/fwd.hpp>
 #include <utility>
 #include <ndb/cx_error.hpp>
+#include <ndb/expression/code.hpp>
 
 namespace ndb
 {
