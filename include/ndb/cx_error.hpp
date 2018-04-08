@@ -13,16 +13,22 @@ namespace ndb
     template<class...>
     struct cx_err_not_implemented;
 
-    template<template<class...> class Source, class Err>
+    template<class Source, class Err>
     struct cx_error_occured;
 
+    template<template<class...> class Source, class Err>
+    struct cx_error_occured_tpl;
+
     template<class Source, class Err>
-    struct cx_error;
+    struct cx_error
+    {
+        static constexpr auto value = cx_error_occured<Source, Err>{};
+    };
 
     template<template<class...> class Source, class Err, class... Ts>
     struct cx_error<Source<Ts...>, Err>
     {
-        static constexpr auto value = cx_error_occured<Source, Err>{};
+        static constexpr auto value = cx_error_occured_tpl<Source, Err>{};
     };
 } // ndb
 
