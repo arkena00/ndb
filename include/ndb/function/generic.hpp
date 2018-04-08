@@ -6,19 +6,19 @@
 
 namespace ndb::functions
 {
-    template<ndb::expr_category_code Expr_category, class Database, class Table>
+    template<class Engine, class Database, class Table, ndb::expr_category_code Expr_category = Engine::expr_category()>
     struct clear
     {
-        static void process()
+        static auto process()
         {
             ncx_error(clear, cx_err_not_implemented);
         }
     };
 
-    template<ndb::expr_category_code Expr_category, class Database>
+    template<class Engine, ndb::expr_category_code Expr_category, class Database>
     struct remove
     {
-        static void process()
+        static auto process()
         {
             ncx_error(remove, cx_err_not_implemented);
         }

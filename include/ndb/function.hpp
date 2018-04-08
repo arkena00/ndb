@@ -1,3 +1,5 @@
+//! \brief custom database functions specialized for engines or engine category
+
 #ifndef FUNCTION_H_NDB
 #define FUNCTION_H_NDB
 
@@ -6,15 +8,15 @@
 namespace ndb
 {
     template<class Database, class Table>
-    void clear(Table table)
+    auto clear(Table table)
     {
-        ndb::functions::clear<Database::engine::expr_category(), Database, Table>::process();
+        return ndb::functions::clear<typename Database::engine, Database, Table>::process();
     }
 
     template<class Database>
     void remove()
     {
-        ndb::functions::remove<Database::engine::expr_category(), Database>::process();
+        //ndb::functions::remove<Database::engine::expr_category(), Database>::process();
     }
 } // ndb
 
