@@ -6,15 +6,30 @@
 #include <ndb/expression/utility.hpp>
 
 /*! expression<Left_expression, expression_type ( [operators, field, value] ), Right_expression>
- * expression::type : [operator, field, value]
+ * expression::type : [operator, field, value, function]
  * expression::clause : get, condition
+ *
+ * Scalar types :
+ * expression<Encapsuled_type, Scalar_type>
+ *
+ * Process of static_make to generate a Native_expression:
+ * Given expression<L, Type, R>
+ * call expression<L, Type, R>::static_make
+ * call expression_type<expr_type_code, Native_expression::expr_category>::static_make(lhs_, rhs_, ne);
+ * Default for all Type of expression :
+ *          L::template static_make<Pass>(ne);
+ *          ne.push_back(expr_code<T, expr_category_code::sql>::value);
+ *          R::template static_make<Pass>(ne);
+ *
+ * static_make can be specialized for Type
+ * recursion stop on scalar types
  */
 
 namespace ndb
 {
     struct expression_base {};
 
-    template<class L, expr_type_code T = expr_type_code::value, class R = void, expr_clause_code Clause = expr_clause_code::none>
+    template<class L = void, expr_type_code T = expr_type_code::value, class R = void, expr_clause_code Clause = expr_clause_code::none>
     struct expression : expression_base
     {
         static constexpr auto type = T;
@@ -191,7 +206,7 @@ namespace ndb
         const T& value_;
 
         constexpr explicit expression(const T& n) :
-            value_(n)
+        value_(n)
         {}
 
         auto value() const
@@ -221,6 +236,90 @@ namespace ndb
         static constexpr void static_make(Native_expression& ne)
         {
             native_expression<Native_expression::expr_category, expr_type_code::value>::template static_make<T, Clause>(ne);
+        }
+
+        constexpr static auto clause()
+        {
+            return expr_clause_code::none;
+        }
+    };
+
+    // value void
+    template<expr_clause_code Clause>
+    struct expression<void, expr_type_code::value, void, Clause>
+    {
+        static constexpr auto type = expr_type_code::value;
+
+        constexpr explicit expression()
+        {}
+
+        auto value() const
+        {
+            return 0;
+        }
+
+        template<class F>
+        constexpr void eval(F&& f) const
+        {
+            f(*this);
+        }
+
+        template<class F>
+        static constexpr void static_eval(F&& f)
+        {
+            f(expression<void, expr_type_code::value, void, Clause>{});
+        }
+
+        template<class Native_expression>
+        constexpr void make(Native_expression& ne) const
+        {
+            native_expression<Native_expression::expr_category, expr_type_code::value>::template make<Clause>(*this, ne);
+        }
+
+        template<int Pass = 0, class Native_expression>
+        static constexpr void static_make(Native_expression& ne)
+        {
+            native_expression<Native_expression::expr_category, expr_type_code::value>::template static_make<void, Clause>(ne);
+        }
+
+        constexpr static auto clause()
+        {
+            return expr_clause_code::none;
+        }
+    };
+
+    // function
+    template<class Function, expr_clause_code Clause>
+    struct expression<Function, expr_type_code::function, void, Clause>
+    {
+        static constexpr auto type = expr_type_code::value;
+
+        constexpr explicit expression()
+        {}
+
+
+        template<class F>
+        constexpr void eval(F&& f) const
+        {
+            //f(*this);
+        }
+
+        template<class F>
+        static constexpr void static_eval(F&& f)
+        {
+            //f(expression<Function, expr_type_code::function, void, Clause> { 0 });
+        }
+
+        template<class Native_expression>
+        constexpr void make(Native_expression& ne) const
+        {
+            native_expression<Native_expression::expr_category, expr_type_code::function>::template make<Clause>(*this, ne);
+        }
+
+        template<int Pass = 0, class Native_expression>
+        static constexpr void static_make(Native_expression& ne)
+        {
+            native_expression<Native_expression::expr_category, expr_type_code::function>::template static_make<Function, Clause>(ne);
         }
 
         constexpr static auto clause()
@@ -284,7 +383,7 @@ constexpr const auto operator||(const L& lhs, const R& rhs)
     return ndb::expression<L, ndb::expr_type_code::op_or, R> { lhs, rhs };
 }
 
-// op_shif_left
+// op_shift_left
 template<class L, class R, class = ndb::enable_expression<L, R>>
 constexpr const auto operator<<(const L& l, const R& r)
 {
