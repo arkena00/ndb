@@ -7,29 +7,32 @@ namespace ndb
 {
     enum class expr_type_code
     {
-        value = 0,
+        value,
         field,
         table,
+        function,
         init,
         op_and,
         op_or,
         op_equal,
         op_assign,
         op_shift_left,
-        op_list
+        op_list,
+        op_function
     };
 
     enum class expr_clause_code
     {
-        none      = 0,
-        get       = 1,
-        set       = 2,
-        add       = 4,
-        del       = 8,
-        source    = 16,
-        condition = 32,
-        join      = 64,
-        value_list = 128
+        none       = 0,
+        get        = 1,
+        set        = 2,
+        add        = 4,
+        del        = 8,
+        source     = 16,
+        condition  = 32,
+        join       = 64,
+        value_list = 128,
+        limit      = 256
     };
 
     enum class expr_category_code
@@ -56,6 +59,12 @@ namespace ndb
 
     template<expr_clause_code, expr_category_code>
     struct clause_code
+    {
+        static constexpr const char* value = " _undefined_ ";
+    };
+
+    template<class Function, expr_category_code>
+    struct function_code
     {
         static constexpr const char* value = " _undefined_ ";
     };

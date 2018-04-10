@@ -67,6 +67,20 @@ namespace ndb
             else R::template static_make<Pass>(ne);
         }
     };
+
+    // function
+    template<>
+    struct expression_type<expr_type_code::op_function, expr_category_code::sql>
+    {
+        template<class L, class R, int Pass, class Native_expression>
+        static constexpr void static_make(Native_expression& ne)
+        {
+            L::template static_make<Pass>(ne);
+            ne.push_back('(');
+            R::template static_make<Pass>(ne);
+            ne.push_back(')');
+        }
+    };
 } // ndb
 
 #endif // EXPRESSION_SQL_TYPE_H_NDB

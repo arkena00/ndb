@@ -1,6 +1,8 @@
 #ifndef EXPRESSION_SQL_NATIVE_H_NDB
 #define EXPRESSION_SQL_NATIVE_H_NDB
 
+//! \brief native expression specialization
+
 #include <ndb/expression/code.hpp>
 #include <ndb/expression/utility.hpp>
 #include <ndb/expression/native.hpp>
@@ -8,6 +10,7 @@
 
 namespace ndb
 {
+
     template<>
     struct native_expression<expr_category_code::sql, expr_type_code::init>
     {
@@ -100,7 +103,18 @@ namespace ndb
         template<class T, expr_clause_code Clause, class Native_expression>
         static constexpr void static_make(Native_expression& ne)
         {
-            ne.push_back_value();
+            if constexpr (!std::is_same_v<T, void>) ne.push_back_value();
+        }
+    };
+
+    // function
+    template<>
+    struct native_expression<expr_category_code::sql, expr_type_code::function>
+    {
+        template<class T, expr_clause_code Clause, class Native_expression>
+        static constexpr void static_make(Native_expression& ne)
+        {
+            ne.push_back(function_code<T, expr_category_code::sql>::value);
         }
     };
 } // ndb
