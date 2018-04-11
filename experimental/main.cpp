@@ -1,14 +1,19 @@
 #include <iostream>
 
+#include <ndb/expression.hpp>
+
 #include <ndb/initializer.hpp>
 #include <ndb/engine/sqlite/sqlite.hpp>
 #include <ndb/engine.hpp>
 #include <ndb/function.hpp>
 
+#include "debug/query.hpp"
+
 #include "database.hpp"
 
 static constexpr const models::library library;
 static constexpr const databases::project project;
+
 
 int main()
 {
@@ -19,13 +24,12 @@ int main()
     {
         ndb::initializer<ndb::sqlite> init;
         ndb::connect<dbs::zeta>();
-
         ndb::clear<dbs::zeta>(movie);
-        ndb::remove<dbs::zeta>();
 
-        //ndb::query<dbs::zeta>() << ( ndb::truncate(movie) );
+        ndb::query<dbs::zeta>().test(  (ndb::now(), movie.id, ndb::count( (movie.name, movie.id) )) );
 
-        //ndb::truncate<dbs::zeta>( movie );
+        //ndb::query<dbs::zeta>() << (  ndb::count(movie.id) << (movie.id == 1) );
+
     }
     catch (const std::exception& e)
     {
