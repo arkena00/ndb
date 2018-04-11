@@ -7,8 +7,8 @@ namespace ndb
 {
     template<class L, class R>
     using enable_expression = std::enable_if_t<ndb::is_expression<L> || ndb::is_expression<R>
-                                               || ndb::is_field<L> || ndb::is_field<L>
-                                               || ndb::is_table<L> || ndb::is_table<L>
+                                               || ndb::is_field<L> || ndb::is_field<R>
+                                               || ndb::is_table<L> || ndb::is_table<R>
     >;
 
     template<expr_clause_code Clause = expr_clause_code::none, class T>
