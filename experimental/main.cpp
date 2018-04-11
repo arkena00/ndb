@@ -26,9 +26,21 @@ int main()
         ndb::connect<dbs::zeta>();
         ndb::clear<dbs::zeta>(movie);
 
-        ndb::query<dbs::zeta>().test(  (ndb::now(), movie.id, ndb::count( (movie.name, movie.id) )) );
+        ndb::query<dbs::zeta>() + ( movie.id = 3 );
+        ndb::query<dbs::zeta>() + ( movie.id = 5 );
+        ndb::query<dbs::zeta>() + ( movie.id = 5 );
 
-        //ndb::query<dbs::zeta>() << (  ndb::count(movie.id) << (movie.id == 1) );
+        using namespace ndb;
+
+        query<dbs::zeta> q;
+        auto res = q << (now(), now(), movie.id ) ;
+
+        for (auto line : res)
+        {
+            std::cout << "\n__" <<line[movie.id] << line[0].get<std::string>() << line[1].get<std::string>();
+        }
+
+        ndb::query<dbs::zeta>() << (  ndb::count(movie.id) << (movie.id == 1) );
 
     }
     catch (const std::exception& e)
