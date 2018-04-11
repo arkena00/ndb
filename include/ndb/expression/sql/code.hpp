@@ -21,7 +21,7 @@ namespace ndb
     template<> struct clause_code<expr_clause_code::condition, expr_category_code::sql> { constexpr static auto value = " WHERE "; };
 
     template<> struct function_code<expr_function::count, expr_category_code::sql> { constexpr static auto value = "COUNT"; };
-    template<> struct function_code<expr_function::now, expr_category_code::sql> { constexpr static auto value = "NOW"; };
+    template<> struct function_code<expr_function::now, expr_category_code::sql> { constexpr static auto value = "DATETIME"; };
 } // ndb
 
 #endif // EXPRESSION_SQL_CODE_H_NDB
