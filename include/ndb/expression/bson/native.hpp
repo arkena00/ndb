@@ -2,7 +2,7 @@
 #define EXPRESSION_BSON_NATIVE_H_NDB
 
 #include <ndb/expression/bson/code.hpp>
-#include <ndb/expression/native.hpp>
+#include <ndb/expression/fwd.hpp>
 #include <ndb/expression/utility.hpp>
 
 namespace ndb

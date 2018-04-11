@@ -11,6 +11,22 @@ namespace ndb
                                                || ndb::is_table<L> || ndb::is_table<L>
     >;
 
+    template<expr_clause_code Clause = expr_clause_code::none, class T>
+    constexpr auto expr_make(const T& v)
+    {
+        if constexpr (ndb::is_expression<T>) return v;
+        else if constexpr (ndb::is_field<T>)
+        {
+            if constexpr (Clause == expr_clause_code::none)
+            {
+                return ndb::expression<T, ndb::expr_type_code::field, void, ndb::expr_clause_code::get> {};
+            }
+            else return ndb::expression<T, ndb::expr_type_code::field, void, Clause> {};
+        }
+        else if constexpr (ndb::is_table<T>) return ndb::expression<T, ndb::expr_type_code::table, void, ndb::expr_clause_code::source> {};
+        else return ndb::expression<T> { v };
+    }
+
     // deduce source
     template<class Expr>
     constexpr auto deduce_source()

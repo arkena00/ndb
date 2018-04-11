@@ -2,7 +2,7 @@
 #define EXPRESSION_SQL_TYPE_H_NDB
 
 #include <ndb/expression/sql/code.hpp>
-#include <ndb/expression/type.hpp>
+#include <ndb/expression/fwd.hpp>
 #include <ndb/expression/utility.hpp>
 
 namespace ndb
