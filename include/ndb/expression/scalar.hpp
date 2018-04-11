@@ -7,7 +7,7 @@ namespace ndb
 {
     // init
     template<class Expr, expr_clause_code Clause>
-    struct expression<Expr, expr_type_code::init, void, Clause>
+    struct expression<Expr, expr_type_code::init, void, Clause> : expression_base
     {
         static constexpr auto type = expr_type_code::init;
 
@@ -47,7 +47,7 @@ namespace ndb
 
     // table
     template<class T, expr_clause_code Clause>
-    struct expression<T, expr_type_code::table, void, Clause>
+    struct expression<T, expr_type_code::table, void, Clause> : expression_base
     {
         static constexpr auto type = expr_type_code::table;
 
@@ -85,7 +85,7 @@ namespace ndb
 
     // field
     template<class T, expr_clause_code Clause>
-    struct expression<T, expr_type_code::field, void, Clause>
+    struct expression<T, expr_type_code::field, void, Clause> : expression_base
     {
         using value_type = T;
         static constexpr auto type = expr_type_code::field;
@@ -124,7 +124,7 @@ namespace ndb
 
     // function
     template<class Function, expr_clause_code Clause>
-    struct expression<Function, expr_type_code::function, void, Clause>
+    struct expression<Function, expr_type_code::function, void, Clause> : expression_base
     {
         static constexpr auto type = expr_type_code::value;
 
@@ -164,7 +164,7 @@ namespace ndb
 
     // value
     template<class T, expr_clause_code Clause>
-    struct expression<T, expr_type_code::value, void, Clause>
+    struct expression<T, expr_type_code::value, void, Clause> : expression_base
     {
         static constexpr auto type = expr_type_code::value;
 
@@ -211,7 +211,7 @@ namespace ndb
 
     // value void
     template<expr_clause_code Clause>
-    struct expression<void, expr_type_code::value, void, Clause>
+    struct expression<void, expr_type_code::value, void, Clause> : expression_base
     {
         static constexpr auto type = expr_type_code::value;
 
