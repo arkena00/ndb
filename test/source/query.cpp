@@ -38,7 +38,13 @@ SCENARIO_TEMPLATE("query", Engine, Engines)
                     CHECK(result.size() == 2);
                 }
 
-                AND_THEN("data match")
+                THEN("check result access")
+                {
+                    CHECK(result[0][0].template get<int>() == result[0][movie.id]);
+                    CHECK(result[0][1].template get<std::string>() == result[0][movie.name]);
+                }
+
+                THEN("data match")
                 {
                     CHECK(result[0][movie.id] == 1);
                     CHECK(result[0][movie.name] == "2");

@@ -90,12 +90,14 @@ namespace ndb
             while (step == SQLITE_ROW)
             {
                 ndb::line<sqlite> line;
-                int nb_col = sqlite3_column_count(statement);
+                int col_count = sqlite3_column_count(statement);
 
-                for(int col = 0; col < nb_col; col++)
+                for(int col = 0; col < col_count; col++)
                 {
                     const char* col_name = sqlite3_column_name(statement, col);
-                    int field_id = std::stoi(std::string(col_name + 1));
+                    int field_id = -1;
+                    if (col_name[0] == 'F') field_id = std::stoi(std::string(col_name + 1));
+
                     int field_type = sqlite3_column_type(statement, col);
                     sqlite3_value* col_value = sqlite3_column_value(statement, col);
 
