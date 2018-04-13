@@ -75,7 +75,6 @@ namespace ndb
                 if constexpr (ndb::expr_is_value<expr_type>)
                 {
                     using value_type = std::decay_t<decltype(e.value())>;
-
                     using native_type = typename ndb::native_type<sqlite, value_type>::type;
 
                     // bind native type value or encode custom type value

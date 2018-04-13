@@ -7,7 +7,7 @@
 
 namespace ndb
 {
-    // default make for expression_type
+    // default make for expression_type <L T R>
     template<expr_type_code T>
     struct expression_type<T, expr_category_code::sql>
     {
