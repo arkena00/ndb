@@ -107,14 +107,14 @@ namespace ndb
         }
     };
 
-    // function
+    // keyword
     template<>
-    struct native_expression<expr_category_code::sql, expr_type_code::function>
+    struct native_expression<expr_category_code::sql, expr_type_code::keyword>
     {
-        template<class T, expr_clause_code Clause, class Native_expression>
+        template<class Keyword_type, expr_clause_code Clause, class Native_expression>
         static constexpr void static_make(Native_expression& ne)
         {
-            ne.push_back(function_code<T, expr_category_code::sql>::value);
+            ne.push_back(keyword_code<Keyword_type::code, expr_category_code::sql>::value);
         }
     };
 } // ndb

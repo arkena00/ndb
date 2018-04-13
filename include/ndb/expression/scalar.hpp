@@ -122,46 +122,6 @@ namespace ndb
         }
     };
 
-    // function
-    template<class Function, expr_clause_code Clause>
-    struct expression<Function, expr_type_code::function, void, Clause> : expression_base
-    {
-        static constexpr auto type = expr_type_code::value;
-
-        constexpr explicit expression()
-        {}
-
-
-        template<class F>
-        constexpr void eval(F&& f) const
-        {
-            //f(*this);
-        }
-
-        template<class F>
-        static constexpr void static_eval(F&& f)
-        {
-            //f(expression<Function, expr_type_code::function, void, Clause> { 0 });
-        }
-
-        template<class Native_expression>
-        constexpr void make(Native_expression& ne) const
-        {
-            native_expression<Native_expression::expr_category, expr_type_code::function>::template make<Clause>(*this, ne);
-        }
-
-        template<int Pass = 0, class Native_expression>
-        static constexpr void static_make(Native_expression& ne)
-        {
-            native_expression<Native_expression::expr_category, expr_type_code::function>::template static_make<Function, Clause>(ne);
-        }
-
-        constexpr static auto clause()
-        {
-            return expr_clause_code::none;
-        }
-    };
-
     // value
     template<class T, expr_clause_code Clause>
     struct expression<T, expr_type_code::value, void, Clause> : expression_base
@@ -209,9 +169,9 @@ namespace ndb
         }
     };
 
-    // value void
+    // void expression
     template<expr_clause_code Clause>
-    struct expression<void, expr_type_code::value, void, Clause> : expression_base
+    struct expression<void, expr_type_code::null, void, Clause> : expression_base
     {
         static constexpr auto type = expr_type_code::value;
 
@@ -226,13 +186,11 @@ namespace ndb
         template<class F>
         constexpr void eval(F&& f) const
         {
-            f(*this);
         }
 
         template<class F>
         static constexpr void static_eval(F&& f)
         {
-            f(expression<void, expr_type_code::value, void, Clause>{});
         }
 
         template<class Native_expression>
@@ -245,6 +203,44 @@ namespace ndb
         static constexpr void static_make(Native_expression& ne)
         {
             native_expression<Native_expression::expr_category, expr_type_code::value>::template static_make<void, Clause>(ne);
+        }
+
+        constexpr static auto clause()
+        {
+            return expr_clause_code::none;
+        }
+    };
+
+    // keyword
+    template<expr_keyword_code Keyword_code, expr_clause_code Clause>
+    struct expression<keyword_type<Keyword_code>, expr_type_code::keyword, void, Clause> : expression_base
+    {
+        static constexpr auto type = expr_type_code::value;
+
+        constexpr explicit expression()
+        {}
+
+
+        template<class F>
+        constexpr void eval(F&& f) const
+        {
+        }
+
+        template<class F>
+        static constexpr void static_eval(F&& f)
+        {
+        }
+
+        template<class Native_expression>
+        constexpr void make(Native_expression& ne) const
+        {
+            native_expression<Native_expression::expr_category, expr_type_code::keyword>::template make<Clause>(*this, ne);
+        }
+
+        template<int Pass = 0, class Native_expression>
+        static constexpr void static_make(Native_expression& ne)
+        {
+            native_expression<Native_expression::expr_category, expr_type_code::keyword>::template static_make<keyword_type<Keyword_code>, Clause>(ne);
         }
 
         constexpr static auto clause()

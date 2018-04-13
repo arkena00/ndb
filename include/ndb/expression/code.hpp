@@ -7,11 +7,13 @@ namespace ndb
 {
     enum class expr_type_code
     {
+        null,
         value,
+        keyword,
         field,
         table,
-        function,
         init,
+        op_keyword,
         op_and,
         op_or,
         op_equal,
@@ -19,6 +21,19 @@ namespace ndb
         op_shift_left,
         op_list,
         op_function
+    };
+
+    enum class expr_keyword_code
+    {
+        now,
+        count,
+        limit
+    };
+
+    template<expr_keyword_code Keyword_code>
+    struct keyword_type
+    {
+        static constexpr auto code = Keyword_code;
     };
 
     enum class expr_clause_code
@@ -31,8 +46,7 @@ namespace ndb
         source     = 16,
         condition  = 32,
         join       = 64,
-        value_list = 128,
-        limit      = 256
+        value_list = 128
     };
 
     enum class expr_category_code
@@ -54,19 +68,19 @@ namespace ndb
     template<expr_type_code, expr_category_code>
     struct expr_code
     {
-        static constexpr const char* value = " _undefined_ ";
+        static constexpr const char* value = " _expr_code_undefined_ ";
     };
 
     template<expr_clause_code, expr_category_code>
     struct clause_code
     {
-        static constexpr const char* value = " _undefined_ ";
+        static constexpr const char* value = " _clause_code_undefined_ ";
     };
 
-    template<class Function, expr_category_code>
-    struct function_code
+    template<expr_keyword_code K, expr_category_code>
+    struct keyword_code
     {
-        static constexpr const char* value = " _undefined_ ";
+        static constexpr const char* value = " _keyword_code_undefined_ ";
     };
 } // ndb
 
