@@ -29,23 +29,22 @@ namespace ndb
     template<class T>
     constexpr auto count(const T& t)
     {
-        auto func = ndb::expression<keyword_type<expr_keyword_code::count>, expr_type_code::keyword>{};
+        auto func = ndb::expr_make_keyword<expr_keyword_code::count>();
         auto expr = ndb::expr_make(t);
         return ndb::expression<decltype(func), expr_type_code::op_function, decltype(expr)> { func, expr };
     }
 
     constexpr auto now()
     {
-        auto func = ndb::expression<keyword_type<expr_keyword_code::now>, expr_type_code::keyword>{};
-        auto expr = ndb::expression<void, expr_type_code::null>();
+        auto func = ndb::expr_make_keyword<expr_keyword_code::now>();
+        auto expr = ndb::expr_make();
         return ndb::expression<decltype(func), expr_type_code::op_function, decltype(expr)> { func, expr };
     }
 
     constexpr auto limit(int count, int offset = 0)
     {
-        auto func = ndb::expression<keyword_type<expr_keyword_code::limit>, expr_type_code::keyword>{};
+        auto func = ndb::expr_make_keyword<expr_keyword_code::limit>();
         auto expr = ndb::expression<int, expr_type_code::value>{ count };
-
         return ndb::expression<decltype(func), expr_type_code::keyword, decltype(expr)> { func, expr };
     }
 } // ndb
