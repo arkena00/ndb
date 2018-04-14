@@ -4,6 +4,7 @@
 #include <ndb/engine/type.hpp>
 #include <ndb/utility.hpp>
 #include <ndb/error.hpp>
+#include <ndb/value.hpp>
 #include <unordered_map>
 #include <vector>
 
