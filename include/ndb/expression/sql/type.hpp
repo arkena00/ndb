@@ -2,24 +2,11 @@
 #define EXPRESSION_SQL_TYPE_H_NDB
 
 #include <ndb/expression/sql/code.hpp>
-#include <ndb/expression/fwd.hpp>
+#include <ndb/expression/type.hpp>
 #include <ndb/expression/utility.hpp>
 
 namespace ndb
 {
-    // default make for expression_type <L T R>
-    template<expr_type_code T>
-    struct expression_type<T, expr_category_code::sql>
-    {
-        template<class L, class R, int Pass, class Native_expression>
-        static constexpr void static_make(Native_expression& ne)
-        {
-            L::template static_make<Pass>(ne);
-            ne.push_back(expr_code<T, expr_category_code::sql>::value);
-            R::template static_make<Pass>(ne);
-        }
-    };
-
     // shift_left
     template<>
     struct expression_type<expr_type_code::op_shift_left, expr_category_code::sql>

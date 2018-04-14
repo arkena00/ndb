@@ -2,7 +2,6 @@
 #define EXPRESSION_H_NDB
 
 #include <ndb/expression/code.hpp>
-#include <ndb/expression/fwd.hpp>
 
 //! .tpp include operators to overload them
 

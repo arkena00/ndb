@@ -28,7 +28,7 @@
 
 #include <ndb/expression/operator.hpp>
 #include <ndb/expression/scalar.hpp>
-#include <ndb/expression/fwd.hpp>
+#include <ndb/expression/type.hpp>
 
 namespace ndb
 {

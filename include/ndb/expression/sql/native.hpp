@@ -5,7 +5,7 @@
 
 #include <ndb/expression/code.hpp>
 #include <ndb/expression/utility.hpp>
-#include <ndb/expression/fwd.hpp>
+#include <ndb/expression/native.hpp>
 #include <array>
 
 namespace ndb
