@@ -55,12 +55,12 @@ namespace tables
     };
 }
 
-namespace models
+struct models
 {
-    struct library
+    struct library_
     {
-        using movie_ = tables::movie<library>; static constexpr movie_ movie {};
-        using music_ = tables::music<library>; static constexpr music_ music {};
+        using movie_ = tables::movie<library_>; static constexpr movie_ movie {};
+        using music_ = tables::music<library_>; static constexpr music_ music {};
 
         //static constexpr struct movie_ : ndb::table<library, tables::movie> {} movie {};
         //static constexpr struct sound_ : ndb::table<library, tables::movie> {} sound {};
@@ -70,7 +70,9 @@ namespace models
         ndb::entity<movie_, music_>
         >;
     };
-}
+
+    static constexpr const models::library_ library = {};
+};
 
 namespace databases
 {
@@ -78,8 +80,8 @@ namespace databases
     {
         static constexpr auto name = "test";
 
-        static constexpr struct alpha_ : ndb::database<project, models::library, ndb::mongo>{} alpha{};
-        static constexpr struct zeta_ : ndb::database<project, models::library, ndb::sqlite>{} zeta{};
+        static constexpr struct alpha_ : ndb::database<project, models::library_, ndb::mongo>{} alpha{};
+        static constexpr struct zeta_ : ndb::database<project, models::library_, ndb::sqlite>{} zeta{};
 
         using Detail_ = ndb::database_detail<ndb::entity<alpha_, zeta_>>;
     };
@@ -90,6 +92,7 @@ namespace dbs
     using alpha = databases::project::alpha_;
     using zeta = databases::project::zeta_;
 }
+
 
 
 /*
