@@ -53,30 +53,30 @@ namespace ndb
     class sqlite : public basic_engine<sqlite>
     {
     public:
-        sqlite();
+        inline sqlite();
 
         template<class Database>
-        void connect();
+        inline void connect();
 
         template<class Database>
-        sqlite_connection& connection() const;
+        inline sqlite_connection& connection() const;
 
         template<class T>
-        void bind(sqlite3_stmt* statement, int bind_index, const T& v) const;
+        inline void bind(sqlite3_stmt* statement, int bind_index, const T& v) const;
 
         template<class Database>
-        void exec(const char* str_query) const;
+        inline void exec(const char* str_query) const;
 
         template<class Database>
-        void exec(const std::string& str_query) const;
+        inline void exec(const std::string& str_query) const;
 
         template<class Database, class Expr>
-        ndb::result<sqlite> exec(const Expr& expr) const;
+        inline ndb::result<sqlite> exec(const Expr& expr) const;
 
         template<class Database>
-        void make();
+        inline void make();
 
-        static constexpr auto expr_category();
+        inline static constexpr auto expr_category();
 
     private:
         std::unordered_map<int, std::unique_ptr<sqlite_connection>> connection_list_;
