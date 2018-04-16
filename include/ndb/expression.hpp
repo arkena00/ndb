@@ -17,21 +17,21 @@ namespace ndb
         const L lhs_;
         const R rhs_;
 
-        constexpr expression(const L& lhs, const R& rhs);
+        inline constexpr expression(const L& lhs, const R& rhs);
 
         template<class F>
-        constexpr void eval(F&& f) const;
+        inline constexpr void eval(F&& f) const;
 
         template<class Native_expression>
-        constexpr void make(Native_expression& ne) const;
+        inline constexpr void make(Native_expression& ne) const;
 
         template<class F>
-        static constexpr void static_eval(F&& f);
+        inline static constexpr void static_eval(F&& f);
 
         template<int Pass = 0, class Native_expression>
-        static constexpr void static_make(Native_expression& ne);
+        inline static constexpr void static_make(Native_expression& ne);
 
-        static constexpr auto clause();
+        inline static constexpr auto clause();
     };
 } // ndb
 
