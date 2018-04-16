@@ -1,6 +1,8 @@
 #ifndef VALUE_H_NDB
 #define VALUE_H_NDB
 
+#include <ndb/error.hpp>
+
 #include <string>
 #include <vector>
 #include <variant>
@@ -17,7 +19,14 @@ namespace ndb
         template<class T>
         const auto& get() const
         {
-            return std::get<T>(value_);
+            try
+            {
+                return std::get<T>(value_);
+            }
+            catch (const std::exception& e)
+            {
+                ndb_error("Can't get unknown type");
+            }
         }
 
     private:
