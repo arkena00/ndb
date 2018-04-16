@@ -11,14 +11,13 @@
 
 #include "database.hpp"
 
-static constexpr const models::library library;
 static constexpr const databases::project project;
 
 
 int main()
 {
-    const auto& movie = library.movie;
-    const auto& music = library.music;
+    const auto& movie = models::library.movie;
+    const auto& music = models::library.music;
 
     try
     {
@@ -26,10 +25,14 @@ int main()
         ndb::connect<dbs::zeta>();
         ndb::clear<dbs::zeta>(movie);
 
+
         ndb::query<dbs::zeta>() + ( movie.id = 3 );
         ndb::query<dbs::zeta>() + ( movie.id = 5 );
         ndb::query<dbs::zeta>() + ( movie.id = 5 );
 
+
+
+        /*
         using namespace ndb;
 
         query<dbs::zeta> q;
@@ -39,8 +42,15 @@ int main()
         {
             std::cout << "\n__" <<line[movie.id] << line[0].get<std::string>() << line[1].get<std::string>();
         }
+*/
+        auto res = ndb::query<dbs::zeta>() <<  ((ndb::now(), movie.id) << ndb::limit(2));
 
-        ndb::query<dbs::zeta>() << (  ndb::count(movie.id) << (movie.id == 1) );
+        for (auto line : res)
+        {
+            std::cout << "\n__" << line[0].get<std::string>();
+            //std::cout << " | " << line[1].get<int>();
+            std::cout << " | " << line[movie.id];
+        }
 
     }
     catch (const std::exception& e)
