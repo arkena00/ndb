@@ -94,7 +94,7 @@ namespace ndb
             size_ += s;
         }
 
-        auto c_str() const
+        constexpr const char* c_str() const
         {
             return data_.data();
         }
@@ -111,7 +111,7 @@ namespace ndb
             return result;
         }
 
-    private:
+    public:
         size_t size_;
         std::array<char, Capacity> data_;
     };
