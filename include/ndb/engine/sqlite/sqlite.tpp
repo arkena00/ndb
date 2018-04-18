@@ -177,6 +177,13 @@ namespace ndb
         });
     }
 
+    template<class Expr>
+    std::string sqlite::to_string(const Expr&)
+    {
+        constexpr auto str_query = ndb::sql_expression<Expr>{};
+        return str_query.to_string();
+    }
+
     constexpr auto sqlite::expr_category()
     {
         return expr_category_code::sql;

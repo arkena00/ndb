@@ -76,6 +76,9 @@ namespace ndb
         template<class Database>
         inline void make();
 
+        template<class Expr>
+        inline static std::string to_string(const Expr&);
+
         inline static constexpr auto expr_category();
 
     private:
