@@ -43,14 +43,14 @@ set_target_properties(exp_preprocessor PROPERTIES
         OUTPUT_NAME  "exp_preprocessor")
 
 # exp_query
-if (ENGINE_MONGO)
-    add_executable(exp_query query.cpp)
-    target_link_libraries(exp_query ${NDB_LIB} ${MONGO_LIB} ${SQLITE_LIB})
-    add_dependencies(exp_query lib_sqlite)
-    set_target_properties(exp_query PROPERTIES
-            RUNTIME_OUTPUT_DIRECTORY "${NDB_BIN_ROOT}/experimental"
-            OUTPUT_NAME  "exp_query")
-endif()
+#if (ENGINE_MONGO)
+add_executable(exp_query query.cpp)
+target_link_libraries(exp_query ${NDB_LIB} ${MONGO_LIB} ${SQLITE_LIB})
+add_dependencies(exp_query lib_sqlite)
+set_target_properties(exp_query PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY "${NDB_BIN_ROOT}/experimental"
+        OUTPUT_NAME  "exp_query")
+#endif()
 
 # exp_mysql
 if (ENGINE_MYSQL)

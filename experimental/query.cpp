@@ -1,28 +1,30 @@
 #include <ndb/initializer.hpp>
 #include <ndb/engine/sqlite/sqlite.hpp>
-#include <ndb/engine/mongo/mongo.hpp>
-#include <ndb/query.hpp>
+
+#include "debug/query.hpp"
 #include <iostream>
 
 #include "database.hpp"
 
-
-static constexpr const models::library library;
-
 int main()
 {
     using ndb::sqlite;
-    using ndb::mongo;
 
-    ndb::initializer<sqlite, mongo> init;
+
+    ndb::initializer<sqlite> init;
     ndb::connect<dbs::zeta, sqlite>();
 
     int a = 11;
     double b = 22;
     auto c = std::chrono::system_clock::now();
 
-    const auto& movie = library.movie;
+    const auto& movie = models::library.movie;
     //const auto& sound = library.sound;
+
+    ndb::query<dbs::zeta>() << ndb::get( movie.id );
+
+    // table
+    ndb::query<dbs::zeta>() << movie;
 
     // field
     ndb::query<dbs::zeta>() << ( movie.id );
