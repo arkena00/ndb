@@ -15,37 +15,53 @@ namespace ndb
     } // expr_function
 
 
-    /*
+    // keyword
     template<class... Ts>
-    constexpr auto test(const Ts&... t)
+    constexpr auto get(const Ts&... t)
     {
-        auto func = ndb::expression<expr_function::count, expr_type_code::function>();
+        auto keyword = ndb::expr_make_keyword<expr_keyword_code::get>();
 
-        auto expr = (ndb::expr_make(t), ...);
-
-        return ndb::expression<decltype(func), expr_type_code::op_function, decltype(expr)> { func, expr };
-    }*/
-
-    template<class T>
-    constexpr auto count(const T& t)
-    {
-        auto func = ndb::expr_make_keyword<expr_keyword_code::count>();
-        auto expr = ndb::expr_make(t);
-        return ndb::expression<decltype(func), expr_type_code::op_function, decltype(expr)> { func, expr };
+        if constexpr (sizeof...(Ts) == 0)
+        {
+            auto expr = ndb::expr_make_keyword<expr_keyword_code::all>();
+            return ndb::expression<decltype(keyword), expr_type_code::keyword, decltype(expr), expr_clause_code::get> { keyword, expr };
+        }
+        else
+        {
+            auto expr = (ndb::expr_make(t), ...);
+            return ndb::expression<decltype(keyword), expr_type_code::keyword, decltype(expr), expr_clause_code::get> { keyword, expr };
+        }
     }
 
-    constexpr auto now()
+    template<class... Ts>
+    constexpr auto source(const Ts&... t)
     {
-        auto func = ndb::expr_make_keyword<expr_keyword_code::now>();
-        auto expr = ndb::expr_make();
-        return ndb::expression<decltype(func), expr_type_code::op_function, decltype(expr)> { func, expr };
+        auto keyword = ndb::expr_make_keyword<expr_keyword_code::source>();
+        auto expr = (ndb::expr_make(t), ...);
+        return ndb::expression<decltype(keyword), expr_type_code::keyword, decltype(expr), expr_clause_code::get> { keyword, expr };
     }
 
     constexpr auto limit(int count, int offset = 0)
     {
-        auto func = ndb::expr_make_keyword<expr_keyword_code::limit>();
+        auto keyword = ndb::expr_make_keyword<expr_keyword_code::limit>();
         auto expr = ndb::expression<int, expr_type_code::value>{ count };
-        return ndb::expression<decltype(func), expr_type_code::keyword, decltype(expr)> { func, expr };
+        return ndb::expression<decltype(keyword), expr_type_code::keyword, decltype(expr)> { keyword, expr };
+    }
+
+    // function
+    template<class T>
+    constexpr auto count(const T& t)
+    {
+        auto keyword = ndb::expr_make_keyword<expr_keyword_code::count>();
+        auto expr = ndb::expr_make(t);
+        return ndb::expression<decltype(keyword), expr_type_code::op_function, decltype(expr)> { keyword, expr };
+    }
+
+    constexpr auto now()
+    {
+        auto keyword = ndb::expr_make_keyword<expr_keyword_code::now>();
+        auto expr = ndb::expr_make();
+        return ndb::expression<decltype(keyword), expr_type_code::op_function, decltype(expr)> { keyword, expr };
     }
 } // ndb
 
