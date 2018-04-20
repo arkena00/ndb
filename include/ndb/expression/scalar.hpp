@@ -21,9 +21,9 @@ namespace ndb
         }
 
         template<class F>
-        static constexpr void static_eval(F&& f)
+        static constexpr auto static_eval(F&& f)
         {
-            f(ndb::expression<T, Expression_type, void, Clause> {});
+            return ndb::call(f, ndb::expression<T, Expression_type, void, Clause> {});
         }
 
         template<class Native_expression>
@@ -45,11 +45,11 @@ namespace ndb
     };
 
 
-    // init
+    // root
     template<class Expr, expr_clause_code Clause>
-    struct expression<Expr, expr_type_code::init, void, Clause> : expression_base
+    struct expression<Expr, expr_type_code::root, void, Clause> : expression_base
     {
-        static constexpr auto type = expr_type_code::init;
+        static constexpr auto type = expr_type_code::root;
 
         Expr expr_;
 
@@ -62,21 +62,21 @@ namespace ndb
         }
 
         template<class F>
-        static constexpr void static_eval(F&& f)
+        static constexpr auto static_eval(F&& f)
         {
-            Expr::static_eval(f);
+            return Expr::static_eval(f);
         }
 
         template<class Native_expression>
         constexpr void make(Native_expression& ne) const
         {
-            native_expression<Native_expression::expr_category, expr_type_code::init>::template make<Clause>(expr_, ne);
+            native_expression<Native_expression::expr_category, expr_type_code::root>::template make<Clause>(expr_, ne);
         }
 
         template<int Pass = 0, class Native_expression>
         static constexpr void static_make(Native_expression& ne)
         {
-            native_expression<Native_expression::expr_category, expr_type_code::init>::template static_make<Expr, Clause>(ne);
+            native_expression<Native_expression::expr_category, expr_type_code::root>::template static_make<Expr, Clause>(ne);
         }
 
         constexpr static auto clause()
@@ -88,13 +88,13 @@ namespace ndb
     // table
     template<class T, expr_clause_code Clause>
     struct expression<T, expr_type_code::table, void, Clause> :
-        public scalar_expression<T, expr_type_code::table, void, Clause>
+    public scalar_expression<T, expr_type_code::table, void, Clause>
     {};
 
     // field
     template<class T, expr_clause_code Clause>
     struct expression<T, expr_type_code::field, void, Clause> :
-        public scalar_expression<T, expr_type_code::field, void, Clause>
+    public scalar_expression<T, expr_type_code::field, void, Clause>
     {
         using value_type = T;
     };
@@ -102,12 +102,12 @@ namespace ndb
     // value
     template<class T, expr_clause_code Clause>
     struct expression<T, expr_type_code::value, void, Clause> :
-        public scalar_expression<T, expr_type_code::value, void, Clause>
+    public scalar_expression<T, expr_type_code::value, void, Clause>
     {
         const T& value_;
 
         constexpr explicit expression(const T& n) :
-            value_(n)
+        value_(n)
         {}
 
         auto value() const
@@ -122,23 +122,25 @@ namespace ndb
         }
 
         template<class F>
-        static constexpr void static_eval(F&& f)
+        static constexpr auto static_eval(F&& f)
         {
-            f(expression<T, expr_type_code::value, void, Clause> { 0 });
+            return ndb::call(f, expression<T, expr_type_code::value, void, Clause> { 0 });
         }
     };
 
     // void expression
     template<expr_clause_code Clause>
     struct expression<void, expr_type_code::null, void, Clause> :
-        public scalar_expression<void, expr_type_code::null, void, Clause>
+    public scalar_expression<void, expr_type_code::null, void, Clause>
     {};
 
     // keyword
     template<expr_keyword_code Keyword_code, expr_clause_code Clause>
     struct expression<keyword_type<Keyword_code>, expr_type_code::keyword, void, Clause> :
-        public scalar_expression<keyword_type<Keyword_code>, expr_type_code::keyword, void, Clause>
-    {};
+    public scalar_expression<keyword_type<Keyword_code>, expr_type_code::keyword, void, Clause>
+    {
+        static constexpr auto keyword_code = Keyword_code;
+    };
 } // ndb
 
 #endif // EXPRESSION_SCALAR_H_NDB

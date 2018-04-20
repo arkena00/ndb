@@ -7,12 +7,12 @@ namespace ndb
 {
     enum class expr_type_code
     {
+        root,
         null,
         value,
         keyword,
         field,
         table,
-        init,
         op_keyword,
         op_and,
         op_or,
@@ -25,6 +25,10 @@ namespace ndb
 
     enum class expr_keyword_code
     {
+        all,
+        get,
+        source,
+        // function
         now,
         count,
         limit
@@ -46,7 +50,8 @@ namespace ndb
         source     = 16,
         condition  = 32,
         join       = 64,
-        value_list = 128
+        value_list = 128,
+        command    = 256
     };
 
     enum class expr_category_code

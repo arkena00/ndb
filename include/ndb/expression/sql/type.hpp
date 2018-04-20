@@ -27,7 +27,7 @@ namespace ndb
             {
                 ne.push_back(clause_code<expr_clause_code::source, expr_category_code::sql>::value);
                 ne.push_back("T");
-                ne.push_back(deduce_source<L>() + 48);
+                ne.push_back(deduce_source_id<L>() + 48);
             }
 
             // not condition << condition

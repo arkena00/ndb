@@ -54,10 +54,18 @@ namespace ndb
 
     template<class L, expr_type_code T, class R, expr_clause_code Clause>
     template<class F>
-    constexpr void expression<L, T, R, Clause>::static_eval(F&& f)
+    constexpr auto expression<L, T, R, Clause>::static_eval(F&& f)
     {
-        L::static_eval(f);
-        R::static_eval(f);
+        constexpr auto l = L::static_eval(f);
+        constexpr auto r = R::static_eval(f);
+
+        // l and r type can't both return values //TODO deduction result
+        static_assert(!std::is_same_v<decltype(l), void_> && !std::is_same_v<decltype(r), void_>);
+        if constexpr (std::is_same_v<decltype(l), void_>)
+        {
+            return r;
+        }
+        else return l;
     }
 
     template<class L, expr_type_code T, class R, expr_clause_code Clause>

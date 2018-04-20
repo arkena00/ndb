@@ -13,6 +13,8 @@ namespace ndb
     struct expression : expression_base
     {
         static constexpr auto type = T;
+        using Lexpr = L;
+        using Rexpr = R;
 
         const L lhs_;
         const R rhs_;
@@ -26,7 +28,7 @@ namespace ndb
         inline constexpr void make(Native_expression& ne) const;
 
         template<class F>
-        inline static constexpr void static_eval(F&& f);
+        inline static constexpr auto static_eval(F&& f);
 
         template<int Pass = 0, class Native_expression>
         inline static constexpr void static_make(Native_expression& ne);

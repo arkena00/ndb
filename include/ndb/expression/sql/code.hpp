@@ -21,6 +21,7 @@ namespace ndb
     template<> struct clause_code<expr_clause_code::source, expr_category_code::sql> { constexpr static auto value = " FROM "; };
     template<> struct clause_code<expr_clause_code::condition, expr_category_code::sql> { constexpr static auto value = " WHERE "; };
 
+    template<> struct keyword_code<expr_keyword_code::get, expr_category_code::sql> { constexpr static auto value = "SELECT "; };
     template<> struct keyword_code<expr_keyword_code::count, expr_category_code::sql> { constexpr static auto value = " COUNT"; };
     template<> struct keyword_code<expr_keyword_code::now, expr_category_code::sql> { constexpr static auto value = " DATETIME"; };
     template<> struct keyword_code<expr_keyword_code::limit, expr_category_code::sql> { constexpr static auto value = " LIMIT "; };

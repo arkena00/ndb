@@ -20,7 +20,7 @@ namespace ndb
             const auto& engine = ndb::engine<Engine>::get();
 
             auto expr = ndb::expr_make(t);
-            auto e = ndb::expression<decltype(expr), expr_type_code::init, void, expr_clause_code::get> { std::move(expr) };
+            auto e = ndb::expression<decltype(expr), expr_type_code::root, void, expr_clause_code::get> { std::move(expr) };
 
             return engine.template exec<Database>(e);
         }
@@ -29,7 +29,7 @@ namespace ndb
         constexpr ndb::result<Engine> operator+(const Expr& expr) const
         {
             const auto& engine = ndb::engine<Engine>::get();
-            auto e = ndb::expression<Expr, expr_type_code::init, void, expr_clause_code::add> { expr };
+            auto e = ndb::expression<Expr, expr_type_code::root, void, expr_clause_code::add> { expr };
 
             return engine.template exec<Database>(e);
         }
@@ -38,7 +38,7 @@ namespace ndb
         constexpr auto operator-(const Expr& expr)
         {
             const auto& engine = ndb::engine<Engine>::get();
-            auto e = ndb::expression<Expr, expr_type_code::init, void, expr_clause_code::del> { expr };
+            auto e = ndb::expression<Expr, expr_type_code::root, void, expr_clause_code::del> { expr };
 
             return engine.template exec<Database>(e);
         }
