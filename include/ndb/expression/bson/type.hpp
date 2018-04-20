@@ -2,7 +2,7 @@
 #define EXPRESSION_BSON_TYPE_H_NDB
 
 #include <ndb/expression/bson/code.hpp>
-#include <ndb/expression/fwd.hpp>
+#include <ndb/expression/type.hpp>
 #include <ndb/utility.hpp>
 
 namespace ndb

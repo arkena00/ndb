@@ -2,13 +2,13 @@
 #define EXPRESSION_BSON_NATIVE_H_NDB
 
 #include <ndb/expression/bson/code.hpp>
-#include <ndb/expression/fwd.hpp>
+#include <ndb/expression/native.hpp>
 #include <ndb/expression/utility.hpp>
 
 namespace ndb
 {
     template<>
-    struct native_expression<expr_category_code::bson, expr_type_code::init>
+    struct native_expression<expr_category_code::bson, expr_type_code::root>
     {
         template<expr_clause_code Clause, class Expr, class Native_expression>
         static constexpr void make(const Expr& expr, Native_expression& ne)
