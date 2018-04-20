@@ -104,7 +104,7 @@ namespace ndb
 
             // database and table name
             std::string db_str = "D" + std::to_string(ndb::database_id<Database>);
-            std::string table_str = "T" + std::to_string(ndb::deduce_source<Expr>());
+            std::string table_str = "T" + std::to_string(ndb::deduce_source_id<Expr>());
 
             mongoc_collection_t* table = mongoc_client_get_collection(connection<Database>().client(), db_str.c_str(), table_str.c_str());
 
