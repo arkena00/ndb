@@ -1,5 +1,5 @@
-#ifndef UTILITY_H_NSE
-#define UTILITY_H_NSE
+#ifndef UTILITY_H_NDB
+#define UTILITY_H_NDB
 
 //! \brief utility functions
 
@@ -48,6 +48,17 @@ namespace ndb
         constexpr static auto value = 1 + index_of<T, Container<Ts...>>::value;
     };
 
+    struct void_{};
+    template<class F, class... Args>
+    static constexpr auto call(F&& f, Args... args)
+    {
+        if constexpr (std::is_void_v<decltype(f(args...))>)
+        {
+            return void_{};
+        }
+        else return f(std::forward<Args>(args)...);
+    }
+
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////              NDB               ////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -90,11 +101,34 @@ namespace ndb
     template<class Expr>
     constexpr bool expr_is_table = Expr::type == expr_type_code::table;
 
+    namespace internal
+    {
+        template<class Expr, expr_keyword_code Keyword_code>
+        constexpr bool expr_is_keyword_code()
+        {
+            // is a keyword
+            if constexpr (Expr::type == expr_type_code::keyword)
+            {
+                // keyword_code match
+                if constexpr (Expr::Lexpr::keyword_code == Keyword_code) return true;
+                else return false;
+            }
+                // not a keyword
+            else return false;
+        };
+    } // internal
+
+    template<class Expr, expr_keyword_code Keyword_code>
+    constexpr bool expr_is_keyword_code = internal::expr_is_keyword_code<Expr, Keyword_code>();
+
     template<class Expr>
     constexpr bool expr_is_scalar = expr_is_field<Expr> || expr_is_value<Expr> || expr_is_table<Expr>;
 
     template<class Expr, expr_clause_code Clause>
     constexpr bool expr_has_clause = static_cast<bool>(Expr::clause() & Clause);
+
+    template<expr_clause_code Check, expr_clause_code Clause>
+    constexpr bool expr_has_clause_value = static_cast<bool>(Check & Clause);
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////            FOR_EACH            ////////////////////////
@@ -157,4 +191,4 @@ namespace ndb
     }
 } // ndb
 
-#endif // UTILITY_H_NSE
+#endif // UTILITY_H_NDB
