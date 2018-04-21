@@ -50,7 +50,7 @@ namespace ndb
 
     struct void_{};
     template<class F, class... Args>
-    static constexpr auto call(F&& f, Args... args)
+    constexpr auto call(F&& f, Args... args)
     {
         if constexpr (std::is_void_v<decltype(f(args...))>)
         {
