@@ -28,8 +28,8 @@ namespace ndb
         }
         else
         {
-            //TODO fix for msvc
-            auto expr = (ndb::expr_make(t), ...);
+            // msvc fix : use (( )) to compile
+            auto expr = ((ndb::expr_make(t), ...));
             return ndb::expression<decltype(keyword), expr_type_code::keyword, decltype(expr), expr_clause_code::get> { keyword, expr };
         }
     }
