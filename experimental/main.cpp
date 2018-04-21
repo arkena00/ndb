@@ -7,11 +7,6 @@
 
 #include "database.hpp"
 
-
-#define Query(Q) { ndb::query_view<dbs::zeta> q; Q; result << __COUNTER__ << " | " << #Q << "\n  \\ " << q.view() ; } \
- { bool q_ok = true; ndb::query<dbs::zeta> q; try { Q; } catch(...) { q_ok = false; } result << "\n  \\ "; if (q_ok) result << "OK"; else result << "FAIL";  result << "\n"; }
-
-
 int main()
 {
     using ndb::sqlite;
@@ -28,44 +23,22 @@ int main()
     const auto& movie = models::library.movie;
     const auto& user = models::library.user;
 
+    //auto q = (movie.id << movie);
+    //auto z = ((movie.id, q) << movie);
 
-    // fields
-    try
-    {
-        ndb::query<dbs::zeta>() << user.id;
-    }
-    catch(...) {std::cerr << "ERROR";}
-
-    /*
-    Query((   q << user.id   ));
-    Query((   q << ( movie.id, movie.image )   ));
-    // fields << table
-    Query((   q << ( (movie.id, movie.image) << movie)   ));
-
+/*
+    auto z = (movie.id << movie);
+    auto u = ndb::limit(3);
+    ndb::query<dbs::zeta> v;
+    ndb::result<dbs::zeta> res = z << u;
+    v = z << u;
 */
 
-
-    // join
-    //Query((   q << (movie.name << (  movie.id == user.id ))   ));
-/*
-
-    // field << join
-    //ndb::query<db::library>{} << movie.name << (  movie.user_id == user.id );
+    ndb::query_view<dbs::zeta> q;
+    q << (movie.id, movie.name, ndb::get(movie.image));
+    std::cout << q.view();
 
 
-    // (movie.name = "test")
-    //  ndb::count(movie.id) -movie << movie.id == 3 ndb::del << movie.id == 3
-
-    //ndb_pquery(list_movies, movie.genre, movie.actor);
-    //qs::list_movies(genre_enum::action, { "john", "sheppard" });
-
-    //ndb::pquery<dbs::alpha>() << (movie.id == 3);
-
-    return 0;*/
-
-    std::cout << result.str();
-
-    std::cout << "_";
 
     return 0;
 

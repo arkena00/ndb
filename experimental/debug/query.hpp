@@ -67,6 +67,17 @@ namespace ndb
         }
 
         template<class T>
+        constexpr auto operator=(const T& t)
+        {
+            const auto& engine = ndb::engine<Engine>::get();
+
+            auto expr = ndb::expr_make(t);
+            auto e = ndb::expression<decltype(expr), expr_type_code::root, void, expr_clause_code::get> { std::move(expr) };
+
+            str_ = ndb::sqlite::to_string(e);
+        }
+
+        template<class T>
         constexpr auto operator<<(const T& t)
         {
             const auto& engine = ndb::engine<Engine>::get();

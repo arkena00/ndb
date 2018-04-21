@@ -56,7 +56,7 @@ int main()
         Query((   q << ( (movie.id) << movie << (movie.id == a && movie.name == b) << ndb::limit(3))   ));
 
     // function
-    Query((    (ndb::count(movie.id) << ( movie.id == 3 ))   ));
+    Query((   q << (ndb::count(movie.id) << ( movie.id == 3 ))   ));
 
     // add
     Query((   q + (movie.id = 3, movie.name = 5)   ));
