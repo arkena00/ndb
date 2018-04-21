@@ -26,6 +26,12 @@ TYPED_TEST(expression, simple)
     EXPECT_NO_THROW( this->q << (movie.id, movie.name, movie.image) );
 }
 
+TYPED_TEST(expression, explicit_keyword)
+{
+    EXPECT_NO_THROW( this->q << ndb::get(movie.id) );
+    EXPECT_NO_THROW( this->q << (ndb::get(movie.id) << ndb::source(movie)) );
+}
+
 TYPED_TEST(expression, function)
 {
     EXPECT_NO_THROW( this->q << (ndb::now(), movie.id, ndb::now()) );
@@ -34,5 +40,6 @@ TYPED_TEST(expression, function)
 
 TYPED_TEST(expression, composed)
 {
+    EXPECT_NO_THROW( this->q << ((ndb::now(), movie.id) << ndb::limit(2)) );
     EXPECT_NO_THROW( this->q << ((ndb::now(), movie.id) << ndb::limit(2)) );
 }
