@@ -13,7 +13,8 @@ namespace ndb
     {
     public:
         template<class T>
-		value(T&& v) : value_{ std::forward<T>(v) }
+		value(T v) :
+            value_{ std::move(v) }
         {}
 
         template<class T>
