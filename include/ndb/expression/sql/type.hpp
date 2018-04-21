@@ -4,23 +4,11 @@
 #include <ndb/expression/sql/code.hpp>
 #include <ndb/expression/type.hpp>
 #include <ndb/expression/utility.hpp>
+#include <ndb/expression/deduction.hpp>
 
 namespace ndb
 {
-    // default make for expression_type
-    template<expr_type_code T>
-    struct expression_type<T, expr_category_code::sql>
-    {
-        template<class L, class R, int Pass, class Native_expression>
-        static constexpr void static_make(Native_expression& ne)
-        {
-            L::template static_make<Pass>(ne);
-            ne.push_back(expr_code<T, expr_category_code::sql>::value);
-            R::template static_make<Pass>(ne);
-        }
-    };
-
-    // shift_left
+    // shift_left (append expressions)
     template<>
     struct expression_type<expr_type_code::op_shift_left, expr_category_code::sql>
     {
@@ -29,18 +17,20 @@ namespace ndb
         {
             L::template static_make<Pass>(ne);
 
-            // get << source
-            if constexpr (expr_has_clause<R, expr_clause_code::source>)
+            // get << source (no keyword)
+            if constexpr (expr_has_clause<R, expr_clause_code::source>
+                          && !expr_is_keyword_code<R, expr_keyword_code::source>)
             {
-                ne.push_back(clause_code<R::clause(), expr_category_code::sql>::value);
+                ne.push_back(clause_code<expr_clause_code::source, expr_category_code::sql>::value);
             }
 
             // get << not source
             if constexpr (!expr_has_clause<L, expr_clause_code::source> && !expr_has_clause<R, expr_clause_code::source>)
             {
+                ne.deduced_source = true;
                 ne.push_back(clause_code<expr_clause_code::source, expr_category_code::sql>::value);
                 ne.push_back("T");
-                ne.push_back(deduce_source<L>() + 48);
+                ne.push_back(deduce_source_id<L>() + 48);
             }
 
             // not condition << condition
@@ -65,6 +55,20 @@ namespace ndb
                 L::template static_make<Pass>(ne);
             }
             else R::template static_make<Pass>(ne);
+        }
+    };
+
+    // function
+    template<>
+    struct expression_type<expr_type_code::op_function, expr_category_code::sql>
+    {
+        template<class L, class R, int Pass, class Native_expression>
+        static constexpr void static_make(Native_expression& ne)
+        {
+            L::template static_make<Pass>(ne);
+            ne.push_back('(');
+            R::template static_make<Pass>(ne);
+            ne.push_back(')');
         }
     };
 } // ndb

@@ -2,7 +2,7 @@
 #define ENGINE_NSE_NSE_H_NDB
 
 // #include <nse/engine.hpp>
-#include <ndb/basic_engine.hpp>
+#include <ndb/engine/basic.hpp>
 #include <ndb/model.hpp>
 #include <ndb/utility.hpp>
 #include <iostream>

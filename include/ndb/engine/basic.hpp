@@ -1,5 +1,5 @@
-#ifndef BASIC_ENGINE_H_NDB
-#define BASIC_ENGINE_H_NDB
+#ifndef ENGINE_BASIC_H_NDB
+#define ENGINE_BASIC_H_NDB
 
 #include <ndb/error.hpp>
 
@@ -38,4 +38,4 @@ namespace ndb
     Engine* basic_engine<Engine>::instance_ = nullptr;
 } // ndb
 
-#endif // BASIC_ENGINE_H_NDB
+#endif // ENGINE_BASIC_H_NDB

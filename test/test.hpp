@@ -1,6 +1,13 @@
-#ifndef CONFIG_H_NDB
-#define CONFIG_H_NDB
+#ifndef TEST_H_NDB
+#define TEST_H_NDB
 
+#include "gtest/gtest.h"
+#include "database.hpp"
+
+// aliases
+static constexpr const auto movie = models::library.movie;
+
+// engines
 #include <ndb/engine/sqlite/sqlite.hpp>
 
 #define TEST_SQLITE ndb::sqlite
@@ -14,4 +21,6 @@
 
 #define TEST_ENGINE TEST_SQLITE TEST_MONGO
 
-#endif // CONFIG_H_NDB
+
+
+#endif // TEST_H_NDB

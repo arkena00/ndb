@@ -1,13 +1,22 @@
-#ifndef EXPRESSION_TYPE_H_NDB
-#define EXPRESSION_TYPE_H_NDB
+#ifndef EXPRESSION_TYPE_NDB
+#define EXPRESSION_TYPE_NDB
 
 #include <ndb/expression/code.hpp>
 
 namespace ndb
 {
-    // default make for expression_type
+    // default make for expression_type <L T R>
     template<expr_type_code T, expr_category_code Ec>
-    struct expression_type;
+    struct expression_type
+    {
+        template<class L, class R, int Pass, class Native_expression>
+        static constexpr void static_make(Native_expression& ne)
+        {
+            L::template static_make<Pass>(ne);
+            ne.push_back(expr_code<T, Ec>::value);
+            R::template static_make<Pass>(ne);
+        }
+    };
 } // ndb
 
-#endif // EXPRESSION_TYPE_H_NDB
+#endif // EXPRESSION_TYPE_NDB

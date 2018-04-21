@@ -16,6 +16,8 @@ namespace ndb
     public:
         static constexpr auto expr_category = expr_category_code::sql;
 
+        bool deduced_source = false;
+
         constexpr explicit expression_size() :
             value_(0)
         {
@@ -50,6 +52,8 @@ namespace ndb
     class sql_expression
     {
     public:
+        bool deduced_source = false;
+
         static constexpr auto expr_category = expr_category_code::sql;
         static constexpr auto Capacity = expression_size<Expr>{}.value();
 
@@ -94,7 +98,7 @@ namespace ndb
             size_ += s;
         }
 
-        auto c_str() const
+        constexpr const char* c_str() const
         {
             return data_.data();
         }

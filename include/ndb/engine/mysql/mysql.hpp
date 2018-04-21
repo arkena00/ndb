@@ -1,7 +1,7 @@
 #ifndef ENGINE_MYSQL_MYSQL_H_NDB
 #define ENGINE_MYSQL_MYSQL_H_NDB
 
-#include <ndb/basic_engine.hpp>
+#include <ndb/engine/basic.hpp>
 
 #include <cppconn/driver.h>
 #include <cppconn/exception.h>

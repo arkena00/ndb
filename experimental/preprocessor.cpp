@@ -5,6 +5,7 @@
 
 namespace tables
 {
+
     ndb_table(movie,
               ndb_field(id, int, 8),
               ndb_field(name, std::string, 255)
@@ -13,6 +14,11 @@ namespace tables
               ndb_field(id, int, 8),
               ndb_field(image, std::string, 255)
     )
+    /*
+    ndb_model(library, movie, music);
+
+    ndb_database(alpha, library, sqlite)
+    ndb_database(zeta, library, mongo)*/
 }
 
 namespace models

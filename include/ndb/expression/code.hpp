@@ -3,33 +3,62 @@
 
 #include <ndb/setup.hpp>
 
+/*TODO organize expressions code
+ * [T, scalar_type] scalar : value, field, table, keyword
+ * [keyword<code>, clause] clauses (get,set... condition, source, limit, group)
+ * [E, OP, E] operators : and, or, function
+ * [keyword<code>, function] functions : now, count
+ * */
+
+
 namespace ndb
 {
     enum class expr_type_code
     {
-        value = 0,
+        root,
+        null,
+        value,
+        keyword,
         field,
         table,
-        init,
         op_and,
         op_or,
         op_equal,
         op_assign,
         op_shift_left,
-        op_list
+        op_list,
+        op_function
+    };
+
+    enum class expr_keyword_code
+    {
+        all,
+        get, set, add, del,
+        source,
+        // function
+        now,
+        count,
+        limit
+    };
+
+    template<expr_keyword_code Keyword_code>
+    struct keyword_type
+    {
+        static constexpr auto code = Keyword_code;
     };
 
     enum class expr_clause_code
     {
-        none      = 0,
-        get       = 1,
-        set       = 2,
-        add       = 4,
-        del       = 8,
-        source    = 16,
-        condition = 32,
-        join      = 64,
-        value_list = 128
+        none       = 0,
+        get        = 1,
+        set        = 2,
+        add        = 4,
+        del        = 8,
+        source     = 16,
+        condition  = 32,
+        join       = 64,
+        value_list = 128,
+        command    = 256
     };
 
     enum class expr_category_code
@@ -51,13 +80,19 @@ namespace ndb
     template<expr_type_code, expr_category_code>
     struct expr_code
     {
-        static constexpr const char* value = " _undefined_ ";
+        static constexpr const char* value = " _expr_code_undefined_ ";
     };
 
     template<expr_clause_code, expr_category_code>
     struct clause_code
     {
-        static constexpr const char* value = " _undefined_ ";
+        static constexpr const char* value = " _clause_code_undefined_ ";
+    };
+
+    template<expr_keyword_code K, expr_category_code>
+    struct keyword_code
+    {
+        static constexpr const char* value = " _keyword_code_undefined_ ";
     };
 } // ndb
 
