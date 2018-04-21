@@ -7,6 +7,8 @@
 
 namespace ndb
 {
+    struct cx_err;
+
     template<class T, template<class...> class Container>
     struct cx_err_type_not_found;
 
