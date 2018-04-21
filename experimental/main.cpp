@@ -1,61 +1,72 @@
-#include <iostream>
-
-#include <ndb/expression.hpp>
-
 #include <ndb/initializer.hpp>
 #include <ndb/engine/sqlite/sqlite.hpp>
-#include <ndb/engine.hpp>
-#include <ndb/function.hpp>
 
 #include "debug/query.hpp"
+#include <iostream>
+#include <sstream>
 
 #include "database.hpp"
 
-static constexpr const databases::project project;
+
+#define Query(Q) { ndb::query_view<dbs::zeta> q; Q; result << __COUNTER__ << " | " << #Q << "\n  \\ " << q.view() ; } \
+ { bool q_ok = true; ndb::query<dbs::zeta> q; try { Q; } catch(...) { q_ok = false; } result << "\n  \\ "; if (q_ok) result << "OK"; else result << "FAIL";  result << "\n"; }
 
 
 int main()
 {
-    const auto& movie = models::library.movie;
-    const auto& music = models::library.music;
+    using ndb::sqlite;
 
+    std::stringstream result;
+
+    ndb::initializer<sqlite> init;
+    ndb::connect<dbs::zeta, sqlite>();
+
+    int a = 11;
+    double b = 22;
+    auto c = std::chrono::system_clock::now();
+
+    const auto& movie = models::library.movie;
+    const auto& user = models::library.user;
+
+
+    // fields
     try
     {
-        ndb::initializer<ndb::sqlite> init;
-        ndb::connect<dbs::zeta>();
-        ndb::clear<dbs::zeta>(movie);
+        ndb::query<dbs::zeta>() << user.id;
+    }
+    catch(...) {std::cerr << "ERROR";}
 
+    /*
+    Query((   q << user.id   ));
+    Query((   q << ( movie.id, movie.image )   ));
+    // fields << table
+    Query((   q << ( (movie.id, movie.image) << movie)   ));
 
-        ndb::query<dbs::zeta>() + ( movie.id = 3 );
-        ndb::query<dbs::zeta>() + ( movie.id = 5 );
-        ndb::query<dbs::zeta>() + ( movie.id = 5 );
-
-
-
-        /*
-        using namespace ndb;
-
-        query<dbs::zeta> q;
-        auto res = q << (now(), now(), movie.id ) ;
-
-        for (auto line : res)
-        {
-            std::cout << "\n__" <<line[movie.id] << line[0].get<std::string>() << line[1].get<std::string>();
-        }
 */
-        auto res = ndb::query<dbs::zeta>() <<  ((ndb::now(), movie.id) << ndb::limit(2));
 
-        for (auto line : res)
-        {
-            std::cout << "\n__" << line[0].get<std::string>();
-            //std::cout << " | " << line[1].get<int>();
-            std::cout << " | " << line[movie.id];
-        }
 
-    }
-    catch (const std::exception& e)
-    {
-        std::cerr << "Exception : " << e.what();
-    }
+    // join
+    //Query((   q << (movie.name << (  movie.id == user.id ))   ));
+/*
+
+    // field << join
+    //ndb::query<db::library>{} << movie.name << (  movie.user_id == user.id );
+
+
+    // (movie.name = "test")
+    //  ndb::count(movie.id) -movie << movie.id == 3 ndb::del << movie.id == 3
+
+    //ndb_pquery(list_movies, movie.genre, movie.actor);
+    //qs::list_movies(genre_enum::action, { "john", "sheppard" });
+
+    //ndb::pquery<dbs::alpha>() << (movie.id == 3);
+
+    return 0;*/
+
+    std::cout << result.str();
+
+    std::cout << "_";
+
     return 0;
+
 }

@@ -3,13 +3,20 @@
 
 #include "debug/query.hpp"
 #include <iostream>
+#include <sstream>
 
 #include "database.hpp"
+
+
+#define Query(Q) { ndb::query_view<dbs::zeta> q; Q; result << __COUNTER__ << " | " << #Q << "\n  \\ " << q.view() ; } \
+ { bool q_ok = true; ndb::query<dbs::zeta> q; try { Q; } catch(...) { q_ok = false; } result << "\n  \\ "; if (q_ok) result << "OK"; else result << "FAIL";  result << "\n"; }
+
 
 int main()
 {
     using ndb::sqlite;
 
+    std::stringstream result;
 
     ndb::initializer<sqlite> init;
     ndb::connect<dbs::zeta, sqlite>();
@@ -19,42 +26,51 @@ int main()
     auto c = std::chrono::system_clock::now();
 
     const auto& movie = models::library.movie;
-    //const auto& sound = library.sound;
+    const auto& user = models::library.user;
 
-    ndb::query<dbs::zeta>() << ndb::get( movie.id );
+
+    // fields
+    Query((   q << ndb::get(user.id)   ));
+    Query((   q << user.id   ));
+    Query((   q << ( movie.id, movie.image )   ));
+        // fields << table
+        Query((   q << ( (movie.id, movie.image) << movie)   ));
+        // fields << condition
+        Query((   q << ((movie.id, movie.name, movie.image) << (movie.id == a && movie.name == b))   ));
 
     // table
-    ndb::query<dbs::zeta>() << movie;
+    Query((   q << movie   ));
 
-    // field
-    ndb::query<dbs::zeta>() << ( movie.id );
-    // field_list
 
-    ndb::query<dbs::zeta>() << ( movie.id, movie.image );
-    // field << table
-    ndb::query<dbs::zeta>() << ( movie.id << movie );
+    // condition
+    Query((   q << ( movie.id == a )   ));
+    Query((   q << ( movie.id == a && movie.name == b)   ));
 
-    // coondition
-    ndb::query<dbs::zeta>() << ( movie.id == a );
-    ndb::query<dbs::zeta>() << ( movie.id == a && movie.name == b );
+    // field << filter
+    Query((   q << ((movie.id) << ndb::limit(2))   ));
+        // field << table << filter
+        Query((   q << ( (movie.id) << movie << ndb::limit(2) )   ));
+        // field << table << condition
+        Query((   q << ( (movie.id) << movie << (movie.id == a && movie.name == b))   ));
+        // field << table << condition << filter
+        Query((   q << ( (movie.id) << movie << (movie.id == a && movie.name == b) << ndb::limit(3))   ));
 
-    // field << table << condition
-    ndb::query<dbs::zeta>() << ( (movie.id) << movie << (movie.id == a && movie.name == b) );
-    ndb::query<dbs::zeta>() << ( (movie.id, movie.name) << movie << (movie.id == a && movie.name == b) );
-    // field << condition
-    ndb::query<dbs::zeta>() << ( (movie.id, movie.name, movie.image) << (movie.id == a && movie.name == b) );
+    // function
+    Query((    (ndb::count(movie.id) << ( movie.id == 3 ))   ));
+
+    // add
+    Query((   q + (movie.id = 3, movie.name = 5)   ));
+
+    // del
+    Query((   q - ( movie.id == 3 || movie.name == b)   ));
+
+    // join
+    //Query((   q << (movie.name << (  movie.id == user.id ))   ));
+/*
 
     // field << join
     //ndb::query<db::library>{} << movie.name << (  movie.user_id == user.id );
 
-    // add
-    ndb::query<dbs::zeta>() + ((movie.id = 3, movie.name = 5));
-
-    // del
-    ndb::query<dbs::zeta>() - ( movie.id == 3 );
-
-
-    ndb::query<dbs::zeta>() + ((movie.id = 3, movie.name = 5));
 
     // (movie.name = "test")
     //  ndb::count(movie.id) -movie << movie.id == 3 ndb::del << movie.id == 3
@@ -64,5 +80,12 @@ int main()
 
     //ndb::pquery<dbs::alpha>() << (movie.id == 3);
 
-    return 0;
+    return 0;*/
+
+    std::cout << result.str();
+
+    std::cout << "_";
+
+	return 0;
+
 }
