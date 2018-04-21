@@ -19,10 +19,11 @@ namespace tables
 {
     struct user
     {
+        using id_ = fields::id<user>; static constexpr id_ id {};
         struct name_ : ndb::field<user, std::string, ndb::size<255>> {} name;
 
         using Detail_ = ndb::table_detail<
-        ndb::entity<name_>
+        ndb::entity<id_, name_>
         >;
     };
 
@@ -60,6 +61,7 @@ struct models
     struct library_
     {
         using movie_ = tables::movie<library_>; static constexpr movie_ movie {};
+        using user_ = tables::movie<library_>; static constexpr user_ user {};
         using music_ = tables::music<library_>; static constexpr music_ music {};
 
         //static constexpr struct movie_ : ndb::table<library, tables::movie> {} movie {};
@@ -67,7 +69,7 @@ struct models
 
         using Detail_ = ndb::model_detail
         <
-        ndb::entity<movie_, music_>
+        ndb::entity< user_, music_, movie_>
         >;
     };
 
