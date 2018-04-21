@@ -12,15 +12,20 @@ namespace ndb
     template<class Expr>
     constexpr auto deduce_source_id()
     {
+        int table_id = -1;
         // get source from first field
-        return Expr::static_eval([&](auto&& e)
+        Expr::static_eval([&](auto&& e)
         {
             if constexpr (e.type == expr_type_code::field)
             {
                 using Table = typename std::decay_t<decltype(e)>::value_type::table;
-                return ndb::table_id<Table>;
+                table_id = ndb::table_id<Table>;
             }
+            //else if constexpr (e.type == expr_type_code::keyword) return 7;
+            //else 9;
         });
+
+        return table_id;
     }
 } // ndb
 

@@ -13,7 +13,6 @@ namespace ndb
         keyword,
         field,
         table,
-        op_keyword,
         op_and,
         op_or,
         op_equal,
@@ -26,7 +25,7 @@ namespace ndb
     enum class expr_keyword_code
     {
         all,
-        get,
+        get, set, add, del,
         source,
         // function
         now,

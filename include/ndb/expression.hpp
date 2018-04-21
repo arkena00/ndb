@@ -16,8 +16,8 @@ namespace ndb
         using Lexpr = L;
         using Rexpr = R;
 
-        const L lhs_;
-        const R rhs_;
+        const L& lhs_;
+        const R& rhs_;
 
         inline constexpr expression(const L& lhs, const R& rhs);
 
@@ -33,7 +33,7 @@ namespace ndb
         template<int Pass = 0, class Native_expression>
         inline static constexpr void static_make(Native_expression& ne);
 
-        inline static constexpr auto clause();
+        inline static constexpr expr_clause_code clause();
     };
 } // ndb
 

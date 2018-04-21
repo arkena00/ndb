@@ -38,6 +38,7 @@ namespace ndb
             else return ndb::expression<T, ndb::expr_type_code::field, void, Clause> {};
         }
         else if constexpr (ndb::is_table<T>) return ndb::expression<T, ndb::expr_type_code::table, void, ndb::expr_clause_code::source> {};
+        // return value expression
         else return ndb::expression<T> { v };
     }
 } // ndb

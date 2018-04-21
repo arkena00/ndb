@@ -23,7 +23,8 @@ namespace ndb
         template<class F>
         static constexpr auto static_eval(F&& f)
         {
-            return ndb::call(f, ndb::expression<T, Expression_type, void, Clause> {});
+            f(ndb::expression<T, Expression_type, void, Clause>{});
+            // return ndb::call(f, ndb::expression<T, Expression_type, void, Clause>{});
         }
 
         template<class Native_expression>
@@ -87,14 +88,14 @@ namespace ndb
 
     // table
     template<class T, expr_clause_code Clause>
-    struct expression<T, expr_type_code::table, void, Clause> :
-    public scalar_expression<T, expr_type_code::table, void, Clause>
+    struct expression<T, expr_type_code::table, void, Clause>
+        : public scalar_expression<T, expr_type_code::table, void, Clause>
     {};
 
     // field
     template<class T, expr_clause_code Clause>
-    struct expression<T, expr_type_code::field, void, Clause> :
-    public scalar_expression<T, expr_type_code::field, void, Clause>
+    struct expression<T, expr_type_code::field, void, Clause>
+        : public scalar_expression<T, expr_type_code::field, void, Clause>
     {
         using value_type = T;
     };
@@ -102,12 +103,14 @@ namespace ndb
     // value
     template<class T, expr_clause_code Clause>
     struct expression<T, expr_type_code::value, void, Clause> :
-    public scalar_expression<T, expr_type_code::value, void, Clause>
+        public scalar_expression<T, expr_type_code::value, void, Clause>
     {
         const T& value_;
 
+        constexpr explicit expression() = delete;
+
         constexpr explicit expression(const T& n) :
-        value_(n)
+            value_{ n }
         {}
 
         auto value() const
@@ -124,20 +127,21 @@ namespace ndb
         template<class F>
         static constexpr auto static_eval(F&& f)
         {
-            return ndb::call(f, expression<T, expr_type_code::value, void, Clause> { 0 });
+            f(expression<T, expr_type_code::value, void, Clause>{ 0 });
+            //return ndb::call(f, expression<T, expr_type_code::value, void, Clause> { 0 });
         }
     };
 
     // void expression
     template<expr_clause_code Clause>
-    struct expression<void, expr_type_code::null, void, Clause> :
-    public scalar_expression<void, expr_type_code::null, void, Clause>
+    struct expression<void, expr_type_code::null, void, Clause>
+        : public scalar_expression<void, expr_type_code::null, void, Clause>
     {};
 
     // keyword
     template<expr_keyword_code Keyword_code, expr_clause_code Clause>
-    struct expression<keyword_type<Keyword_code>, expr_type_code::keyword, void, Clause> :
-    public scalar_expression<keyword_type<Keyword_code>, expr_type_code::keyword, void, Clause>
+    struct expression<keyword_type<Keyword_code>, expr_type_code::keyword, void, Clause>
+        : public scalar_expression<keyword_type<Keyword_code>, expr_type_code::keyword, void, Clause>
     {
         static constexpr auto keyword_code = Keyword_code;
     };

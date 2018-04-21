@@ -4,10 +4,11 @@
 #include <ndb/expression/sql/code.hpp>
 #include <ndb/expression/type.hpp>
 #include <ndb/expression/utility.hpp>
+#include <ndb/expression/deduction.hpp>
 
 namespace ndb
 {
-    // shift_left
+    // shift_left (append expressions)
     template<>
     struct expression_type<expr_type_code::op_shift_left, expr_category_code::sql>
     {
@@ -19,12 +20,13 @@ namespace ndb
             // get << source
             if constexpr (expr_has_clause<R, expr_clause_code::source>)
             {
-                ne.push_back(clause_code<R::clause(), expr_category_code::sql>::value);
+                ne.push_back(clause_code<expr_clause_code::source, expr_category_code::sql>::value);
             }
 
             // get << not source
             if constexpr (!expr_has_clause<L, expr_clause_code::source> && !expr_has_clause<R, expr_clause_code::source>)
             {
+                ne.deduced_source = true;
                 ne.push_back(clause_code<expr_clause_code::source, expr_category_code::sql>::value);
                 ne.push_back("T");
                 ne.push_back(deduce_source_id<L>() + 48);
