@@ -4,6 +4,8 @@
 #include <ndb/expression/code.hpp>
 #include <ndb/expression/function.hpp>
 
+//TODO use only one struct
+
 namespace ndb
 {
     template<> struct expr_code<expr_type_code::op_and, expr_category_code::sql> { constexpr static auto value = " AND "; };
@@ -29,6 +31,7 @@ namespace ndb
     template<> struct keyword_code<expr_keyword_code::count, expr_category_code::sql> { constexpr static auto value = " COUNT"; };
     template<> struct keyword_code<expr_keyword_code::now, expr_category_code::sql> { constexpr static auto value = " DATETIME"; };
     template<> struct keyword_code<expr_keyword_code::limit, expr_category_code::sql> { constexpr static auto value = " LIMIT "; };
+    template<> struct keyword_code<expr_keyword_code::source, expr_category_code::sql> { constexpr static auto value = " FROM  "; };
 
     //TODO make clause get get_list, set set_list add add_list condition condition_list
     //TODO add expression level for nested expression

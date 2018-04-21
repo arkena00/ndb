@@ -39,7 +39,7 @@ namespace ndb
     {
         auto keyword = ndb::expr_make_keyword<expr_keyword_code::source>();
         auto expr = (ndb::expr_make(t), ...);
-        return ndb::expression<decltype(keyword), expr_type_code::keyword, decltype(expr), expr_clause_code::get> { keyword, expr };
+        return ndb::expression<decltype(keyword), expr_type_code::keyword, decltype(expr), expr_clause_code::source> { keyword, expr };
     }
 
     constexpr auto limit(int count, int offset = 0)

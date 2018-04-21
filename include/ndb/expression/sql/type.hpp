@@ -17,8 +17,9 @@ namespace ndb
         {
             L::template static_make<Pass>(ne);
 
-            // get << source
-            if constexpr (expr_has_clause<R, expr_clause_code::source>)
+            // get << source (no keyword)
+            if constexpr (expr_has_clause<R, expr_clause_code::source>
+                          && !expr_is_keyword_code<R, expr_keyword_code::source>)
             {
                 ne.push_back(clause_code<expr_clause_code::source, expr_category_code::sql>::value);
             }

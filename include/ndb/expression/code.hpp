@@ -3,6 +3,14 @@
 
 #include <ndb/setup.hpp>
 
+/*TODO organize expressions code
+ * [T, scalar_type] scalar : value, field, table, keyword
+ * [keyword<code>, clause] clauses (get,set... condition, source, limit, group)
+ * [E, OP, E] operators : and, or, function
+ * [keyword<code>, function] functions : now, count
+ * */
+
+
 namespace ndb
 {
     enum class expr_type_code
