@@ -25,3 +25,4 @@ script:
   - cmake -DENGINE_MONGO=OFF -DENGINE_MYSQL=OFF -DBUILD_EXP=OFF -DCMAKE_BUILD_TYPE=Release
   - make
   - make test
+  - ctest
