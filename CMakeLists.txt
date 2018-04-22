@@ -18,7 +18,7 @@ set(NDB_ROOT ${CMAKE_CURRENT_SOURCE_DIR})
 set(NDB_BIN_ROOT ${NDB_ROOT}/bin)
 set(THIRD_PARTY_ROOT ${NDB_ROOT}/third_party)
 
-option(NDB_ENGINE_SQLITE "Build sqlite" ON)
+option(NDB_ENGINE_SQLITE "Build sqlite" OFF)
 option(NDB_ENGINE_MONGO "Build mongo" OFF)
 option(NDB_ENGINE_MYSQL "Build mysql" OFF)
 option(NDB_BUILD_EXP "Build experimentals" OFF)

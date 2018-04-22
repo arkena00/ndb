@@ -22,6 +22,6 @@ install:
 script:
   - export CC=gcc-7
   - export CXX=g++-7
-  - cmake -DENGINE_MONGO=OFF -DENGINE_MYSQL=OFF -DNDB_BUILD_EXP=OFF -DNDB_BUILD_TEST=ON -DCMAKE_BUILD_TYPE=Release
+  - cmake -DNDB_ENGINE_SQLITE=ON -DNDB_BUILD_TEST=ON -DCMAKE_BUILD_TYPE=Release
   - make
   - make test
