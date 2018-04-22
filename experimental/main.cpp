@@ -23,6 +23,8 @@ int main()
     const auto& movie = models::library.movie;
     const auto& user = models::library.user;
 
+    ndb::query<dbs::zeta>() << ndb::get(user.id, user.name);
+
     //auto q = (movie.id << movie);
     //auto z = ((movie.id, q) << movie);
 

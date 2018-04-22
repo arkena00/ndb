@@ -4,8 +4,8 @@ project(ndb_experimental CXX C)
 
 # exp_main, global tests
 add_executable(exp_main main.cpp)
-target_link_libraries(exp_main ${NDB_LIB} ${SQLITE_LIB})
-add_dependencies(exp_main lib_sqlite)
+target_link_libraries(exp_main lib_ndb)
+add_dependencies(exp_main lib_ndb)
 set_target_properties(exp_main PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY "${NDB_BIN_ROOT}/experimental"
         OUTPUT_NAME  "exp_main")
@@ -13,8 +13,8 @@ set_target_properties(exp_main PROPERTIES
 # exp_result
 if (ENGINE_MONGO)
     add_executable(exp_result result.cpp)
-    target_link_libraries(exp_result ${NDB_LIB} ${MONGO_LIB} ${SQLITE_LIB})
-    add_dependencies(exp_result lib_sqlite)
+    target_link_libraries(exp_main lib_ndb)
+    add_dependencies(exp_main lib_ndb)
     set_target_properties(exp_result PROPERTIES
             RUNTIME_OUTPUT_DIRECTORY "${NDB_BIN_ROOT}/experimental"
             OUTPUT_NAME  "exp_result")
@@ -23,7 +23,7 @@ endif()
 # exp_preprocessor_macro
 add_custom_command(
         OUTPUT preprocessor_result
-        COMMAND "${CMAKE_C_COMPILER}" -E ${NDB_ROOT}/experimental/preprocessor.hpp -I ${BOOST_PP_INCLUDE}
+        COMMAND ${CMAKE_C_COMPILER} -E ${NDB_ROOT}/experimental/preprocessor.hpp -I ${THIRD_PARTY_ROOT}/boost
         MAIN_DEPENDENCY preprocessor.hpp
         COMMENT "Preprocessing..."
         VERBATIM
@@ -36,21 +36,19 @@ add_custom_target(
 
 # exp_preprocessor
 add_executable(exp_preprocessor preprocessor.cpp)
-target_link_libraries(exp_preprocessor ${NDB_LIB} ${SQLITE_LIB})
-add_dependencies(exp_preprocessor lib_sqlite)
+target_link_libraries(exp_preprocessor lib_ndb)
+add_dependencies(exp_preprocessor lib_ndb)
 set_target_properties(exp_preprocessor PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY "${NDB_BIN_ROOT}/experimental"
         OUTPUT_NAME  "exp_preprocessor")
 
 # exp_query
-#if (ENGINE_MONGO)
 add_executable(exp_query query.cpp)
-target_link_libraries(exp_query ${NDB_LIB} ${MONGO_LIB} ${SQLITE_LIB})
-add_dependencies(exp_query lib_sqlite)
+target_link_libraries(exp_query lib_ndb)
+add_dependencies(exp_query lib_ndb)
 set_target_properties(exp_query PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY "${NDB_BIN_ROOT}/experimental"
         OUTPUT_NAME  "exp_query")
-#endif()
 
 # exp_mysql
 if (ENGINE_MYSQL)
