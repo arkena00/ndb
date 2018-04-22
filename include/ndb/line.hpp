@@ -41,7 +41,7 @@ namespace ndb
 
     private:
         std::vector<ndb::value> values_;
-        std::unordered_map<int, int> value_index_;
+        std::unordered_map<size_t, size_t> value_index_;
     };
 } // ndb
 
