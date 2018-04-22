@@ -7,3 +7,5 @@
 
 # cmake build foler
 /cmake-*/
+
+config.cmake
