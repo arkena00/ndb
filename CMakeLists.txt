@@ -6,27 +6,30 @@ message("--------------------------------------------------------
                          NDB
 --------------------------------------------------------")
 
+# config file for custom variables
+include(config.cmake OPTIONAL)
+
+#-------------------------------------------------------
+#                        VARS
+#-------------------------------------------------------
 # roots
 set(NDB_ROOT ${CMAKE_CURRENT_SOURCE_DIR})
 set(NDB_BIN_ROOT ${NDB_ROOT}/bin)
 set(THIRD_PARTY_ROOT ${NDB_ROOT}/third_party)
 
-# config file for custom variables
-include(config.cmake OPTIONAL)
-
-option(ENGINE_SQLITE "Build sqlite" ON)
-option(ENGINE_MONGO "Build mongo" OFF)
-option(ENGINE_MYSQL "Build mysql" OFF)
-option(BUILD_EXP "Build experimentals" ON)
+option(NDB_ENGINE_SQLITE "Build sqlite" ON)
+option(NDB_ENGINE_MONGO "Build mongo" OFF)
+option(NDB_ENGINE_MYSQL "Build mysql" OFF)
+option(NDB_BUILD_EXP "Build experimentals" OFF)
+option(NDB_BUILD_TEST "Build tests" OFF)
 
 # display config
-message("SQLITE : ${ENGINE_SQLITE}")
-message("MONGO : ${ENGINE_MONGO}")
-message("MYSQL : ${ENGINE_MYSQL}")
+message("SQLITE : ${NDB_ENGINE_SQLITE}")
+message("MONGO : ${NDB_ENGINE_MONGO}")
+message("MYSQL : ${NDB_ENGINE_MYSQL}")
 message("")
 
-# boost_pp
-set(BOOST_PP_INCLUDE ${THIRD_PARTY_ROOT}/boost)
+add_library(lib_ndb INTERFACE)
 
 #-------------------------------------------------------
 #                      COMPILER
@@ -52,35 +55,45 @@ endif()
 #-------------------------------------------------------
 #                       ENGINE
 #-------------------------------------------------------
-if (ENGINE_MONGO)
+if (NDB_ENGINE_MONGO)
     include(third_party/mongo.cmake)
 endif()
 
-if (ENGINE_MYSQL)
+if (NDB_ENGINE_MYSQL)
     message("ENGINE_MYSQL : ON")
     set(MYSQL_ROOT C:/lib/mysql-connector)
     set(MYSQL_LIB mysqlcppconn)
 endif()
 
-if (ENGINE_SQLITE)
+if (NDB_ENGINE_SQLITE)
     add_definitions(-DNDB_ENGINE_SQLITE)
     add_library(lib_sqlite OBJECT ${THIRD_PARTY_ROOT}/sqlite/source/sqlite3.c)
+    add_dependencies(lib_ndb lib_sqlite)
     set(SQLITE_LIB $<TARGET_OBJECTS:lib_sqlite>)
-    list(APPEND ENGINE_INCLUDE "${THIRD_PARTY_ROOT}/sqlite/include ")
+    list(APPEND ENGINE_INCLUDE ${THIRD_PARTY_ROOT}/sqlite/include)
     list(APPEND ENGINE_LIB ${SQLITE_LIB})
 endif()
 
-# include
-include_directories(include ${BOOST_PP_INCLUDE} ${ENGINE_INCLUDE})
 
-# subdirs
-add_subdirectory(test)
+#-------------------------------------------------------
+#                     NDB INTERFACE
+#-------------------------------------------------------
+target_include_directories(lib_ndb INTERFACE include ${THIRD_PARTY_ROOT}/boost ${ENGINE_INCLUDE})
+target_link_libraries(lib_ndb INTERFACE ${NDB_LIB} ${ENGINE_LIB})
 
-if (BUILD_EXP)
+
+#-------------------------------------------------------
+#                        SUBDIRS
+#-------------------------------------------------------
+if (NDB_BUILD_EXP)
     add_subdirectory(experimental)
+endif()
+if (NDB_BUILD_TEST)
+    add_subdirectory(test)
 endif()
 
 # delete some cache variables
-unset(ENGINE_MONGO CACHE)
-unset(ENGINE_MYSQL CACHE)
-unset(BUILD_EXP CACHE)
+unset(NDB_ENGINE_MONGO CACHE)
+unset(NDB_ENGINE_MYSQL CACHE)
+unset(NDB_BUILD_EXP CACHE)
+unset(NDB_BUILD_TEST CACHE)
