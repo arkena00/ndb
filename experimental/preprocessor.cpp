@@ -1,6 +1,6 @@
-#include <ndb/preprocessor.hpp>
 #include <ndb/initializer.hpp>
 #include <ndb/engine/sqlite/sqlite.hpp>
+#include <ndb/preprocessor.hpp>
 #include <ndb/query.hpp>
 
 namespace tables
@@ -39,6 +39,8 @@ namespace databases
 {
     struct project
     {
+        static constexpr auto name = "project";
+
         static constexpr struct alpha_ : ndb::database<project, models::library, ndb::mongo>{} alpha{};
         static constexpr struct zeta_ : ndb::database<project, models::library, ndb::sqlite>{} zeta{};
 
