@@ -1,7 +1,6 @@
 ﻿cmake_minimum_required(VERSION 3.7)
 
 project(test_ndb)
-enable_testing()
 
 add_library(lib_gtest OBJECT ${THIRD_PARTY_ROOT}/gtest/source/gtest-all.cc)
 set(GTEST_LIB $<TARGET_OBJECTS:lib_gtest>)
@@ -17,4 +16,4 @@ set_target_properties(test_ndb PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY "${NDB_BIN_ROOT}/test"
         OUTPUT_NAME  "test_ndb")
 
-add_test(NAME testing_ndb COMMAND "${NDB_BIN_ROOT}/experimental}/test_ndb")
+add_test(NAME test_ndb COMMAND "${NDB_BIN_ROOT}/test/test_ndb")

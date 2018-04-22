@@ -1,6 +1,7 @@
 ﻿cmake_minimum_required(VERSION 3.7)
 
 project(ndb C CXX)
+enable_testing()
 
 message("--------------------------------------------------------
                          NDB
@@ -27,7 +28,8 @@ option(NDB_BUILD_TEST "Build tests" OFF)
 message("SQLITE : ${NDB_ENGINE_SQLITE}")
 message("MONGO : ${NDB_ENGINE_MONGO}")
 message("MYSQL : ${NDB_ENGINE_MYSQL}")
-message("")
+message("BUILD_EXP : ${NDB_BUILD_EXP}")
+message("BUILD_TEST : ${NDB_BUILD_TEST}")
 
 add_library(lib_ndb INTERFACE)
 
@@ -79,7 +81,7 @@ endif()
 #                     NDB INTERFACE
 #-------------------------------------------------------
 target_include_directories(lib_ndb INTERFACE include ${THIRD_PARTY_ROOT}/boost ${ENGINE_INCLUDE})
-target_link_libraries(lib_ndb INTERFACE ${NDB_LIB} ${ENGINE_LIB})
+target_link_libraries(lib_ndb INTERFACE ${ENGINE_LIB} ${NDB_LIB})
 
 
 #-------------------------------------------------------

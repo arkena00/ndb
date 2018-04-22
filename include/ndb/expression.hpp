@@ -16,8 +16,8 @@ namespace ndb
         using Lexpr = L;
         using Rexpr = R;
 
-        const L& lhs_;
-        const R& rhs_;
+        const L lhs_;
+        const R rhs_;
 
         inline constexpr expression(const L& lhs, const R& rhs);
 
