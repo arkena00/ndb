@@ -19,12 +19,29 @@ namespace ndb
         return *str ? 1 + cx_str_len(str + 1) : 0;
     }
 
-    // is_tpl_of
-    template<template<class...> class, class>
-    struct is_tpl_of : std::false_type {};
+    namespace internal
+    {
+        struct char256 { char x[256]; };
 
-    template<template<class...> class T, class... Ts>
-    struct is_tpl_of<T, T<Ts...>> : std::true_type {};
+        template <typename T>
+        char256 is_complete_helper(int(*)[sizeof(T)]);
+
+        template <typename>
+        char is_complete_helper(...);
+
+        template <typename T>
+        struct is_complete
+        {
+            enum { value = sizeof(is_complete_helper<T>(0)) != 1 };
+        };
+
+        // T is a complete type and base_of T
+        template<class Base, class T, class = void>
+        struct is_base_of : std::false_type {};
+
+        template<class Base, class T>
+        struct is_base_of<Base, T, std::enable_if_t<is_complete<T>::value>> : std::conditional_t<std::is_base_of_v<Base, T>, std::true_type, std::false_type> {};
+    } // internal
 
     // index_of
     template<class T, class Container>
@@ -63,22 +80,22 @@ namespace ndb
 ////////////////////////              NDB               ////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
     template<class T>
-    static constexpr bool is_table = std::is_base_of<ndb::table_base, T>::value;
+    static constexpr bool is_table = internal::is_base_of<ndb::table_base, T>::value;
 
     template<class T>
-    static constexpr bool is_field =  std::is_base_of<ndb::field_base, T>::value;
+    static constexpr bool is_field =  internal::is_base_of<ndb::field_base, T>::value;
 
     template<class T>
-    static constexpr bool is_field_entity = std::is_base_of<ndb::table_base, typename T::value_type>::value;
+    static constexpr bool is_field_entity = internal::is_base_of<ndb::table_base, typename T::value_type>::value;
 
     template<class T>
     static constexpr bool is_field_entity_vector = is_field_entity<T> && (T{}.detail_.size == 0);
 
     template<class T>
-    static constexpr bool is_option = std::is_base_of<ndb::option_base, T>::value;
+    static constexpr bool is_option = internal::is_base_of<ndb::option_base, T>::value;
 
     template<class T>
-    static constexpr bool is_expression = std::is_base_of<ndb::expression_base, T>::value;
+    static constexpr bool is_expression = internal::is_base_of<ndb::expression_base, T>::value;
 
     template<class Field>
     constexpr unsigned char field_id = index_of<std::decay_t<Field>, typename Field::table::Detail_::entity>::value;
