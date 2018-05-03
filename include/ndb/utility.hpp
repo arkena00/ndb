@@ -21,19 +21,11 @@ namespace ndb
 
     namespace internal
     {
-        struct char256 { char x[256]; };
+        template <class T, class = void>
+        struct is_complete : std::false_type{};
 
-        template <typename T>
-        char256 is_complete_helper(int(*)[sizeof(T)]);
-
-        template <typename>
-        char is_complete_helper(...);
-
-        template <typename T>
-        struct is_complete
-        {
-            enum { value = sizeof(is_complete_helper<T>(0)) != 1 };
-        };
+        template <class T>
+        struct is_complete<T, decltype(void(sizeof(T)))> : std::true_type{};
 
         // T is a complete type and base_of T
         template<class Base, class T, class = void>
