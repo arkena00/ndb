@@ -1,7 +1,7 @@
 # Neuroshok Database Interface
 
 | Master | Unix ![](https://travis-ci.org/ads00/ndb.svg?branch=master)|
-|--------|-------------------------------------------------------|
+|--------|------------------------------------------------------------|
 | Dev    | Unix ![](https://travis-ci.org/ads00/ndb.svg?branch=dev)   | 
 
 **ndb** is a generic interface to connect to any databases. 
@@ -16,13 +16,14 @@ Database model is defined and accessible compile time.
 - **Compile-time** generation for **SQL expressions**
 - **Customizable** **types** conversion 
 - **Field access by C++** structure
+- **Database generation** with macros
 
 ## Current support
 - Expressions based on **SQL** and **BSON**
 - **Sqlite**, **MySQL** and **MongoDB**.
 
-# Example
-## Database (using macros)
+# Database
+## Generation
 ```
 ndb_table(movie,
           ndb_field(id, int, 8),
@@ -32,23 +33,38 @@ ndb_table(music,
           ndb_field(id, int, 8),
           ndb_field(image, std::string, 255)
 )
+// ndb_model([model_name], [tables]...)
+ndb_model(library, movie, music)
+
+// ndb_project([project_name], [databases]...)
+// ndb_database([database_name], [model_name], [engine])
+ndb_project(my_project,
+            ndb_database(alpha, library, ndb::sqlite),
+            ndb_database(zeta, library, ndb::sqlite)
+)
+
 ```
-## Querys
+Access namespaces : 
+- tables : ndb::tables::[table_name]
+- models : ndb::models::[model_name]
+- databases : ndb::databases::[project_name]
+
+
+# Querys
 ```
 ndb::query<dbs::zeta>() << ( movie.id, movie.image ); // get
 ndb::query<dbs::zeta>() << ( movie.id == a && movie.name == b ); // get by condition
 ndb::query<dbs::zeta>() + ( movie.id = 3, movie.name = "test" ); // add
 ndb::query<dbs::zeta>() - ( movie.id == 3 ); // del
 ```
-## Minimal
+# Minimal example
 An example with a *libray* database using a *collection* model and a *movie* table
 ```
 #include "my_database.h"
-static constexpr const models::collection collection;
 
 int main()
 {
-    const auto& movie = collection.movie;
+    const auto& movie = ndb::models::collection.movie; // alias
     
     ndb::initializer<ndb::sqlite> init;
     ndb::connect<dbs::library>();
