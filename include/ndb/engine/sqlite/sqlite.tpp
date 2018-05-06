@@ -89,23 +89,23 @@ namespace ndb
             while (step == SQLITE_ROW)
             {
                 ndb::line<sqlite> line;
-                int col_count = sqlite3_column_count(statement);
+                int field_count = sqlite3_column_count(statement);
 
-                for(int col = 0; col < col_count; col++)
+                for(int field_it = 0; field_it < field_count; field_it++)
                 {
-                    const char* col_name = sqlite3_column_name(statement, col);
+                    const char* field_name = sqlite3_column_name(statement, field_it);
                     int field_id = -1;
-                    if (col_name[0] == 'F') field_id = std::stoi(std::string(col_name + 1));
+                    if (field_name[0] == 'F') field_id = std::stoi(std::string(field_name + 1));
 
-                    int field_type = sqlite3_column_type(statement, col);
-                    sqlite3_value* col_value = sqlite3_column_value(statement, col);
+                    int field_type = sqlite3_column_type(statement, field_it);
+                    sqlite3_value* field_value = sqlite3_column_value(statement, field_it);
 
                     if (field_type == ndb::type_id<sqlite, int>::value)
-                        line.add(field_id, sqlite3_value_int(col_value));
+                        line.add(field_id, sqlite3_value_int(field_value));
                     if (field_type == ndb::type_id<sqlite, double>::value)
-                        line.add(field_id, sqlite3_value_double(col_value));
+                        line.add(field_id, sqlite3_value_double(field_value));
                     if (field_type == ndb::type_id<sqlite, std::string>::value)
-                        line.add(field_id, std::string(reinterpret_cast<const char*>(sqlite3_value_text(col_value))));
+                        line.add(field_id, std::string(reinterpret_cast<const char*>(sqlite3_value_text(field_value))));
                 }
                 result.add(std::move(line));
 
