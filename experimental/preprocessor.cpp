@@ -4,12 +4,12 @@
 #include <ndb/query.hpp>
 
 ndb_table(movie,
-          ndb_field(id, int, 8),
-          ndb_field(name, std::string, 255)
+          ndb_field_id,
+          ndb_field(name, std::string, ndb::size<255>)
 )
 ndb_table(music,
-          ndb_field(id, int, 8),
-          ndb_field(image, std::string, 255)
+          ndb_field(id, int),
+          ndb_field(image, std::string)
 )
 ndb_model(library, movie, music)
 
