@@ -17,14 +17,15 @@ namespace fields
 
 namespace tables
 {
-    template<class Model>
+    template<class Model, class Parent = void>
     struct user : ndb::table<Model>
     {
         using id_ = fields::id<user>; static constexpr id_ id {};
         struct name_ : ndb::field<user, std::string, ndb::size<255>> {} name;
 
         using Detail_ = ndb::table_detail<
-        ndb::entity<id_, name_>
+        ndb::entity<id_, name_>,
+        ndb::parent<Parent>
         >;
     };
 
@@ -34,11 +35,11 @@ namespace tables
         using id_ = fields::id<movie>; static constexpr id_ id {};
         static constexpr struct name_ : ndb::field<movie, std::string, ndb::size<255>> { ndb_internal_field_op } name {};
         static constexpr struct image_ : ndb::field<movie, std::string, ndb::size<255>> { ndb_internal_field_op } image {};
-        static constexpr struct user_ : ndb::field<movie, tables::user<Model>> {} user {};
+        static constexpr struct user_ : ndb::field<movie, tables::user<Model, movie>> {} user {};
 
         using Detail_ = ndb::table_detail
         <
-        ndb::entity<id_, name_, image_>
+        ndb::entity<id_, name_, image_, user_>
         >;
     };
 
