@@ -9,6 +9,12 @@ namespace ndb
 {
     class table_base {};
 
+    template<class Table>
+    struct parent
+    {
+        using table = Table;
+    };
+
     template<class Model>
     struct table : table_base
     {
@@ -19,10 +25,11 @@ namespace ndb
         //static constexpr Detail_ detail_ {};
     };
 
-    template<class Entity, class... Options>
+    template<class Entity, class Parent = ndb::parent<void>, class... Options>
     struct table_detail
     {
         using entity = Entity;
+        using parent_table = typename Parent::table;
 
         static constexpr std::size_t size = Entity::size() + sizeof...(Options);
     };

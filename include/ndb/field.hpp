@@ -82,13 +82,19 @@ namespace ndb
     // field<table>
     template<class Table, class T>
     struct field<Table, T, typename std::enable_if_t<ndb::is_table<T>>> :
-        common_field<Table, T, ndb::size<default_size<T>()>, option<field_option::none>>
-    {};
+        common_field<Table, T, ndb::size<default_size<T>()>, option<field_option::none>>, T
+    {
+        // redefine to avoid ambiguity
+        using value_type = T;
+        using table = Table;
+        using Detail_ = typename common_field<Table, T, ndb::size<default_size<T>()>, option<field_option::none>>::Detail_;
+        Detail_ detail{};
+    };
 
     // field<table, size>
     template<class Table, class T, size_t Size>
     struct field<Table, T, typename std::enable_if_t<ndb::is_table<T>>, ndb::size<Size>> :
-        public common_field<Table, T, ndb::size<Size>, option<field_option::none>>
+        public common_field<Table, T, ndb::size<Size>, option<field_option::none>>, T
     {};
 } // ndb
 
