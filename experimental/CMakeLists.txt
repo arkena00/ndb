@@ -34,6 +34,14 @@ add_custom_target(
         VERBATIM
 )
 
+# exp_cx_deduction
+add_executable(exp_cx_deduction cx_deduction.cpp)
+target_link_libraries(exp_cx_deduction lib_ndb)
+add_dependencies(exp_cx_deduction lib_ndb)
+set_target_properties(exp_cx_deduction PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY "${NDB_BIN_ROOT}/experimental"
+        OUTPUT_NAME "exp_cx_deduction")
+
 # exp_preprocessor
 add_executable(exp_preprocessor preprocessor.cpp)
 target_link_libraries(exp_preprocessor lib_ndb)
