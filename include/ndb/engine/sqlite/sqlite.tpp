@@ -143,17 +143,23 @@ namespace ndb
 
                 // field id
                 output += "\nF" + std::to_string(ndb::field_id<Field>);
+                bool need_size = false;
 
                 // field type
                 using native_value_type = typename native_type<sqlite, typename std::decay_t<decltype(field)>::value_type>::type;
                 if constexpr (std::is_same_v<int, native_value_type>) output += " integer ";
                 if constexpr (std::is_same_v<double, native_value_type>) output += " float ";
-                if constexpr (std::is_same_v<std::string, native_value_type>) output += " text ";
+                if constexpr (std::is_same_v<std::string, native_value_type>)
+                {
+                    output += " text ";
+                    need_size = true;
+                }
 
                 // field size
-                if (field.detail_.size > 0) output += "(" + std::to_string(field.detail_.size) + ")";
+                if (field.detail_.size > 0 && need_size) output += "(" + std::to_string(field.detail_.size) + ")";
+
                 // field option
-                if (field.detail_.is_primary) output += " primary key";
+                if (field.detail_.is_primary || field.detail_.is_oid) output += " primary key";
                 if (field.detail_.is_autoincrement) output += " autoincrement";
                 if (field.detail_.is_not_null) output += " not null";
                 if (field.detail_.is_unique) output += " unique";

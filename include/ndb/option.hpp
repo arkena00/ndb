@@ -10,6 +10,7 @@ namespace ndb
         struct autoincrement { static constexpr auto value = 2; };
         struct primary { static constexpr auto value = 4; };
         struct not_null { static constexpr auto value = 8; };
+        struct oid { static constexpr auto value = primary::value; };
     };
 
     template<class...>
