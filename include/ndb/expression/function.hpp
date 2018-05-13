@@ -42,6 +42,14 @@ namespace ndb
         return ndb::expression<decltype(keyword), expr_type_code::keyword, decltype(expr), expr_clause_code::source> { keyword, expr };
     }
 
+    template<class T>
+    constexpr auto filter(const T& t)
+    {
+        auto keyword = ndb::expr_make_keyword<expr_keyword_code::condition>();
+        auto expr = ndb::expr_make(t);
+        return ndb::expression<decltype(keyword), expr_type_code::keyword, decltype(expr), expr_clause_code::condition> { keyword, expr };
+    }
+
     constexpr auto limit(int count, int offset = 0)
     {
         auto keyword = ndb::expr_make_keyword<expr_keyword_code::limit>();
