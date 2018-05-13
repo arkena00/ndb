@@ -42,6 +42,14 @@ set_target_properties(exp_cx_deduction PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY "${NDB_BIN_ROOT}/experimental"
         OUTPUT_NAME "exp_cx_deduction")
 
+# database_creation
+add_executable(exp_database_creation database_creation.cpp)
+target_link_libraries(exp_database_creation lib_ndb)
+add_dependencies(exp_database_creation lib_ndb)
+set_target_properties(exp_database_creation PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY "${NDB_BIN_ROOT}/experimental"
+        OUTPUT_NAME  "exp_database_creation")
+
 # exp_preprocessor
 add_executable(exp_preprocessor preprocessor.cpp)
 target_link_libraries(exp_preprocessor lib_ndb)
