@@ -80,7 +80,7 @@ endif()
 #-------------------------------------------------------
 #                     NDB INTERFACE
 #-------------------------------------------------------
-target_include_directories(lib_ndb INTERFACE include ${THIRD_PARTY_ROOT}/boost ${ENGINE_INCLUDE})
+target_include_directories(lib_ndb INTERFACE include ${THIRD_PARTY_ROOT}/boost ${THIRD_PARTY_ROOT}/mpl/src ${ENGINE_INCLUDE})
 target_link_libraries(lib_ndb INTERFACE ${ENGINE_LIB} ${NDB_LIB})
 
 
