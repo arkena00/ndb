@@ -1,0 +1,3 @@
+[submodule "third_party/mpl"]
+	path = third_party/mpl
+	url = https://github.com/kvasir-io/mpl.git
