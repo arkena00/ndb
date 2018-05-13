@@ -160,13 +160,14 @@ namespace ndb
 
                 if constexpr (ndb::is_field_entity<Field>)
                 {
+                    /*
                     auto store_type = typename Field::type{};
 
                     //output += "\n\tentity type " + std::string(store_type.detail_.name);
                     output += "\n\tentity count : " + std::to_string(field.detail_.size);
                     output += "\n\ttotal size : " + std::to_string(store_type.detail_.size);
 
-                    if constexpr (ndb::is_field_entity_vector<Field>) output += " VECTOR";
+                    if constexpr (ndb::is_field_entity_vector<Field>) output += " VECTOR";*/
                 }
             });
             output += ");";
