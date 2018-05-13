@@ -29,7 +29,7 @@ namespace ndb
             /*
             if constexpr (Expr::type == expr_type_code::statement)
             {
-                ne.push_back(clause_code<expr_clause_code::Clause, expr_category_code::sql>::value);
+                ne.push_back(keyword_code<expr_clause_code::Clause, expr_category_code::sql>::value);
                 ne.push_back("TRUE   ");
             }*/
 
@@ -52,11 +52,11 @@ namespace ndb
                 if constexpr (expr_clause == expr_clause_code::condition)
                 {
                     ne.push_back("*");
-                    ne.push_back(clause_code<expr_clause_code::source, expr_category_code::sql>::value);
+                    ne.push_back(keyword_code<expr_keyword_code::source, expr_category_code::sql>::value);
                     ne.push_back("T");
                     ne.push_back(deduce_source_id<Expr>() + 48);
 
-                    ne.push_back(clause_code<expr_clause_code::condition, expr_category_code::sql>::value);
+                    ne.push_back(keyword_code<expr_keyword_code::condition, expr_category_code::sql>::value);
                 }
             }
 
@@ -81,7 +81,7 @@ namespace ndb
                 if constexpr (!expr_is_keyword_code<Expr, expr_keyword_code::del>)
                 {
                     ne.push_back("DELETE ");
-                    ne.push_back(clause_code<expr_clause_code::source, expr_category_code::sql>::value);
+                    ne.push_back(keyword_code<expr_keyword_code::source, expr_category_code::sql>::value);
                     ne.push_back("T");
                     ne.push_back(deduce_source_id<Expr>() + 48);
                     ne.push_back(" WHERE ");
@@ -98,7 +98,7 @@ namespace ndb
             {
                 if (!ne.deduced_source)
                 {
-                    ne.push_back(clause_code<expr_clause_code::source, expr_category_code::sql>::value);
+                    ne.push_back(keyword_code<expr_keyword_code::source, expr_category_code::sql>::value);
                     ne.push_back("T");
                     ne.push_back(deduce_source_id<Expr>() + 48);
                 }
@@ -108,7 +108,7 @@ namespace ndb
             if constexpr (Clause == expr_clause_code::add)
             {
                 ne.push_back(')');
-                ne.push_back(clause_code<expr_clause_code::value_list, expr_category_code::sql>::value);
+                ne.push_back(keyword_code<expr_keyword_code::values, expr_category_code::sql>::value);
                 ne.push_back('(');
                 Expr::template static_make<1>(ne);
                 ne.push_back(')');

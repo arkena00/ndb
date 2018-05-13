@@ -21,14 +21,14 @@ namespace ndb
             if constexpr (expr_has_clause<R, expr_clause_code::source>
                           && !expr_is_keyword_code<R, expr_keyword_code::source>)
             {
-                ne.push_back(clause_code<expr_clause_code::source, expr_category_code::sql>::value);
+                ne.push_back(keyword_code<expr_keyword_code::source, expr_category_code::sql>::value);
             }
 
             // get << not source
             if constexpr (!expr_has_clause<L, expr_clause_code::source> && !expr_has_clause<R, expr_clause_code::source>)
             {
                 ne.deduced_source = true;
-                ne.push_back(clause_code<expr_clause_code::source, expr_category_code::sql>::value);
+                ne.push_back(keyword_code<expr_keyword_code::source, expr_category_code::sql>::value);
                 ne.push_back("T");
                 ne.push_back(deduce_source_id<L>() + 48);
             }
@@ -36,7 +36,7 @@ namespace ndb
             // not condition << condition
             if constexpr (!(expr_has_clause<L, expr_clause_code::condition>) && expr_has_clause<R, expr_clause_code::condition>)
             {
-                ne.push_back(clause_code<expr_clause_code::condition, expr_category_code::sql>::value);
+                ne.push_back(keyword_code<expr_keyword_code::condition, expr_category_code::sql>::value);
             }
 
             R::template static_make<Pass>(ne);

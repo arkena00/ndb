@@ -3,24 +3,18 @@
 
 #include <ndb/setup.hpp>
 
-/*TODO organize expressions code
- * [T, scalar_type] scalar : value, field, table, keyword
- * [keyword<code>, clause] clauses (get,set... condition, source, limit, group)
- * [E, OP, E] operators : and, or, function
- * [keyword<code>, function] functions : now, count
- * */
-
-
 namespace ndb
 {
     enum class expr_type_code
     {
         root,
         null,
-        value,
+        //
         keyword,
+        value,
         field,
         table,
+        //
         op_and,
         op_or,
         op_equal,
@@ -35,10 +29,13 @@ namespace ndb
         all,
         get, set, add, del,
         source,
+        condition,
+        limit,
+        group,
+        values,
         // function
         now,
         count,
-        limit
     };
 
     template<expr_keyword_code Keyword_code>
@@ -47,6 +44,7 @@ namespace ndb
         static constexpr auto code = Keyword_code;
     };
 
+    // order is important to add missing clauses
     enum class expr_clause_code
     {
         none       = 0,
@@ -81,12 +79,6 @@ namespace ndb
     struct expr_code
     {
         static constexpr const char* value = " _expr_code_undefined_ ";
-    };
-
-    template<expr_clause_code, expr_category_code>
-    struct clause_code
-    {
-        static constexpr const char* value = " _clause_code_undefined_ ";
     };
 
     template<expr_keyword_code K, expr_category_code>
