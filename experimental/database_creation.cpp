@@ -57,7 +57,7 @@ namespace ndb
 
                                             // field option
                                             if (field.detail_.is_primary || field.detail_.is_oid) output += " primary key";
-                                            if (field.detail_.is_autoincrement) output += " autoincrement";
+                                            if (field.detail_.is_auto_increment) output += " autoincrement";
                                             if (field.detail_.is_not_null) output += " not null";
                                             if (field.detail_.is_unique) output += " unique";
 

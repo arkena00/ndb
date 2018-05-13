@@ -111,12 +111,12 @@ static constexpr const ::ndb::models::MODEL_NAME##_ MODEL_NAME = {}; \
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////             ALIASES            ////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-#define ndb_field_id ndb_field(id, int, ndb::option<ndb::field_option::autoincrement, ndb::field_option::primary, ndb::field_option::not_null>)
+#define ndb_field_id ndb_field(id, int, ndb::option<ndb::field_option::auto_increment, ndb::field_option::primary, ndb::field_option::not_null>)
 
 
 
 ndb_table(movie,
-          ndb_field(id, int, ndb::size<8>, ndb::option<ndb::field_option::autoincrement, ndb::field_option::not_null>),
+          ndb_field(id, int, ndb::size<8>, ndb::option<ndb::field_option::auto_increment, ndb::field_option::not_null>),
           ndb_field(name, std::string, ndb::size<255>),
           ndb_field(image, std::string, ndb::size<255>)
 )

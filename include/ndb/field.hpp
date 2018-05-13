@@ -46,7 +46,7 @@ namespace ndb
         {
             static constexpr bool is_oid = has_option<field_option::oid, Option>::value;
             static constexpr bool is_primary = has_option<field_option::primary, Option>::value;
-            static constexpr bool is_autoincrement = has_option<field_option::autoincrement, Option>::value;
+            static constexpr bool is_auto_increment = has_option<field_option::auto_increment, Option>::value;
             static constexpr bool is_unique = has_option<field_option::unique, Option>::value;
             static constexpr bool is_not_null = has_option<field_option::not_null, Option>::value;
             static constexpr size_t size = Size::value;

@@ -7,7 +7,7 @@ namespace ndb
     {
         struct none { static constexpr auto value = 0; };
         struct unique { static constexpr auto value = 1; };
-        struct autoincrement { static constexpr auto value = 2; };
+        struct auto_increment { static constexpr auto value = 2; };
         struct primary { static constexpr auto value = 4; };
         struct not_null { static constexpr auto value = 8; };
         struct oid { static constexpr auto value = primary::value; };
