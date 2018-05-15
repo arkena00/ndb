@@ -24,7 +24,7 @@ namespace ndb
             {
                 return std::get<T>(value_);
             }
-            catch (const std::exception& e)
+            catch (const std::exception&)
             {
                 ndb_error("Can't get unknown type");
             }
