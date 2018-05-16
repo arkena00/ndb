@@ -23,6 +23,7 @@ option(NDB_ENGINE_MONGO "Build mongo" OFF)
 option(NDB_ENGINE_MYSQL "Build mysql" OFF)
 option(NDB_BUILD_EXP "Build experimentals" OFF)
 option(NDB_BUILD_TEST "Build tests" OFF)
+option(NDB_BUILD_EXAMPLE "Build examples" OFF)
 
 # display config
 message("SQLITE : ${NDB_ENGINE_SQLITE}")
@@ -30,6 +31,7 @@ message("MONGO : ${NDB_ENGINE_MONGO}")
 message("MYSQL : ${NDB_ENGINE_MYSQL}")
 message("BUILD_EXP : ${NDB_BUILD_EXP}")
 message("BUILD_TEST : ${NDB_BUILD_TEST}")
+message("BUILD_EXAMPLE : ${NDB_BUILD_EXAMPLE}")
 
 add_library(lib_ndb INTERFACE)
 
@@ -62,7 +64,6 @@ if (NDB_ENGINE_MONGO)
 endif()
 
 if (NDB_ENGINE_MYSQL)
-    message("ENGINE_MYSQL : ON")
     set(MYSQL_ROOT C:/lib/mysql-connector)
     set(MYSQL_LIB mysqlcppconn)
 endif()
@@ -93,9 +94,13 @@ endif()
 if (NDB_BUILD_TEST)
     add_subdirectory(test)
 endif()
+if (NDB_BUILD_EXAMPLE)
+    add_subdirectory(example)
+endif()
 
 # delete some cache variables
 unset(NDB_ENGINE_MONGO CACHE)
 unset(NDB_ENGINE_MYSQL CACHE)
 unset(NDB_BUILD_EXP CACHE)
 unset(NDB_BUILD_TEST CACHE)
+unset(NDB_BUILD_EXAMPLE CACHE)
