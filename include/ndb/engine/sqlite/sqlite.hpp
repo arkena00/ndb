@@ -16,12 +16,6 @@ namespace ndb
 {
     namespace fs = std::experimental::filesystem;
 
-    template<class T>
-    static constexpr bool is_native = std::is_same_v<std::decay_t<T>, int>
-    || std::is_same_v<std::decay_t<T>, double>
-    || std::is_same_v<std::decay_t<T>, std::string>
-    || std::is_same_v<std::decay_t<T>, std::vector<char>>;
-
     class sqlite_connection
     {
     public:
@@ -81,6 +75,12 @@ namespace ndb
         inline static std::string to_string(const Expr&);
 
         inline static constexpr auto expr_category();
+
+        template<class T>
+        static constexpr bool is_native = std::is_same_v<std::decay_t<T>, int>
+                                          || std::is_same_v<std::decay_t<T>, double>
+                                          || std::is_same_v<std::decay_t<T>, std::string>
+                                          || std::is_same_v<std::decay_t<T>, std::vector<char>>;
 
     private:
         std::unordered_map<int, std::unique_ptr<sqlite_connection>> connection_list_;
