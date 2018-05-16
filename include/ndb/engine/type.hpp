@@ -25,12 +25,16 @@ namespace ndb
     };
 
     template<class Engine>
-    struct type
+    struct basic_type
     {
         template<class T> using id = type_id<Engine, T>;
         template<class T> using native = typename native_type<Engine, T>::type;
         template<int ID> using get = typename cpp_type<Engine, ID>::type;
+    };
 
+    template<class Engine>
+    struct type : basic_type<Engine>
+    {
         template<class T> static auto encode(const T& v) -> native<T>;
         template<class T> static T decode(const ndb::value&);
     };

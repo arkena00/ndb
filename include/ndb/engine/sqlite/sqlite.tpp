@@ -31,7 +31,7 @@ namespace ndb
     {
         if constexpr (std::is_same_v<int, T>) sqlite3_bind_int(statement, bind_index, v);
         if constexpr (std::is_same_v<double, T>) sqlite3_bind_double(statement, bind_index, v);
-        if constexpr (std::is_same_v<std::string, T>) sqlite3_bind_text(statement, bind_index, "test", -1, SQLITE_STATIC);
+        if constexpr (std::is_same_v<std::string, T>) sqlite3_bind_text(statement, bind_index, v.c_str(), -1, SQLITE_STATIC);
     };
 
     template<class Database>
@@ -79,7 +79,7 @@ namespace ndb
 
                     // bind native type value or encode custom type value
                     if constexpr (is_native<value_type>) bind(statement, bind_index++, e.value());
-                    else bind(statement, bind_index++, type<sqlite>::encode(e.value()));
+                    else bind(statement, bind_index++, type<sqlite>::encode(e.value())); //check encoders if you have an error here
                 }
             });
 

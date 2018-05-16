@@ -14,7 +14,7 @@ namespace ndb
 {
     class sqlite;
 
-    // associate engine type id to cpp type
+    // associate engine type id to native type
     template<> struct cpp_type<sqlite, SQLITE_INTEGER> { using type = int; };
     template<> struct cpp_type<sqlite, SQLITE_FLOAT> { using type = double; };
     template<> struct cpp_type<sqlite, SQLITE3_TEXT> { using type = std::string; };
@@ -26,26 +26,31 @@ namespace ndb
     template<> struct type_id<sqlite, std::string> { static constexpr auto value = SQLITE3_TEXT; };
     template<> struct type_id<sqlite, std::vector<char>> { static constexpr auto value = SQLITE_BLOB; };
 
-    // specify native type for custom type
-    template<> struct native_type<sqlite, std::chrono::time_point<std::chrono::system_clock>> { using type = int; };
+    // associate custom type to native type
+    template<> struct native_type<sqlite, const char*> { using type = std::string; };
+    template<class T, class U>
+    struct native_type<sqlite, std::chrono::duration<T, U>> { using type = double; };
 
-    template<> template<>
-    inline auto type<sqlite>::encode(const std::chrono::time_point<std::chrono::system_clock>& v) -> native<std::decay_t<decltype(v)>>
-    {
-        auto epoch = v.time_since_epoch();
-        auto value = std::chrono::duration_cast<std::chrono::seconds>(epoch);
-        return static_cast<int>(value.count());
-    }
-
-/*
+    // custom type conversions
     template<>
-    auto type<sqlite>::encode(const std::chrono::time_point<std::chrono::system_clock>& v) -> native<std::decay_t<decltype(v)>>
+    struct type<sqlite> : basic_type<sqlite>
     {
-        auto epoch = v.time_since_epoch();
-        auto value = std::chrono::duration_cast<std::chrono::seconds>(epoch);
-        return static_cast<int>(value.count());
-    }*/
+        inline static auto encode(const char* v) -> native<std::decay_t<decltype(v)>>
+        {
+            return std::string(v);
+        }
 
+        template<class T, class U>
+        inline static auto encode(const std::chrono::duration<T, U>& v) -> native<std::decay_t<decltype(v)>>
+        {
+            return v.count();
+        }
+        template<class T>
+        inline static T decode(const native<T>& v)
+        {
+            return T{ v };
+        };
+    };
 } // ndb
 
 
