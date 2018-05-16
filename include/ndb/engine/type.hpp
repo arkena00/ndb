@@ -35,8 +35,10 @@ namespace ndb
     template<class Engine>
     struct type : basic_type<Engine>
     {
-        template<class T> static auto encode(const T& v) -> native<T>;
-        template<class T> static T decode(const ndb::value&);
+        template<class T>
+        static auto encode(const T& v) ->  typename basic_type<Engine>::template native<T>;
+        template<class T>
+        static T decode(const ndb::value&);
     };
 } // ndb
 

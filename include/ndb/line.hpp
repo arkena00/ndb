@@ -41,11 +41,11 @@ namespace ndb
             using native_type = typename native_type<Engine, typename Field::value_type>::type;
             using value_type = typename Field::value_type;
 
-            if constexpr (ndb::is_native<value_type>)
+            if constexpr (Engine::template is_native<value_type>)
             {
                 return values_.at(index).template get<native_type>();
             }
-            else return ndb::type<Engine>::decode<value_type>(values_.at(index).template get<native_type>());
+            else return ndb::type<Engine>::template decode<value_type>(values_.at(index).template get<native_type>());
         }
 
     private:
