@@ -74,6 +74,7 @@ ndb_project(my_project,
             ndb_database(libray, collection, ndb::sqlite),
             ndb_database(mongo_library, collection, ndb::mongo)
 )
+```
 
 ## Querys
 ```cpp
@@ -121,3 +122,12 @@ int main()
     return 0;
 }
 ```
+
+# Documentation
+[Example](https://github.com/ads00/ndb/tree/dev/example)
+
+
+# Contribution
+ads00
+
+Jonathan Poelen ([@jonathanpoelen](https://github.com/jonathanpoelen))
