@@ -31,8 +31,8 @@ namespace ndb
     {
         if constexpr (std::is_same_v<int, T>) sqlite3_bind_int(statement, bind_index, v);
         if constexpr (std::is_same_v<double, T>) sqlite3_bind_double(statement, bind_index, v);
-        if constexpr (std::is_same_v<std::string, T>) sqlite3_bind_text(statement, bind_index, v.c_str(), -1, SQLITE_STATIC);
-        if constexpr (std::is_same_v<std::vector<char>, T>) sqlite3_bind_blob(statement, bind_index, v.data(), 100, SQLITE_STATIC);
+        if constexpr (std::is_same_v<std::string, T>) sqlite3_bind_text(statement, bind_index, v.c_str(), -1, SQLITE_TRANSIENT); //TODO: use SQLITE_STATIC
+        if constexpr (std::is_same_v<std::vector<char>, T>) sqlite3_bind_blob(statement, bind_index, v.data(), 100, SQLITE_TRANSIENT);
     };
 
     template<class Database>
@@ -107,6 +107,11 @@ namespace ndb
                         line.add(field_id, sqlite3_value_double(field_value));
                     if (field_type == ndb::type_id<sqlite, std::string>::value)
                         line.add(field_id, std::string(reinterpret_cast<const char*>(sqlite3_value_text(field_value))));
+                    if (field_type == ndb::type_id<sqlite, std::vector<char>>::value)
+                    {
+                        auto data = reinterpret_cast<const char*>(sqlite3_value_blob(field_value));
+                        line.add(field_id, std::vector<char>(data, data + 100));
+                    }
                 }
                 result.add(std::move(line));
 

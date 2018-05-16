@@ -37,7 +37,7 @@ namespace ndb
     {
         inline static auto encode(const char* v) -> native<std::decay_t<decltype(v)>>
         {
-            return std::string(v);
+            return v;
         }
 
         template<class T, class U>
