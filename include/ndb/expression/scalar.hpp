@@ -127,7 +127,7 @@ namespace ndb
         template<class F>
         static constexpr auto static_eval(F&& f)
         {
-            f(expression<T, expr_type_code::value, void, Clause>{ 0 });
+            //f(expression<T, expr_type_code::value, void, Clause>{ value_ });
             //return ndb::call(f, expression<T, expr_type_code::value, void, Clause> { 0 });
         }
     };
