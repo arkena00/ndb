@@ -32,6 +32,7 @@ namespace ndb
         if constexpr (std::is_same_v<int, T>) sqlite3_bind_int(statement, bind_index, v);
         if constexpr (std::is_same_v<double, T>) sqlite3_bind_double(statement, bind_index, v);
         if constexpr (std::is_same_v<std::string, T>) sqlite3_bind_text(statement, bind_index, v.c_str(), -1, SQLITE_STATIC);
+        if constexpr (std::is_same_v<std::vector<char>, T>) sqlite3_bind_blob(statement, bind_index, v.data(), 100, SQLITE_STATIC);
     };
 
     template<class Database>
@@ -154,6 +155,7 @@ namespace ndb
                     output += " text ";
                     need_size = true;
                 }
+                if constexpr (std::is_same_v<std::vector<char>, native_value_type>) output += " blob ";
 
                 // field size
                 if (field.detail_.size > 0 && need_size) output += "(" + std::to_string(field.detail_.size) + ")";

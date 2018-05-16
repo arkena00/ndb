@@ -19,7 +19,8 @@ namespace ndb
     template<class T>
     static constexpr bool is_native = std::is_same_v<std::decay_t<T>, int>
     || std::is_same_v<std::decay_t<T>, double>
-    || std::is_same_v<std::decay_t<T>, std::string>;
+    || std::is_same_v<std::decay_t<T>, std::string>
+    || std::is_same_v<std::decay_t<T>, std::vector<char>>;
 
     class sqlite_connection
     {
