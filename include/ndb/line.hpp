@@ -41,7 +41,8 @@ namespace ndb
             using native_type = typename native_type<Engine, typename Field::value_type>::type;
             using value_type = typename Field::value_type;
 
-            if constexpr (Engine::template is_native<value_type>)
+            constexpr auto b = Engine::template is_native<value_type>; // msvc crash, separate in 2 lines
+            if constexpr (b)
             {
                 return values_.at(index).template get<native_type>();
             }
