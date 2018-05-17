@@ -5,14 +5,17 @@
 #include <ndb/expression.hpp>
 #include <ndb/engine.hpp>
 #include <ndb/result.hpp>
+#include <ndb/option.hpp>
 
 namespace ndb
 {
-    template<class Database, class Engine = typename Database::engine>
-    class query
+    template<class Database, class Option = ndb::option<>>
+    class basic_query
     {
     public:
-        constexpr query() {}
+        using Engine = typename Database::engine;
+
+        constexpr basic_query() {}
 
         template<class T>
         constexpr auto operator<<(const T& t)
@@ -22,7 +25,7 @@ namespace ndb
             auto expr = ndb::expr_make(t);
             auto e = ndb::expression<decltype(expr), expr_type_code::root, void, expr_clause_code::get> { std::move(expr) };
 
-            return engine.template exec<Database>(e);
+            return engine.template exec<Database, Option>(e);
         }
 
         template<class Expr>
@@ -31,7 +34,7 @@ namespace ndb
             const auto& engine = ndb::engine<Engine>::get();
             auto e = ndb::expression<Expr, expr_type_code::root, void, expr_clause_code::add> { expr };
 
-            return engine.template exec<Database>(e);
+            return engine.template exec<Database, Option>(e);
         }
 
         template<class Expr>
@@ -40,12 +43,17 @@ namespace ndb
             const auto& engine = ndb::engine<Engine>::get();
             auto e = ndb::expression<Expr, expr_type_code::root, void, expr_clause_code::del> { expr };
 
-            return engine.template exec<Database>(e);
+            return engine.template exec<Database, Option>(e);
         }
     };
 
-    //template<class Database>
-    //static constexpr auto query = query_impl<Database>();
+    template<class Database, class Option = ndb::option<>>
+    using query = basic_query<Database, Option>;
+
+    template<class Database, class Option = ndb::option<>>
+    using oquery = basic_query<Database, ndb::option<ndb::query_option::object>>;
+
+
 } // ndb
 
 #endif // QUERY_H_NDB
