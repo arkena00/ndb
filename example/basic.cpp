@@ -4,6 +4,11 @@
 #include <ndb/function.hpp> // ndb::clear
 #include <ndb/query.hpp> // query and expression
 
+/*! Generate database entities (instances, structures etc ...)
+ * Entites are generated in namespaces ndb::models, ndb::tables, ndb::databases::my_project
+ * Add _ to the name tu use the type (example : ndb::tables::movie_)
+ */
+
 // database
 ndb_table(movie,
            ndb_field_id,
@@ -19,12 +24,6 @@ ndb_model(library, movie, music)
 ndb_project(my_project,
             ndb_database(library, library, ndb::sqlite)
 )
-
-/*! Generate constexpr instances usable for query expressions
- * Names are generated in namespaces ndb::models, ndb::tables, ndb::databases::my_project
- *
- * Add _ to the name tu use the type (example : ndb::tables::movie_)
- */
 
 // alias
 namespace dbs
