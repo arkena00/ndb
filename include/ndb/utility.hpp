@@ -101,17 +101,30 @@ namespace ndb
 /////////////////////////////////////////////////////////////////////////////////
 ////////////////////////           EXPRESSION            ////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
-    template<class Expr>
-    constexpr bool expr_is_value = Expr::type == expr_type_code::value;
-
-    template<class Expr>
-    constexpr bool expr_is_field = Expr::type == expr_type_code::field;
-
-    template<class Expr>
-    constexpr bool expr_is_table = Expr::type == expr_type_code::table;
-
+//TODO wrap expression enum to type for easier traits (exrp_type::field class)
     namespace internal
     {
+        template<class Expr, expr_type_code T>
+        struct expr_type_check { static constexpr auto value = Expr::type == T; };
+
+        template<class Expr>
+        struct expr_is_value :
+            std::conditional_t<is_expression<Expr>, expr_type_check<Expr, expr_type_code::value>, std::false_type>{};
+
+        template<class Expr>
+        struct expr_is_field :
+            std::conditional_t<is_expression<Expr>, expr_type_check<Expr, expr_type_code::field>, std::false_type>{};
+
+        template<class Expr>
+        struct expr_is_table :
+            std::conditional_t<is_expression<Expr>, expr_type_check<Expr, expr_type_code::table>, std::false_type>{};
+
+        template<class Expr>
+        struct expr_is_scalar
+        {
+            static constexpr bool value = expr_is_field<Expr>::value || expr_is_value<Expr>::value || expr_is_table<Expr>::value;
+        };
+
         template<class Expr, expr_keyword_code Keyword_code>
         constexpr bool expr_is_keyword_code()
         {
@@ -127,11 +140,13 @@ namespace ndb
         };
     } // internal
 
+    template<class Expr> constexpr bool expr_is_value = internal::expr_is_value<Expr>::value;
+    template<class Expr> constexpr bool expr_is_field = internal::expr_is_field<Expr>::value;
+    template<class Expr> constexpr bool expr_is_table = internal::expr_is_table<Expr>::value;
+    template<class Expr> constexpr bool expr_is_scalar = internal::expr_is_scalar<Expr>::value;
+
     template<class Expr, expr_keyword_code Keyword_code>
     constexpr bool expr_is_keyword_code = internal::expr_is_keyword_code<Expr, Keyword_code>();
-
-    template<class Expr>
-    constexpr bool expr_is_scalar = expr_is_field<Expr> || expr_is_value<Expr> || expr_is_table<Expr>;
 
     template<class Expr, expr_clause_code Clause>
     constexpr bool expr_has_clause = static_cast<bool>(Expr::clause() & Clause);
