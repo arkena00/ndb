@@ -1,6 +1,7 @@
 #include <ndb/expression/sql.hpp>
 #include <ndb/engine/sqlite/function.hpp>
 #include <ndb/engine/sqlite/type.hpp>
+#include <ndb/expression/deduce.hpp>
 
 namespace ndb
 {
@@ -55,10 +56,12 @@ namespace ndb
         else ndb_error("exec error : " + str_query);
     }
 
-    template<class Database, class Expr>
+    template<class Database, class Query_option, class Expr>
     ndb::result<sqlite> sqlite::exec(const Expr& expr) const
     {
         constexpr auto str_query = ndb::sql_expression<Expr>{};
+
+
 
         sqlite3_stmt* statement;
         int step = SQLITE_DONE;

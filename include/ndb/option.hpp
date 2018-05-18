@@ -3,6 +3,11 @@
 
 namespace ndb
 {
+    struct query_option
+    {
+        struct object;
+    };
+
     struct field_option
     {
         struct none { static constexpr auto value = 0; };
