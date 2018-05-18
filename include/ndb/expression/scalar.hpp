@@ -10,6 +10,7 @@ namespace ndb
     template<class T, expr_type_code Expression_type, class R, expr_clause_code Clause>
     struct scalar_expression : public expression_base
     {
+        using value_type = T;
         static constexpr auto type = Expression_type;
 
         constexpr scalar_expression() {}
@@ -90,15 +91,15 @@ namespace ndb
     template<class T, expr_clause_code Clause>
     struct expression<T, expr_type_code::table, void, Clause>
         : public scalar_expression<T, expr_type_code::table, void, Clause>
-    {};
+    {
+        using value_type = T;
+    };
 
     // field
     template<class T, expr_clause_code Clause>
     struct expression<T, expr_type_code::field, void, Clause>
         : public scalar_expression<T, expr_type_code::field, void, Clause>
-    {
-        using value_type = T;
-    };
+    {};
 
     // value
     template<class T, expr_clause_code Clause>
