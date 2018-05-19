@@ -26,7 +26,7 @@ namespace ndb
             return values_.size();
         }
 
-        ndb::value operator[](unsigned int index) const
+        ndb::value operator[](int index) const
         {
             if (index >= values_.size()) ndb_error("ndb::value out of range");
             return values_.at(index);
