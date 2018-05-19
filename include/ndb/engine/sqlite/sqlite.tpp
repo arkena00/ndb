@@ -74,7 +74,7 @@ namespace ndb
         sqlite3_stmt* statement;
         int step = SQLITE_DONE;
 
-        ndb::result<Result_type, sqlite> result;
+        ndb::result<sqlite, Result_type> result;
 
         if(sqlite3_prepare_v2(connection<Database>().database(), str_query.c_str(), -1, &statement, nullptr) == SQLITE_OK)
         {

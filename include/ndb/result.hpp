@@ -19,7 +19,7 @@ namespace ndb
         }
     };
 
-    template<class T, class Engine>
+    template<class Engine, class T = ndb::line<Engine>>
     class result
     {
         using iterator = typename std::vector<T>::iterator;
@@ -71,10 +71,10 @@ namespace ndb
 namespace std
 {
     template<class T, class Engine>
-    struct tuple_size<::ndb::result<T, Engine>> : std::integral_constant<std::size_t, 1> {};
+    struct tuple_size<::ndb::result<Engine, T>> : std::integral_constant<std::size_t, 1> {};
 
     template<class T, class Engine>
-    struct tuple_element<0, ::ndb::result<T, Engine>> { using type = T; };
+    struct tuple_element<0, ::ndb::result<Engine, T>> { using type = T; };
 } // std
 
 #endif // RESULT_H_NDB
