@@ -1,11 +1,11 @@
 #include <ndb/initializer.hpp>
 #include <ndb/engine/sqlite/sqlite.hpp>
-
-#include "debug/query.hpp"
+#include <ndb/query.hpp>
 #include <iostream>
 #include <sstream>
 
-#include "database.hpp"
+#include <ndb/expression/deduce.hpp>
+#include <ndb/preprocessor.hpp>
 
 /* tree_table
 
@@ -40,31 +40,61 @@ struct my_table : ndb::table<Model>, ndb::connection_table<my_ctable>
     static constexpr struct connexions_ : ndb::field<my_table, int> {} connexions {};
 }
 
-
-
-
  */
+
+
+// database
+
+ndb_table(movie,
+          ndb_field_id,
+          ndb_field(name, std::string, ndb::size<255>)
+)
+ndb_table(music,
+          ndb_field(id, int),
+          ndb_field(image, std::string)
+)
+ndb_model(library, movie, music)
+
+ndb_project(my_project,
+            ndb_database(library, library, ndb::sqlite)
+)
+
+
+//#include "database.hpp"
+
 
 int main()
 {
     using ndb::sqlite;
+    // using db = dbs::zeta;
+    using db = ndb::databases::my_project::library_;
+    constexpr auto library = ndb::models::library;
 
     std::stringstream result;
 
     try
     {
         ndb::initializer<sqlite> init;
-        ndb::connect<dbs::zeta, sqlite>();
+        ndb::connect<db, sqlite>();
 
-        int a = 11;
-        double b = 22;
-        auto c = std::chrono::system_clock::now();
 
-        const auto& movie = models::library.movie;
-        const auto& user = models::library.user;
 
-        ndb::query<dbs::zeta>() << (ndb::get(movie.id) << ndb::source(movie));
+        //! add records
+        //ndb::query<db>() + (library.movie.name = "Interstellar");
+        //ndb::query<db>() + (library.movie.name = "Watchmen");
 
+        auto [test] = ndb::oquery<db>() << (library.music);
+        std::cout << "\n___" << test.image;
+
+
+        auto [interstellar] = ndb::oquery<db>() << (library.movie.id == 1);
+        std::cout << interstellar.id << " | " << interstellar.name << std::endl;
+
+        for (auto [id, name] : ndb::oquery<db>() << library.movie)
+        {
+            std::cout << "id : " << id << std::endl;
+            std::cout << "name : " << name << std::endl;
+        }
 
         //auto q = (movie.id << movie);
         //auto z = ((movie.id, q) << movie);
@@ -77,9 +107,10 @@ int main()
         v = z << u;
     */
 
+    /*
         ndb::query_view<dbs::zeta> q;
         q << (movie.id, movie.name, ndb::get(movie.image));
-        std::cout << q.view();
+        std::cout << q.view();*/
 
     } catch(const std::exception& e)
     {
