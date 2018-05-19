@@ -2,6 +2,8 @@
 #include <ndb/engine/sqlite/function.hpp>
 #include <ndb/engine/sqlite/type.hpp>
 #include <ndb/expression/deduce.hpp>
+#include <ndb/option.hpp>
+
 
 namespace ndb
 {
@@ -57,16 +59,22 @@ namespace ndb
     }
 
     template<class Database, class Query_option, class Expr>
-    ndb::result<sqlite> sqlite::exec(const Expr& expr) const
+    auto sqlite::exec(const Expr& expr) const
     {
         constexpr auto str_query = ndb::sql_expression<Expr>{};
 
+        using Result_type = typename
+        std::conditional_t<
+            ndb::has_option_v<query_option::object, Query_option>,
+            typename ndb::deduce<Expr>::main_table::Detail_::object_type,
+            ndb::line<sqlite>
+        >;
 
 
         sqlite3_stmt* statement;
         int step = SQLITE_DONE;
 
-        ndb::result<sqlite> result;
+        ndb::result<Result_type, sqlite> result;
 
         if(sqlite3_prepare_v2(connection<Database>().database(), str_query.c_str(), -1, &statement, nullptr) == SQLITE_OK)
         {
@@ -106,17 +114,23 @@ namespace ndb
 
                     if (field_type == ndb::type_id<sqlite, int>::value)
                         line.add(field_id, sqlite3_value_int(field_value));
+
                     if (field_type == ndb::type_id<sqlite, double>::value)
                         line.add(field_id, sqlite3_value_double(field_value));
+
                     if (field_type == ndb::type_id<sqlite, std::string>::value)
                         line.add(field_id, std::string(reinterpret_cast<const char*>(sqlite3_value_text(field_value))));
+
                     if (field_type == ndb::type_id<sqlite, std::vector<char>>::value)
                     {
                         auto data = reinterpret_cast<const char*>(sqlite3_value_blob(field_value));
                         line.add(field_id, std::vector<char>(data, data + 100));
                     }
+                    //TODO null value
                 }
-                result.add(std::move(line));
+
+                auto result_entity = ndb::result_encoder<Result_type, sqlite>::decode(line);
+                result.add(std::move(result_entity));
 
                 step = sqlite3_step(statement);
             }
