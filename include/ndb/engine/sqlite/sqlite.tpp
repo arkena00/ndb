@@ -129,7 +129,7 @@ namespace ndb
                     //TODO null value
                 }
 
-                auto result_entity = ndb::result_encoder<Result_type, sqlite>::decode(line);
+                auto result_entity = ndb::result_encoder<Result_type, sqlite>::decode(std::move(line));
                 result.add(std::move(result_entity));
 
                 step = sqlite3_step(statement);

@@ -13,7 +13,7 @@ namespace ndb
     template<class Engine>
     struct result_encoder<ndb::line<Engine>, Engine>
     {
-        static auto decode(ndb::line<Engine>& line)
+        static auto decode(const ndb::line<Engine>& line)
         {
             return line;
         }
