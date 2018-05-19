@@ -6,19 +6,34 @@
 
 namespace ndb
 {
+    template<class T, class Engine>
+    struct result_encoder;
+
+    // nop encoder
     template<class Engine>
+    struct result_encoder<ndb::line<Engine>, Engine>
+    {
+        static auto decode(ndb::line<Engine>& line)
+        {
+            return line;
+        }
+    };
+
+    template<class T, class Engine>
     class result
     {
-        using iterator = typename std::vector<ndb::line<Engine>>::iterator;
+        using iterator = typename std::vector<T>::iterator;
 
     private:
-        std::vector<ndb::line<Engine>> line_list_;
+        std::vector<T> line_list_;
         int _add_id;
 
     public:
         result() : _add_id(0) {}
 
-        void add(ndb::line<Engine> l)
+
+
+        void add(T l)
         {
             line_list_.push_back(std::move(l));
         }
@@ -29,7 +44,7 @@ namespace ndb
 
         bool has_result() const { return size() > 0; }
 
-        ndb::line<Engine>& operator[](int index) { return line_list_.at(index); }
+        T& operator[](int index) { return line_list_.at(index); }
 
         iterator begin() { return line_list_.begin(); }
         iterator end() { return line_list_.end(); }
