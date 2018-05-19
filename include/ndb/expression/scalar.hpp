@@ -92,14 +92,16 @@ namespace ndb
     struct expression<T, expr_type_code::table, void, Clause>
         : public scalar_expression<T, expr_type_code::table, void, Clause>
     {
-        using value_type = T;
+        using table = T;
     };
 
     // field
     template<class T, expr_clause_code Clause>
     struct expression<T, expr_type_code::field, void, Clause>
         : public scalar_expression<T, expr_type_code::field, void, Clause>
-    {};
+    {
+        using table = typename T::table;
+    };
 
     // value
     template<class T, expr_clause_code Clause>

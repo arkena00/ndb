@@ -1,6 +1,8 @@
 #ifndef EXPRESSION_DEDUCE_H_NDB
 #define EXPRESSION_DEDUCE_H_NDB
 
+#pragma warning(push, 0)
+
 #include <kvasir/mpl/algorithm/filter.hpp>
 #include <kvasir/mpl/algorithm/transform.hpp>
 #include <kvasir/mpl/algorithm/all.hpp>
@@ -10,8 +12,11 @@
 #include <kvasir/mpl/types/int.hpp>
 #include <kvasir/mpl/types/list.hpp>
 #include <kvasir/mpl/functional/call.hpp>
-#include <kvasir/mpl/functional/flow.hpp>
+#include <kvasir/mpl/functional/fork.hpp>
 #include <kvasir/mpl/functions/comparison/equal.hpp>
+#include <kvasir/mpl/functions/logical/logical_or.hpp>
+
+#pragma warning(pop)
 
 #include <ndb/expression.hpp>
 #include <ndb/cx_error.hpp>
@@ -54,7 +59,7 @@ struct error
 template<class T>
 struct table_bot_found
 {
-    using value_type = typename error;
+    using value_type = error;
     static constexpr auto value = 0;
 };
 
@@ -70,12 +75,17 @@ namespace ndb
         using main_table = typename
         mpl::call<
             mpl::unpack<
-                mpl::filter<mpl::cfe<internal::expr_is_field>,
+                mpl::filter<
+                    mpl::fork<
+                        mpl::cfe<internal::expr_is_field>,
+                        mpl::cfe<internal::expr_is_table>,
+                        mpl::logical_or<>
+                    >,
                     mpl::front<>
                 >
             >
         , linear_type
-        >::value_type::table;
+        >::table;
     };
 } // ndb
 
