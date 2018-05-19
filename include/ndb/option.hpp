@@ -33,6 +33,9 @@ namespace ndb
     template<class Needle, template<class...> class Haystack, class... T>
     struct has_option<Needle, Haystack<Needle, T...>> : std::true_type {};
 
+    template<class Needle, class Haystack>
+    constexpr auto has_option_v = has_option<Needle, Haystack>::value;
+
 } // ndb
 
 #endif // OPTION_H_NDB
