@@ -29,7 +29,7 @@ namespace ndb
         }
 
         template<class Expr>
-        constexpr ndb::result<Engine> operator+(const Expr& expr) const
+        constexpr auto operator+(const Expr& expr) const
         {
             const auto& engine = ndb::engine<Engine>::get();
             auto e = ndb::expression<Expr, expr_type_code::root, void, expr_clause_code::add> { expr };
