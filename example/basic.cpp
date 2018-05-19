@@ -11,7 +11,7 @@
 
 // database
 ndb_table(movie,
-           ndb_field_id,
+          ndb_field_id,
           ndb_field(name, std::string, ndb::size<255>),
           ndb_field(duration, std::chrono::duration<double, std::ratio<3600>>)
 )
