@@ -11,6 +11,15 @@
 
 namespace ndb
 {
+    template<class T, class Engine>
+    struct result_encoder;
+
+    template<class Engine>
+    class line;
+} // ndb
+
+namespace ndb
+{
     namespace objects
     {
         struct movie
