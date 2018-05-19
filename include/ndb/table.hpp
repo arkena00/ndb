@@ -25,11 +25,12 @@ namespace ndb
         //static constexpr Detail_ detail_ {};
     };
 
-    template<class Entity, class Parent = ndb::parent<void>, class... Options>
+    template<class Entity, class Parent = ndb::parent<void>, class Object_type = void, class... Options>
     struct table_detail
     {
         using entity = Entity;
         using parent_table = typename Parent::table;
+        using object_type = Object_type;
 
         static constexpr std::size_t size = Entity::size() + sizeof...(Options);
     };
