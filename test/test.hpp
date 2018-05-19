@@ -5,7 +5,7 @@
 #include "database.hpp"
 
 // aliases
-static constexpr const auto movie = models::library.movie;
+static constexpr const auto movie = ndb::models::library.movie;
 
 // engines
 #include <ndb/engine/sqlite/sqlite.hpp>
