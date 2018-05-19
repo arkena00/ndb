@@ -118,8 +118,8 @@ namespace ndb
         static auto decode(ndb::line<Engine>& line)
         {
             objects::movie m;
-            m.id = line[ndb::tables::movie<models::library_>::id];
-            m.name = line[ndb::tables::movie<models::library_>::name];
+            m.id = line[ndb::tables::movie<void>::id];
+            m.name = line[ndb::tables::movie<void>::name];
 
             return m;
         }
