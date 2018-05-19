@@ -9,89 +9,118 @@
 #include <ndb/entity.hpp>
 #include <ndb/expression.hpp>
 
-namespace fields
+namespace ndb
 {
-    template<class Table>
-    struct id : public ndb::field<Table, int, ndb::size<sizeof(int)>> { ndb_internal_field_op };
-}
-
-namespace tables
-{
-    template<class Model, class Parent = void>
-    struct user : ndb::table<Model>
+    namespace objects
     {
-        using id_ = fields::id<user>; static constexpr id_ id {};
-        struct name_ : ndb::field<user, std::string, ndb::size<255>> {} name;
+        struct movie
+        {
+            int id;
+            std::string name;
+        };
+    }
 
-        using Detail_ = ndb::table_detail<
-        ndb::entity<id_, name_>,
-        ndb::parent<Parent>
-        >;
-    };
-
-    template<class Model>
-    struct movie : ndb::table<Model>
+    namespace fields
     {
-        using id_ = fields::id<movie>; static constexpr id_ id {};
-        static constexpr struct name_ : ndb::field<movie, std::string, ndb::size<255>> { ndb_internal_field_op } name {};
-        static constexpr struct image_ : ndb::field<movie, std::string, ndb::size<255>> { ndb_internal_field_op } image {};
-        static constexpr struct user_ : ndb::field<movie, tables::user<Model, movie>> {} user {};
+        template<class Table>
+        struct id : public ndb::field<Table, int, ndb::size<sizeof(int)>> { ndb_internal_field_op };
+    }
 
-        using Detail_ = ndb::table_detail
-        <
-        ndb::entity<id_, name_, image_, user_>
-        >;
-    };
-
-    template<class Model>
-    struct music : ndb::table<Model>
+    namespace tables
     {
-        using id_ = fields::id<music>; static constexpr id_ id {};
-        static constexpr struct name_ : ndb::field<music, std::string, ndb::size<255>> { ndb_internal_field_op } name {};
-        static constexpr struct image_ : ndb::field<music, std::string, ndb::size<255>> { ndb_internal_field_op } image {};
-        //static constexpr struct user_ : ndb::field<movie, tables::user> {} user {};
+        template<class Model, class Parent = void>
+        struct user : ndb::table<Model>
+        {
+            using id_ = fields::id<user>; static constexpr id_ id {};
+            struct name_ : ndb::field<user, std::string, ndb::size<255>> {} name;
 
-        using Detail_ = ndb::table_detail
-        <
-        ndb::entity<id_, name_, image_>
-        >;
-    };
-}
+            using Detail_ = ndb::table_detail<
+            ndb::entity<id_, name_>,
+            ndb::parent<Parent>
+            >;
+        };
 
-struct models
-{
-    struct library_
+        template<class Model>
+        struct movie : ndb::table<Model>
+        {
+            using id_ = fields::id<movie>; static constexpr id_ id {};
+            static constexpr struct name_ : ndb::field<movie, std::string, ndb::size<255>> { ndb_internal_field_op } name {};
+            static constexpr struct image_ : ndb::field<movie, std::string, ndb::size<255>> { ndb_internal_field_op } image {};
+            static constexpr struct user_ : ndb::field<movie, tables::user<Model, movie>> {} user {};
+
+            using Detail_ = ndb::table_detail
+            <
+                ndb::entity<id_, name_, image_, user_>,
+                ndb::parent<void>,
+                objects::movie
+            >;
+        };
+
+        template<class Model>
+        struct music : ndb::table<Model>
+        {
+            using id_ = fields::id<music>; static constexpr id_ id {};
+            static constexpr struct name_ : ndb::field<music, std::string, ndb::size<255>> { ndb_internal_field_op } name {};
+            static constexpr struct image_ : ndb::field<music, std::string, ndb::size<255>> { ndb_internal_field_op } image {};
+            //static constexpr struct user_ : ndb::field<movie, tables::user> {} user {};
+
+            using Detail_ = ndb::table_detail
+            <
+            ndb::entity<id_, name_, image_>
+            >;
+        };
+    }
+
+    namespace models
     {
-        using movie_ = tables::movie<library_>; static constexpr movie_ movie {};
-        using user_ = tables::user<library_>; static constexpr user_ user {};
-        using music_ = tables::music<library_>; static constexpr music_ music {};
+        struct library_
+        {
+            using movie_ = tables::movie<library_>; static constexpr movie_ movie {};
+            using user_ = tables::user<library_>; static constexpr user_ user {};
+            using music_ = tables::music<library_>; static constexpr music_ music {};
 
-        using Detail_ = ndb::model_detail
-        <
-        ndb::entity< user_, music_, movie_>
-        >;
-    };
+            using Detail_ = ndb::model_detail
+            <
+            ndb::entity< user_, music_, movie_>
+            >;
+        };
 
-    static constexpr const models::library_ library = {};
-};
+        static constexpr const models::library_ library = {};
+    }
 
-namespace databases
-{
-    struct project
+    namespace databases
     {
-        static constexpr auto name = "test";
+        struct project
+        {
+            static constexpr auto name = "test";
 
-        static constexpr struct alpha_ : ndb::database<project, models::library_, ndb::mongo>{} alpha{};
-        static constexpr struct zeta_ : ndb::database<project, models::library_, ndb::sqlite>{} zeta{};
+            static constexpr struct alpha_ : ndb::database<project, models::library_, ndb::mongo>{} alpha{};
+            static constexpr struct zeta_ : ndb::database<project, models::library_, ndb::sqlite>{} zeta{};
 
-        using Detail_ = ndb::database_detail<ndb::entity<alpha_, zeta_>>;
+            using Detail_ = ndb::database_detail<ndb::entity<alpha_, zeta_>>;
+        };
+    } // databases
+
+
+
+    template<class Engine>
+    struct result_encoder<objects::movie, Engine>
+    {
+        static auto decode(ndb::line<Engine>& line)
+        {
+            objects::movie m;
+            m.id = line[ndb::tables::movie<models::library_>::id];
+            m.name = line[ndb::tables::movie<models::library_>::name];
+
+            return m;
+        }
     };
-} // databases
+} // ndb
 
 namespace dbs
 {
-    using alpha = databases::project::alpha_;
-    using zeta = databases::project::zeta_;
+    using alpha = ndb::databases::project::alpha_;
+    using zeta = ndb::databases::project::zeta_;
 }
 
 
