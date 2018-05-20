@@ -52,7 +52,8 @@ ads@NK:/home/ads/ndb/build$ make
 ```cmake 
 include_directories(${PATH_TO_NDB}/ndb/include)
 include_directories(${PATH_TO_NDB}/ndb/third_party/sqlite/include)
-include_directories(${PATH_TO_NDB}/third-party/ndb/third_party/boost)
+include_directories(${PATH_TO_NDB}/ndb/third_party/boost)
+include_directories(${PATH_TO_NDB}/ndb/third_party/mpl/src)
 
 add_subdirectory(${PATH_TO_NDB}/ndb ${THIRD_PARTY_ROOT}/ndb/cmake-build)
 target_link_libraries(my_target INTERFACE lib_ndb)
