@@ -50,16 +50,10 @@ ads@NK:/home/ads/ndb/build$ make
 ## Integration
 ### CMake
 ```cmake 
-include_directories(${PATH_TO_NDB}/ndb/include)
-include_directories(${PATH_TO_NDB}/ndb/third_party/sqlite/include)
-include_directories(${PATH_TO_NDB}/ndb/third_party/boost)
-include_directories(${PATH_TO_NDB}/ndb/third_party/mpl/src)
-
 add_subdirectory(${PATH_TO_NDB}/ndb ${THIRD_PARTY_ROOT}/ndb/cmake-build)
-target_link_libraries(my_target INTERFACE lib_ndb)
+target_link_libraries(my_target lib_ndb)
 ```
-> Remember, it's importent to enable options like like engines **before** adding the subdirectory. Indeed, you need to include libraries of the engine you use.
-> Furthermore, if you have an other `target_link_libraries` in your CMakeLists.txt you **must** add a keyword like `LINK_PUBLIC`, `LINK_PRIVATE` or `INTERFACE`. If you don't, you will not be able to load your project. [See the officiel documentation](https://cmake.org/cmake/help/v3.0/policy/CMP0023.html)
+> Remember, it's importent to enable options like engines **before** adding the subdirectory. Indeed, you need to include libraries of the engine you use.
 
 ### Manual
 Add paths to ndb headers and your customs engine builds
