@@ -4,6 +4,7 @@
 #include <sqlite3.h>
 
 #include <ndb/engine/basic.hpp>
+#include <ndb/engine/sqlite/connection.hpp>
 #include <ndb/error.hpp>
 #include <ndb/value.hpp>
 #include <ndb/result.hpp>
@@ -14,44 +15,13 @@
 
 namespace ndb
 {
-    namespace fs = std::experimental::filesystem;
-
-    class sqlite_connection
-    {
-    public:
-        sqlite_connection(const std::string& db_name) :
-            database_{ nullptr }
-        {
-            if (!fs::exists(setup<sqlite>::path)) fs::create_directory(setup<sqlite>::path);
-
-            std::string path = setup<sqlite>::path + db_name + setup<sqlite>::ext;
-            auto status = sqlite3_open(path.c_str(), &database_);
-
-            if (status != SQLITE_OK) ndb_error("database connection failed");
-        }
-
-        ~sqlite_connection()
-        {
-            sqlite3_close(database_);
-        }
-
-        sqlite3* database()
-        {
-            return database_;
-        }
-
-    private:
-        sqlite3* database_;
-    };
-
-
     class sqlite : public basic_engine<sqlite>
     {
     public:
         inline sqlite();
 
         template<class Database>
-        inline void connect();
+        inline void connect(const std::string& path = "");
 
         template<class Database>
         inline sqlite_connection& connection() const;

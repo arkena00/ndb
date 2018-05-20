@@ -10,11 +10,11 @@ namespace ndb
     sqlite::sqlite() {}
 
     template<class Database>
-    void sqlite::connect()
+    void sqlite::connect(const std::string& path)
     {
         std::string db_name = Database::group::name;
         db_name += "_D" + std::to_string(ndb::database_id<Database>);
-        auto conn = std::make_unique<sqlite_connection>(db_name);
+        auto conn = std::make_unique<sqlite_connection>(db_name, path);
         connection_list_.emplace(ndb::database_id<Database>, std::move(conn));
 
         // database connected, add foreign keys and create model

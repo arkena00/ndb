@@ -13,16 +13,16 @@ namespace ndb
         }
 
         template<class Database>
-        static void connect()
+        static void connect(const std::string& path = "")
         {
-            get().template connect<Database>();
+            get().template connect<Database>(path);
         }
     };
 
     template<class Database, class Engine = typename Database::engine>
-    void connect()
+    void connect(const std::string& path = "")
     {
-        ndb::engine<Engine>::template connect<Database>();
+        ndb::engine<Engine>::template connect<Database>(path);
     }
 } // ndb
 
