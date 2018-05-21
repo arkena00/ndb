@@ -24,6 +24,9 @@ namespace ndb
         inline void connect(const std::string& path = "");
 
         template<class Database>
+        inline void config(ndb::connection_flag);
+
+        template<class Database>
         inline sqlite_connection& connection() const;
 
         template<class T>
@@ -53,7 +56,8 @@ namespace ndb
                                           || std::is_same_v<std::decay_t<T>, std::vector<char>>;
 
     private:
-        std::unordered_map<int, std::unique_ptr<sqlite_connection>> connection_list_;
+        std::unordered_map<int, std::unique_ptr<sqlite_connection>> connections_;
+        std::unordered_map<int, ndb::connection_flag> connections_flag_;
     };
 } // ndb
 

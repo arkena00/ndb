@@ -12,10 +12,15 @@ namespace ndb
     template<class Database>
     void sqlite::connect(const std::string& path)
     {
+        int db_id = ndb::database_id<Database>;
+        auto conn_flag = ndb::connection_flag::default_;
+        if (connections_flag_.count(db_id)) conn_flag = connections_flag_.at(db_id);
+
         std::string db_name = Database::group::name;
-        db_name += "_D" + std::to_string(ndb::database_id<Database>);
-        auto conn = std::make_unique<sqlite_connection>(db_name, path);
-        connection_list_.emplace(ndb::database_id<Database>, std::move(conn));
+        db_name += "_D" + std::to_string(db_id);
+        auto conn = std::make_unique<sqlite_connection>(db_name, path, conn_flag);
+        conn->connect();
+        connections_.emplace(db_id, std::move(conn));
 
         // database connected, add foreign keys and create model
         exec<Database>("PRAGMA foreign_keys = ON;");
@@ -23,10 +28,16 @@ namespace ndb
     }
 
     template<class Database>
+    void sqlite::config(ndb::connection_flag flag)
+    {
+        connections_flag_.emplace(ndb::database_id<Database>, flag);
+    }
+
+    template<class Database>
     sqlite_connection& sqlite::connection() const
     {
-        if (!connection_list_.count(ndb::database_id<Database>)) ndb_error("database connection not found : D" + std::to_string(ndb::database_id<Database>));
-        return *connection_list_.at(ndb::database_id<Database>).get();
+        if (!connections_.count(ndb::database_id<Database>)) ndb_error("database connection not found : D" + std::to_string(ndb::database_id<Database>));
+        return *connections_.at(ndb::database_id<Database>).get();
     }
 
     template<class T>
