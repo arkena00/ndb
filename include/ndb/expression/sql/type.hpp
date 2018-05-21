@@ -25,13 +25,17 @@ namespace ndb
             }
 
             // get << not source
-            if constexpr (!expr_has_clause<L, expr_clause_code::source> && !expr_has_clause<R, expr_clause_code::source>)
+            if constexpr ( !((int)Clause & (int)expr_clause_code::set) ) // do not deduce for SET
             {
-                ne.deduced_source = true;
-                ne.push_back(keyword_code<expr_keyword_code::source, expr_category_code::sql>::value);
-                ne.push_back("T");
-                ne.push_back(deduce_source_id<L>() + 48);
+                if constexpr (!expr_has_clause<L, expr_clause_code::source> && !expr_has_clause<R, expr_clause_code::source>)
+                {
+                    ne.deduced_source = true;
+                    ne.push_back(keyword_code<expr_keyword_code::source, expr_category_code::sql>::value);
+                    ne.push_back("T");
+                    ne.push_back(deduce_source_id<L>() + 48);
+                }
             }
+
 
             // not condition << condition
             if constexpr (!(expr_has_clause<L, expr_clause_code::condition>) && expr_has_clause<R, expr_clause_code::condition>)
