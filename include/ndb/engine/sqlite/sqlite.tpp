@@ -3,7 +3,7 @@
 #include <ndb/engine/sqlite/type.hpp>
 #include <ndb/expression/deduce.hpp>
 #include <ndb/option.hpp>
-
+#include <iostream> // query_debug
 
 namespace ndb
 {
@@ -62,6 +62,9 @@ namespace ndb
     auto sqlite::exec(const Expr& expr) const
     {
         constexpr auto str_query = ndb::sql_expression<Expr>{};
+        #ifdef NDB_QUERY_DEBUG
+            std::cout << str_query.c_str() << std::endl;
+        #endif
 
         using Result_type = typename
         std::conditional_t<
