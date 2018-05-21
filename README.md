@@ -51,8 +51,9 @@ ads@NK:/home/ads/ndb/build$ make
 ### CMake
 ```cmake 
 add_subdirectory(${PATH_TO_NDB}/ndb ${THIRD_PARTY_ROOT}/ndb/cmake-build)
-target_link_libraries(my_target INTERFACE lib_ndb)
+target_link_libraries(my_target lib_ndb)
 ```
+> Remember, it's importent to enable options like engines **before** adding the subdirectory. Indeed, you need to include libraries of the engine you use.
 
 ### Manual
 Add paths to ndb headers and your customs engine builds
@@ -80,6 +81,7 @@ ndb_project(my_project,
 ```cpp
 ndb::query<dbs::zeta>() << ( movie.id, movie.image ); // get
 ndb::query<dbs::zeta>() << ( movie.id == a && movie.name == b ); // get by condition
+ndb::query<dbs::zeta>() >> (( movie.name = "updated") << ( movie.id == 3 )); // update by condition
 ndb::query<dbs::zeta>() + ( movie.id = 3, movie.name = "test" ); // add
 ndb::query<dbs::zeta>() - ( movie.id == 3 ); // del
 ```
