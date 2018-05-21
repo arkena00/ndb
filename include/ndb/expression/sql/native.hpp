@@ -102,7 +102,7 @@ namespace ndb
                 }
             }
 
-            Expr::static_make<root_clause>(ne);
+            Expr::template static_make<root_clause>(ne);
 
             // POST-PROCESS incomplete expressions
 
