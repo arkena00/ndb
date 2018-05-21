@@ -81,7 +81,7 @@ ndb_project(my_project,
 ```cpp
 ndb::query<dbs::zeta>() << ( movie.id, movie.image ); // get
 ndb::query<dbs::zeta>() << ( movie.id == a && movie.name == b ); // get by condition
-ndb::query<dbs::zeta>() >> ( movie.name = "updated") << ( movie.id == 3 ); // update by condition
+ndb::query<dbs::zeta>() >> (( movie.name = "updated") << ( movie.id == 3 )); // update by condition
 ndb::query<dbs::zeta>() + ( movie.id = 3, movie.name = "test" ); // add
 ndb::query<dbs::zeta>() - ( movie.id == 3 ); // del
 ```
