@@ -71,7 +71,7 @@ namespace ndb
 namespace std
 {
     template<class T, class Engine>
-    struct tuple_size<::ndb::result<Engine, T>> : std::integral_constant<std::size_t, 1> {};
+    struct tuple_size< ::ndb::result<Engine, T>> : std::integral_constant<std::size_t, 1> {};
 
     template<class T, class Engine>
     struct tuple_element<0, ::ndb::result<Engine, T>> { using type = T; };
