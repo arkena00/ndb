@@ -34,7 +34,7 @@ namespace ndb
             ndb::native_expression<Native_expression::expr_category, Expression_type>::template make<Clause>(*this, ne);
         }
 
-        template<int Pass = 0, class Native_expression>
+        template<expr_clause_code SM_Clause = Clause, int Pass = 0,class Native_expression>
         static constexpr void static_make(Native_expression& ne)
         {
             ndb::native_expression<Native_expression::expr_category, Expression_type>::template static_make<T, Clause>(ne);
@@ -75,7 +75,7 @@ namespace ndb
             native_expression<Native_expression::expr_category, expr_type_code::root>::template make<Clause>(expr_, ne);
         }
 
-        template<int Pass = 0, class Native_expression>
+        template<expr_clause_code SM_Clause = Clause, int Pass = 0,class Native_expression>
         static constexpr void static_make(Native_expression& ne)
         {
             native_expression<Native_expression::expr_category, expr_type_code::root>::template static_make<Expr, Clause>(ne);

@@ -68,9 +68,9 @@ namespace ndb
     }
 
     template<class L, expr_type_code T, class R, expr_clause_code Clause>
-    template<int Pass, class Native_expression>
+    template<expr_clause_code SM_Clause, int Pass, class Native_expression>
     constexpr void expression<L, T, R, Clause>::static_make(Native_expression& ne)
     {
-        expression_type<T, Native_expression::expr_category>::template static_make<L, R, Pass>(ne);
+        expression_type<T, Native_expression::expr_category>::template static_make<L, R, SM_Clause, Pass>(ne);
     }
 } // ndb

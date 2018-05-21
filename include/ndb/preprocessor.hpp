@@ -24,7 +24,7 @@ constexpr const auto operator=(const R& rhs) const \
     using L = std::decay_t<decltype(*this)>; \
     constexpr auto lhs = ::ndb::expression<L, ::ndb::expr_type_code::field, void> {}; \
     auto expr_value = ::ndb::expression<R, ::ndb::expr_type_code::value, void> { rhs }; \
-    return ::ndb::expression<decltype(lhs), ::ndb::expr_type_code::op_assign, decltype(expr_value), ::ndb::expr_clause_code::set> { lhs, expr_value }; \
+    return ::ndb::expression<decltype(lhs), ::ndb::expr_type_code::op_assign, decltype(expr_value)> { lhs, expr_value }; \
 }
 
 ////////////////////////////////////////////////////////////////////////////////

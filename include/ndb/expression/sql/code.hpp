@@ -11,7 +11,7 @@ namespace ndb
     template<> struct expr_code<expr_type_code::op_and, expr_category_code::sql> { constexpr static auto value = " AND "; };
     template<> struct expr_code<expr_type_code::op_or, expr_category_code::sql> { constexpr static auto value = " OR "; };
     template<> struct expr_code<expr_type_code::op_equal, expr_category_code::sql> { constexpr static auto value = " = "; };
-    template<> struct expr_code<expr_type_code::op_assign, expr_category_code::sql> { constexpr static auto value = ""; };
+    template<> struct expr_code<expr_type_code::op_assign, expr_category_code::sql> { constexpr static auto value = " = "; };
     template<> struct expr_code<expr_type_code::op_list, expr_category_code::sql> { constexpr static auto value = ", "; };
     template<> struct expr_code<expr_type_code::op_function, expr_category_code::sql> { constexpr static auto value = ""; };
     template<> struct expr_code<expr_type_code::keyword, expr_category_code::sql> { constexpr static auto value = ""; };

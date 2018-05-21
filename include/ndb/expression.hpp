@@ -30,7 +30,7 @@ namespace ndb
         template<class F>
         inline static constexpr auto static_eval(F&& f);
 
-        template<int Pass = 0, class Native_expression>
+        template<expr_clause_code SM_Clause = Clause, int Pass = 0, class Native_expression>
         inline static constexpr void static_make(Native_expression& ne);
 
         inline static constexpr expr_clause_code clause();

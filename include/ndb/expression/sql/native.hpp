@@ -74,6 +74,20 @@ namespace ndb
                 ne.push_back('(');
             }
 
+            // set
+            if constexpr (Clause == expr_clause_code::set)
+            {
+                // (no keyword)
+                if constexpr (!expr_is_keyword_code<Expr, expr_keyword_code::set>)
+                {
+                    ne.push_back(keyword_code<expr_keyword_code::set, expr_category_code::sql>::value);
+                }
+
+                ne.push_back("T");
+                ne.push_back(deduce_source_id<Expr>() + 48);
+                ne.push_back(" SET ");
+            }
+
             // del
             if constexpr (root_clause == expr_clause_code::del)
             {
@@ -88,7 +102,7 @@ namespace ndb
                 }
             }
 
-            Expr::static_make(ne);
+            Expr::static_make<root_clause>(ne);
 
             // POST-PROCESS incomplete expressions
 
@@ -110,7 +124,7 @@ namespace ndb
                 ne.push_back(')');
                 ne.push_back(keyword_code<expr_keyword_code::values, expr_category_code::sql>::value);
                 ne.push_back('(');
-                Expr::template static_make<1>(ne);
+                Expr::template static_make<expr_clause_code::add, 1>(ne);
                 ne.push_back(')');
             }
 

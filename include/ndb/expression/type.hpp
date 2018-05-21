@@ -9,12 +9,12 @@ namespace ndb
     template<expr_type_code T, expr_category_code Ec>
     struct expression_type
     {
-        template<class L, class R, int Pass, class Native_expression>
+        template<class L, class R, expr_clause_code Clause, int Pass, class Native_expression>
         static constexpr void static_make(Native_expression& ne)
         {
-            L::template static_make<Pass>(ne);
+            L::template static_make<Clause, Pass>(ne);
             ne.push_back(expr_code<T, Ec>::value);
-            R::template static_make<Pass>(ne);
+            R::template static_make<Clause, Pass>(ne);
         }
     };
 } // ndb

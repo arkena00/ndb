@@ -12,10 +12,10 @@ namespace ndb
     template<>
     struct expression_type<expr_type_code::op_shift_left, expr_category_code::sql>
     {
-        template<class L, class R, int Pass, class Native_expression>
+        template<class L, class R, expr_clause_code Clause, int Pass, class Native_expression>
         static constexpr void static_make(Native_expression& ne)
         {
-            L::template static_make<Pass>(ne);
+            L::template static_make<Clause, Pass>(ne);
 
             // get << source (no keyword)
             if constexpr (expr_has_clause<R, expr_clause_code::source>
@@ -39,7 +39,7 @@ namespace ndb
                 ne.push_back(keyword_code<expr_keyword_code::condition, expr_category_code::sql>::value);
             }
 
-            R::template static_make<Pass>(ne);
+            R::template static_make<Clause, Pass>(ne);
         }
     };
 
@@ -47,14 +47,23 @@ namespace ndb
     template<>
     struct expression_type<expr_type_code::op_assign, expr_category_code::sql>
     {
-        template<class L, class R, int Pass, class Native_expression>
+        template<class L, class R, expr_clause_code Clause, int Pass, class Native_expression>
         static constexpr void static_make(Native_expression& ne)
         {
-            if constexpr (Pass == 0)
+            if constexpr ((int)Clause & (int)expr_clause_code::set)
             {
-                L::template static_make<Pass>(ne);
+                L::template static_make<Clause, Pass>(ne);
+                ne.push_back(expr_code<expr_type_code::op_assign, expr_category_code::sql>::value);
+                R::template static_make<Clause, Pass>(ne);
             }
-            else R::template static_make<Pass>(ne);
+            else
+            {
+                if constexpr (Pass == 0)
+                {
+                    L::template static_make<Clause, Pass>(ne);
+                }
+                else R::template static_make<Clause, Pass>(ne);
+            }
         }
     };
 
@@ -62,12 +71,12 @@ namespace ndb
     template<>
     struct expression_type<expr_type_code::op_function, expr_category_code::sql>
     {
-        template<class L, class R, int Pass, class Native_expression>
+        template<class L, class R, expr_clause_code Clause, int Pass, class Native_expression>
         static constexpr void static_make(Native_expression& ne)
         {
-            L::template static_make<Pass>(ne);
+            L::template static_make<Clause, Pass>(ne);
             ne.push_back('(');
-            R::template static_make<Pass>(ne);
+            R::template static_make<Clause, Pass>(ne);
             ne.push_back(')');
         }
     };

@@ -67,12 +67,12 @@ namespace ndb
 
     constexpr expr_clause_code operator|(expr_clause_code lhs, expr_clause_code rhs)
     {
-        return static_cast<expr_clause_code>(static_cast<char>(lhs) | static_cast<char>(rhs));
+        return static_cast<expr_clause_code>(static_cast<int>(lhs) | static_cast<int>(rhs));
     }
 
     constexpr expr_clause_code operator&(expr_clause_code lhs, expr_clause_code rhs)
     {
-        return static_cast<expr_clause_code>(static_cast<char>(lhs) & static_cast<char>(rhs));
+        return static_cast<expr_clause_code>(static_cast<int>(lhs) & static_cast<int>(rhs));
     }
 
     template<expr_type_code, expr_category_code>
