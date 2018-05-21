@@ -15,6 +15,7 @@
 #include <ndb/table.hpp>
 #include <ndb/field.hpp>
 #include <ndb/entity.hpp>
+#include <ndb/result.hpp>
 
 // operator= for fields
 #define ndb_internal_field_op \
@@ -31,9 +32,9 @@ constexpr const auto operator=(const R& rhs) const \
 ////////////////////////           GENERATION           ////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 // declare namespaces
-namespace ndb::tables{}
-namespace ndb::models{}
 namespace ndb::databases{}
+namespace ndb::models{}
+namespace ndb::tables{}
 namespace ndb::objects{}
 
 // common
