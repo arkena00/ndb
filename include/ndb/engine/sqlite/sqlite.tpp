@@ -126,20 +126,16 @@ namespace ndb
                     int field_type = sqlite3_column_type(statement, field_it);
                     sqlite3_value* field_value = sqlite3_column_value(statement, field_it);
 
-                    if (field_type == ndb::engine_type_id<sqlite, int_>::value)
+                    if (field_type == ndb::type_id<sqlite, int>::value)
                         line.add(field_id, sqlite3_value_int(field_value));
 
-                    if (field_type == ndb::engine_type_id<sqlite, double_>::value)
+                    if (field_type == ndb::type_id<sqlite, double>::value)
                         line.add(field_id, sqlite3_value_double(field_value));
 
-                    if (field_type == ndb::engine_type_id<sqlite, ndb::string_>::value)
-                    {
-                        using cpptype = typename ndb::cpp_type<ndb::string_, sqlite>::type;
-                        line.add(field_id,
-                                 cpptype(reinterpret_cast<const char *>(sqlite3_value_text(field_value))));
-                    }
+                    if (field_type == ndb::type_id<sqlite, std::string>::value)
+                        line.add(field_id, std::string(reinterpret_cast<const char*>(sqlite3_value_text(field_value))));
 
-                    if (field_type == ndb::engine_type_id<sqlite, ndb::byte_array_>::value)
+                    if (field_type == ndb::type_id<sqlite, std::vector<char>>::value)
                     {
                         auto data = reinterpret_cast<const char*>(sqlite3_value_blob(field_value));
                         line.add(field_id, std::vector<char>(data, data + 100));
@@ -187,16 +183,15 @@ namespace ndb
                 bool need_size = false;
 
                 // field type
-                using field_value_type = typename std::decay_t<decltype(field)>::value_type;
-                using field_ndb_type = ndb_type_t<field_value_type, sqlite>;
-                if constexpr (std::is_same_v<int_, field_ndb_type>) output += " integer ";
-                if constexpr (std::is_same_v<double_, field_ndb_type>) output += " float ";
-                if constexpr (std::is_same_v<string_, field_ndb_type>)
+                using native_value_type = typename native_type<sqlite, typename std::decay_t<decltype(field)>::value_type>::type;
+                if constexpr (std::is_same_v<int, native_value_type>) output += " integer ";
+                if constexpr (std::is_same_v<double, native_value_type>) output += " float ";
+                if constexpr (std::is_same_v<std::string, native_value_type>)
                 {
                     output += " text ";
                     need_size = true;
                 }
-                if constexpr (std::is_same_v<byte_array_, field_ndb_type>) output += " blob ";
+                if constexpr (std::is_same_v<std::vector<char>, native_value_type>) output += " blob ";
 
                 // field size
                 if (field.detail_.size > 0 && need_size) output += "(" + std::to_string(field.detail_.size) + ")";
