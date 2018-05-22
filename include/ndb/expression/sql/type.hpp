@@ -29,10 +29,13 @@ namespace ndb
             {
                 if constexpr (!expr_has_clause<L, expr_clause_code::source> && !expr_has_clause<R, expr_clause_code::source>)
                 {
-                    ne.deduced_source = true;
-                    ne.push_back(keyword_code<expr_keyword_code::source, expr_category_code::sql>::value);
-                    ne.push_back("T");
-                    ne.push_back(deduce_source_id<L>() + 48);
+                    if (!ne.deduced_source)
+                    {
+                        ne.deduced_source = true;
+                        ne.push_back(keyword_code<expr_keyword_code::source, expr_category_code::sql>::value);
+                        ne.push_back("T");
+                        ne.push_back(deduce_source_id<L>() + 48);
+                    }
                 }
             }
 

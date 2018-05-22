@@ -46,6 +46,7 @@ namespace ndb
                 if constexpr (expr_clause == expr_clause_code::source)
                 {
                     ne.push_back("* FROM ");
+                    ne.deduced_source = true;
                 }
 
                 // get << condition
@@ -55,6 +56,7 @@ namespace ndb
                     ne.push_back(keyword_code<expr_keyword_code::source, expr_category_code::sql>::value);
                     ne.push_back("T");
                     ne.push_back(deduce_source_id<Expr>() + 48);
+                    ne.deduced_source = true;
 
                     ne.push_back(keyword_code<expr_keyword_code::condition, expr_category_code::sql>::value);
                 }
