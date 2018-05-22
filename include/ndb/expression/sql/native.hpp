@@ -50,7 +50,9 @@ namespace ndb
                 }
 
                 // get << condition
-                if constexpr (expr_clause == expr_clause_code::condition)
+                if constexpr (expr_has_clause_value<expr_clause, expr_clause_code::condition>
+                    && !expr_has_clause_value<expr_clause, expr_clause_code::get >
+                    && !expr_has_clause_value<expr_clause, expr_clause_code::source>)
                 {
                     ne.push_back("*");
                     ne.push_back(keyword_code<expr_keyword_code::source, expr_category_code::sql>::value);
