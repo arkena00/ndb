@@ -19,17 +19,23 @@ namespace ndb
     struct ndb_type<CPP_TYPE, Engine> { using type = NDB_TYPE; };
 
     class sqlite;
+    struct undefined_type;
 
     // ndb types are proxy types
     namespace types
     {
-        struct int_;
-        struct float_;
-        struct double_;
-        struct string_;
-        struct byte_array_;
+        struct int_{};
+        struct float_{};
+        struct double_{};
+        struct string_{};
+        struct byte_array_{};
     } // types
     using namespace ::ndb::types;
+
+    template<class...>
+    struct ndb_types;
+
+    using ndb_types_t = ndb_types<int_, float_, double_, string_, byte_array_>;
 
     // associate engine type id to ndb type
     template<> struct engine_ndb_type<sqlite, SQLITE_INTEGER> { using type = int_; };
@@ -53,6 +59,13 @@ namespace ndb
     // custom type (non-native)
     template<class T, class U>
     struct ndb_type<std::chrono::duration<T, U>, sqlite> { using type = double_; };
+
+
+
+
+
+
+
 
 
 /*

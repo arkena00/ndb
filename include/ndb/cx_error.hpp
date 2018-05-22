@@ -9,6 +9,9 @@ namespace ndb
 {
     struct cx_err;
 
+    template<class T>
+    struct cx_err_type_map_not_found;
+
     template<class T, template<class...> class Container>
     struct cx_err_type_not_found;
 

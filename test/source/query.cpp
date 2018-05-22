@@ -4,6 +4,11 @@
 #include <ndb/query.hpp>
 #include <ndb/function.hpp>
 
+#include "../database.hpp"
+
+// aliases
+static constexpr const auto movie = ndb::models::library.movie;
+
 template<class Engine, class T>
 testing::AssertionResult result_line_field_eq(ndb::result<Engine> result, int index, const T& field)
 {

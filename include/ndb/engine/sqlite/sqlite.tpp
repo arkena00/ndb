@@ -101,11 +101,11 @@ namespace ndb
                 if constexpr (ndb::expr_is_value<expr_type>)
                 {
                     using value_type = std::decay_t<decltype(e.value())>;
-                    using native_type = typename ndb::native_type<sqlite, value_type>::type;
+                    using native_type = ndb::native_type<value_type, sqlite>;
 
                     // bind native type value or encode custom type value
-                    if constexpr (is_native<value_type>) bind(statement, bind_index++, e.value());
-                    else bind(statement, bind_index++, type<sqlite>::encode(e.value())); //check encoders if you have an error here
+                    //if constexpr (is_native<value_type>) bind(statement, bind_index++, e.value());
+                    //else bind(statement, bind_index++, ndb::type<sqlite>::encode(e.value())); //check encoders if you have an error here
                 }
             });
 
@@ -123,38 +123,44 @@ namespace ndb
                     int field_id = -1;
                     if (field_name[0] == 'F') field_id = std::stoi(std::string(field_name + 1));
 
-                    int field_type = sqlite3_column_type(statement, field_it);
+                    int field_type_id = sqlite3_column_type(statement, field_it);
                     sqlite3_value* field_value = sqlite3_column_value(statement, field_it);
 
-                    if (field_type == ndb::engine_type_id<sqlite, int_>::value)
-                        line.add(field_id, sqlite3_value_int(field_value));
 
-                    if (field_type == ndb::engine_type_id<sqlite, double_>::value)
-                        line.add(field_id, sqlite3_value_double(field_value));
-
-                    if (field_type == ndb::engine_type_id<sqlite, ndb::string_>::value)
+                    switch(field_type_id)
                     {
-                        using cpptype = typename ndb::cpp_type<ndb::string_, sqlite>::type;
-                        line.add(field_id,
-                                 cpptype(reinterpret_cast<const char *>(sqlite3_value_text(field_value))));
-                    }
+                        case ndb::engine_type_id<sqlite, int_>::value:
+                            line.add(field_id, sqlite3_value_int(field_value)); break;
 
-                    if (field_type == ndb::engine_type_id<sqlite, ndb::byte_array_>::value)
-                    {
-                        auto data = reinterpret_cast<const char*>(sqlite3_value_blob(field_value));
-                        line.add(field_id, std::vector<char>(data, data + 100));
-                    }
-                    //TODO null value
-                }
+                        case ndb::engine_type_id<sqlite, double_>::value:
+                            line.add(field_id, sqlite3_value_double(field_value)); break;
+
+                        case ndb::engine_type_id<sqlite, string_>::value:
+                            using cpptype = typename ndb::cpp_type<ndb::string_, sqlite>::type;
+                            line.add(field_id,
+                                     cpptype( reinterpret_cast<const char*>(sqlite3_value_text(field_value))) );
+                            break;
+
+                        case ndb::engine_type_id<sqlite, byte_array_>::value:
+                            //data = reinterpret_cast<const char*>(sqlite3_value_blob(field_value));
+                            //line.add(field_id, std::vector<char>(data, data + 100));
+                            break;
+
+                            //TODO null value
+
+                        default:
+                            ndb_error("unknown engine type");
+                    } // switch
+                } // for
 
                 auto result_entity = ndb::result_encoder<Result_type, sqlite>::decode(std::move(line));
                 result.add(std::move(result_entity));
 
                 step = sqlite3_step(statement);
-            }
+            } // while
             sqlite3_finalize(statement);
 
-        }
+        } // if
         else ndb_error("exec error : " + str_query.to_string());
 
         std::string error = sqlite3_errmsg(connection<Database>().database());

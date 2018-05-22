@@ -38,7 +38,7 @@ namespace ndb
             if (!value_index_.count(ndb::field_id<Field>)) ndb_error("Field does not exist in the result, check the select clause");
 
             size_t index = value_index_.at(ndb::field_id<Field>);
-            using native_type = typename native_type<Engine, typename Field::value_type>::type;
+            using native_type = ndb::native_type<typename Field::value_type, Engine>;
             using value_type = typename Field::value_type;
 
             constexpr auto b = Engine::template is_native<value_type>; // msvc crash, separate in 2 lines
