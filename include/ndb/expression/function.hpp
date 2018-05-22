@@ -57,6 +57,30 @@ namespace ndb
         return ndb::expression<decltype(keyword), expr_type_code::keyword, decltype(expr)> { keyword, expr };
     }
 
+    template<class... Ts>
+    constexpr auto sort(const Ts&... t)
+    {
+        auto keyword = ndb::expr_make_keyword<expr_keyword_code::sort>();
+        auto expr = ((ndb::expr_make(t), ...)); // msvc fix : use (( )) to compile
+        return ndb::expression<decltype(keyword), expr_type_code::keyword, decltype(expr)> { keyword, expr };
+    }
+
+    template<class T>
+    constexpr auto asc(const T& t)
+    {
+        auto keyword = ndb::expr_make_keyword<expr_keyword_code::asc>();
+        auto expr = ndb::expression<T, ndb::expr_type_code::field, void, ndb::expr_clause_code::sort> {};
+        return ndb::expression<decltype(expr), expr_type_code::null, decltype(keyword)> { expr, keyword };
+    }
+
+    template<class T>
+    constexpr auto desc(const T& t)
+    {
+        auto keyword = ndb::expr_make_keyword<expr_keyword_code::desc>();
+        auto expr = ndb::expression<T, ndb::expr_type_code::field, void, ndb::expr_clause_code::sort> {};
+        return ndb::expression<decltype(expr), expr_type_code::null, decltype(keyword)> { expr, keyword };
+    }
+
     // function
     template<class T>
     constexpr auto count(const T& t)

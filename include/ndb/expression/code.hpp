@@ -31,6 +31,7 @@ namespace ndb
         source,
         condition,
         limit,
+        sort, asc, desc,
         group,
         values,
         // function
@@ -55,8 +56,9 @@ namespace ndb
         source     = 16,
         condition  = 32,
         join       = 64,
-        value_list = 128,
-        command    = 256
+        sort       = 128,
+        value_list = 256,
+        command    = 512
     };
 
     enum class expr_category_code
