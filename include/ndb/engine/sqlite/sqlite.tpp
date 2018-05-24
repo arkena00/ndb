@@ -81,14 +81,14 @@ namespace ndb
         std::conditional_t<
             ndb::has_option_v<query_option::object, Query_option>,
             typename ndb::deduce<Expr>::main_table::Detail_::object_type,
-            ndb::line<sqlite>
+            ndb::line<Database>
         >;
 
 
         sqlite3_stmt* statement;
         int step = SQLITE_DONE;
 
-        ndb::result<sqlite, Result_type> result;
+        ndb::result<Database, Result_type> result;
 
         if(sqlite3_prepare_v2(connection<Database>().database(), str_query.c_str(), -1, &statement, nullptr) == SQLITE_OK)
         {
@@ -101,11 +101,11 @@ namespace ndb
                 if constexpr (ndb::expr_is_value<expr_type>)
                 {
                     using value_type = std::decay_t<decltype(e.value())>;
-                    using native_type = ndb::native_type<value_type, sqlite>;
+                    using native_type = ndb::native_type<value_type, Database>;
 
                     // bind native type value or encode custom type value
-                    //if constexpr (is_native<value_type>) bind(statement, bind_index++, e.value());
-                    //else bind(statement, bind_index++, ndb::type<sqlite>::encode(e.value())); //check encoders if you have an error here
+                    if constexpr (is_native<value_type>) bind(statement, bind_index++, e.value());
+                    else bind(statement, bind_index++, ndb::custom_type<value_type, Database>::encode(e.value())); //check encoders if you have an error here
                 }
             });
 
@@ -114,7 +114,7 @@ namespace ndb
             // select
             while (step == SQLITE_ROW)
             {
-                ndb::line<sqlite> line;
+                ndb::line<Database> line;
                 int field_count = sqlite3_column_count(statement);
 
                 for(int field_it = 0; field_it < field_count; field_it++)
@@ -136,7 +136,7 @@ namespace ndb
                             line.add(field_id, sqlite3_value_double(field_value)); break;
 
                         case ndb::engine_type_id<sqlite, string_>::value:
-                            using cpptype = typename ndb::cpp_type<ndb::string_, sqlite>::type;
+                            using cpptype = typename ndb::cpp_type<ndb::string_, Database>::type;
                             line.add(field_id,
                                      cpptype( reinterpret_cast<const char*>(sqlite3_value_text(field_value))) );
                             break;
@@ -153,8 +153,11 @@ namespace ndb
                     } // switch
                 } // for
 
-                auto result_entity = ndb::result_encoder<Result_type, sqlite>::decode(std::move(line));
-                result.add(std::move(result_entity));
+                if (field_count > 0)
+                {
+                    auto result_entity = ndb::result_encoder<Result_type, Database>::decode(std::move(line));
+                    result.add(std::move(result_entity));
+                }
 
                 step = sqlite3_step(statement);
             } // while
@@ -194,7 +197,7 @@ namespace ndb
 
                 // field type
                 using field_value_type = typename std::decay_t<decltype(field)>::value_type;
-                using field_ndb_type = ndb_type_t<field_value_type, sqlite>;
+                using field_ndb_type = ndb_type_t<field_value_type, Database>;
                 if constexpr (std::is_same_v<int_, field_ndb_type>) output += " integer ";
                 if constexpr (std::is_same_v<double_, field_ndb_type>) output += " float ";
                 if constexpr (std::is_same_v<string_, field_ndb_type>)

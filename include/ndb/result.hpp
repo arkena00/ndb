@@ -10,10 +10,10 @@ namespace ndb
     struct result_encoder;
 
     // nop encoder
-    template<class Engine>
-    struct result_encoder<ndb::line<Engine>, Engine>
+    template<class Database>
+    struct result_encoder<ndb::line<Database>, Database>
     {
-        static auto decode(const ndb::line<Engine>& line)
+        static auto& decode(const ndb::line<Database>& line)
         {
             return line;
         }

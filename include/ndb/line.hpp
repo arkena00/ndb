@@ -10,7 +10,7 @@
 
 namespace ndb
 {
-    template<class Engine>
+    template<class Database>
     class line
     {
     public:
@@ -38,7 +38,8 @@ namespace ndb
             if (!value_index_.count(ndb::field_id<Field>)) ndb_error("Field does not exist in the result, check the select clause");
 
             size_t index = value_index_.at(ndb::field_id<Field>);
-            using native_type = ndb::native_type<typename Field::value_type, Engine>;
+            using Engine = typename Database::engine;
+            using native_type = ndb::native_type<typename Field::value_type, Database>;
             using value_type = typename Field::value_type;
 
             constexpr auto b = Engine::template is_native<value_type>; // msvc crash, separate in 2 lines
@@ -46,7 +47,7 @@ namespace ndb
             {
                 return values_.at(index).template get<native_type>();
             }
-            else return ndb::type<Engine>::template decode<value_type>(values_.at(index).template get<native_type>());
+            else return ndb::custom_type<value_type, Database>::template decode<value_type>(values_.at(index).template get<native_type>());
         }
 
     private:
