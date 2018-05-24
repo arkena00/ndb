@@ -2,10 +2,6 @@
 #define TEST_H_NDB
 
 #include "gtest/gtest.h"
-#include "database.hpp"
-
-// aliases
-static constexpr const auto movie = ndb::models::library.movie;
 
 // engines
 #include <ndb/engine/sqlite/sqlite.hpp>

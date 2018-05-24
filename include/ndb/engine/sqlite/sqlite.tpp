@@ -81,14 +81,14 @@ namespace ndb
         std::conditional_t<
             ndb::has_option_v<query_option::object, Query_option>,
             typename ndb::deduce<Expr>::main_table::Detail_::object_type,
-            ndb::line<sqlite>
+            ndb::line<Database>
         >;
 
 
         sqlite3_stmt* statement;
         int step = SQLITE_DONE;
 
-        ndb::result<sqlite, Result_type> result;
+        ndb::result<Database, Result_type> result;
 
         if(sqlite3_prepare_v2(connection<Database>().database(), str_query.c_str(), -1, &statement, nullptr) == SQLITE_OK)
         {
@@ -101,11 +101,11 @@ namespace ndb
                 if constexpr (ndb::expr_is_value<expr_type>)
                 {
                     using value_type = std::decay_t<decltype(e.value())>;
-                    using native_type = typename ndb::native_type<sqlite, value_type>::type;
+                    using native_type = ndb::native_type<value_type, Database>;
 
                     // bind native type value or encode custom type value
                     if constexpr (is_native<value_type>) bind(statement, bind_index++, e.value());
-                    else bind(statement, bind_index++, type<sqlite>::encode(e.value())); //check encoders if you have an error here
+                    else bind(statement, bind_index++, ndb::custom_type<value_type, Database>::encode(e.value())); //check encoders if you have an error here
                 }
             });
 
@@ -114,7 +114,7 @@ namespace ndb
             // select
             while (step == SQLITE_ROW)
             {
-                ndb::line<sqlite> line;
+                ndb::line<Database> line;
                 int field_count = sqlite3_column_count(statement);
 
                 for(int field_it = 0; field_it < field_count; field_it++)
@@ -123,34 +123,47 @@ namespace ndb
                     int field_id = -1;
                     if (field_name[0] == 'F') field_id = std::stoi(std::string(field_name + 1));
 
-                    int field_type = sqlite3_column_type(statement, field_it);
+                    int field_type_id = sqlite3_column_type(statement, field_it);
                     sqlite3_value* field_value = sqlite3_column_value(statement, field_it);
 
-                    if (field_type == ndb::type_id<sqlite, int>::value)
-                        line.add(field_id, sqlite3_value_int(field_value));
 
-                    if (field_type == ndb::type_id<sqlite, double>::value)
-                        line.add(field_id, sqlite3_value_double(field_value));
-
-                    if (field_type == ndb::type_id<sqlite, std::string>::value)
-                        line.add(field_id, std::string(reinterpret_cast<const char*>(sqlite3_value_text(field_value))));
-
-                    if (field_type == ndb::type_id<sqlite, std::vector<char>>::value)
+                    switch(field_type_id)
                     {
-                        auto data = reinterpret_cast<const char*>(sqlite3_value_blob(field_value));
-                        line.add(field_id, std::vector<char>(data, data + 100));
-                    }
-                    //TODO null value
+                        case ndb::engine_type_id<sqlite, int_>::value:
+                            line.add(field_id, sqlite3_value_int(field_value)); break;
+
+                        case ndb::engine_type_id<sqlite, double_>::value:
+                            line.add(field_id, sqlite3_value_double(field_value)); break;
+
+                        case ndb::engine_type_id<sqlite, string_>::value:
+                            using cpptype = typename ndb::cpp_type<ndb::string_, Database>::type;
+                            line.add(field_id,
+                                     cpptype( reinterpret_cast<const char*>(sqlite3_value_text(field_value))) );
+                            break;
+
+                        case ndb::engine_type_id<sqlite, byte_array_>::value:
+                            //data = reinterpret_cast<const char*>(sqlite3_value_blob(field_value));
+                            //line.add(field_id, std::vector<char>(data, data + 100));
+                            break;
+
+                            //TODO null value
+
+                        default:
+                            ndb_error("unknown engine type");
+                    } // switch
+                } // for
+
+                if (field_count > 0)
+                {
+                    auto result_entity = ndb::result_encoder<Result_type, Database>::decode(std::move(line));
+                    result.add(std::move(result_entity));
                 }
 
-                auto result_entity = ndb::result_encoder<Result_type, sqlite>::decode(std::move(line));
-                result.add(std::move(result_entity));
-
                 step = sqlite3_step(statement);
-            }
+            } // while
             sqlite3_finalize(statement);
 
-        }
+        } // if
         else ndb_error("exec error : " + str_query.to_string());
 
         std::string error = sqlite3_errmsg(connection<Database>().database());
@@ -183,15 +196,16 @@ namespace ndb
                 bool need_size = false;
 
                 // field type
-                using native_value_type = typename native_type<sqlite, typename std::decay_t<decltype(field)>::value_type>::type;
-                if constexpr (std::is_same_v<int, native_value_type>) output += " integer ";
-                if constexpr (std::is_same_v<double, native_value_type>) output += " float ";
-                if constexpr (std::is_same_v<std::string, native_value_type>)
+                using field_value_type = typename std::decay_t<decltype(field)>::value_type;
+                using field_ndb_type = ndb_type_t<field_value_type, Database>;
+                if constexpr (std::is_same_v<int_, field_ndb_type>) output += " integer ";
+                if constexpr (std::is_same_v<double_, field_ndb_type>) output += " float ";
+                if constexpr (std::is_same_v<string_, field_ndb_type>)
                 {
                     output += " text ";
                     need_size = true;
                 }
-                if constexpr (std::is_same_v<std::vector<char>, native_value_type>) output += " blob ";
+                if constexpr (std::is_same_v<byte_array_, field_ndb_type>) output += " blob ";
 
                 // field size
                 if (field.detail_.size > 0 && need_size) output += "(" + std::to_string(field.detail_.size) + ")";

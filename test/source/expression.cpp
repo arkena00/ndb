@@ -4,6 +4,13 @@
 #include <ndb/query.hpp>
 #include <ndb/function.hpp>
 
+#include "../database.hpp"
+
+
+
+// aliases
+static constexpr const auto movie = ndb::models::library.movie;
+
 template <typename Engine>
 class expression : public ::testing::Test
 {
