@@ -44,7 +44,7 @@ TYPED_TEST(query, general)
 {
     using Engine = TypeParam;
 
-    ndb::result<Engine> result;
+    ndb::result<dbs::zeta> result;
 
     // insert 2 rows with unique data
     ASSERT_NO_THROW( (result = ndb::query<dbs::zeta>() + (movie.id = 1, movie.name = "2", movie.image = "9")) );
