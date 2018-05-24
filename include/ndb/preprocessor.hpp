@@ -66,7 +66,7 @@ BOOST_PP_LIST_FOR_EACH_I( \
 typename ::ndb::tables::TABLE_NAME<void>::BOOST_PP_CAT(BOOST_PP_VARIADIC_ELEM(0, ndb_internal_unpack(FIELD_PACK)), _)::value_type BOOST_PP_VARIADIC_ELEM(0, ndb_internal_unpack(FIELD_PACK));
 // make object result encoder
 #define ndb_internal_make_object_result_encoder(r, TABLE_NAME, i, FIELD_PACK) \
-object.BOOST_PP_VARIADIC_ELEM(0, ndb_internal_unpack(FIELD_PACK)) = line[ndb::tables::TABLE_NAME<void>::BOOST_PP_VARIADIC_ELEM(0, ndb_internal_unpack(FIELD_PACK))];
+object.BOOST_PP_VARIADIC_ELEM(0, ndb_internal_unpack(FIELD_PACK)) = line[::ndb::tables::TABLE_NAME<void>::BOOST_PP_VARIADIC_ELEM(0, ndb_internal_unpack(FIELD_PACK))];
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////             TABLE              ////////////////////////
@@ -83,7 +83,7 @@ object.BOOST_PP_VARIADIC_ELEM(0, ndb_internal_unpack(FIELD_PACK)) = line[ndb::ta
         ::ndb::entity< \
             ndb_internal_for_each_fields(TABLE_NAME, ndb_internal_make_table_detail_entity, __VA_ARGS__) \
         >, \
-        ndb::parent<void>, ndb::objects::TABLE_NAME \
+        ndb::parent<void>, ::ndb::objects::TABLE_NAME \
     >; \
 }; \
 } /* ndb::tables */ \
@@ -99,9 +99,9 @@ namespace ndb::objects \
 } \
 namespace ndb { \
     template<class Engine> \
-    struct result_encoder<ndb::objects::TABLE_NAME, Engine> \
+    struct result_encoder< ::ndb::objects::TABLE_NAME, Engine > \
     { \
-        static auto decode(const ndb::line<Engine>& line) \
+        static auto decode(const ::ndb::line<Engine>& line) \
         { \
             ::ndb::objects::TABLE_NAME object; \
                 ndb_internal_for_each_fields(TABLE_NAME, ndb_internal_make_object_result_encoder, __VA_ARGS__) \
@@ -176,6 +176,6 @@ static constexpr const ::ndb::models::MODEL_NAME##_ MODEL_NAME = {}; \
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////             ALIASES            ////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-#define ndb_field_id ndb_field(id, int, ndb::option<ndb::field_option::oid>)
+#define ndb_field_id ndb_field(id, int, ::ndb::option<ndb::field_option::oid>)
 
 #endif // NDB_PREPROCESSOR_HPP
