@@ -130,14 +130,16 @@ namespace ndb
                     switch(field_type_id)
                     {
                         case ndb::engine_type_id<sqlite, int_>::value:
-                            line.add(field_id, sqlite3_value_int(field_value)); break;
+                            line.add(field_id,
+                                     cpp_type_t<int_, Database>{ sqlite3_value_int(field_value) } ); break;
 
                         case ndb::engine_type_id<sqlite, double_>::value:
-                            line.add(field_id, sqlite3_value_double(field_value)); break;
+                            line.add(field_id,
+                                     cpp_type_t<double_, Database>{ sqlite3_value_double(field_value) } ); break;
 
                         case ndb::engine_type_id<sqlite, string_>::value:
                             line.add(field_id,
-                                     cpp_type_t<string_, Database>( reinterpret_cast<const char*>(sqlite3_value_text(field_value))) );
+                                     cpp_type_t<string_, Database>{ reinterpret_cast<const char*>(sqlite3_value_text(field_value)) } );
                             break;
 
                         case ndb::engine_type_id<sqlite, byte_array_>::value:
@@ -147,7 +149,7 @@ namespace ndb
 
                         case ndb::engine_type_id<sqlite, null_>::value:
                             line.add(field_id,
-                                     cpp_type_t<null_, Database>() ); break;
+                                     cpp_type_t<null_, Database>{} ); break;
 
                         default:
                             ndb_error("unknown engine type");
