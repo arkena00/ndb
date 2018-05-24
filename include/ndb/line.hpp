@@ -26,6 +26,29 @@ namespace ndb
             return values_.size();
         }
 
+        template<class Field, class Field_value_type = typename Field::value_type>
+        auto get(const Field& f, Field_value_type value_if_null) const
+        {
+            if (!value_index_.count(ndb::field_id<Field>)) ndb_error("Field does not exist in the result, check the select clause");
+            size_t index = value_index_.at(ndb::field_id<Field>);
+            auto& value = values_.at(index);
+
+            using Engine = typename Database::engine;
+            using native_type = ndb::native_type<typename Field::value_type, Database>;
+
+            constexpr auto b = Engine::template is_native<Field_value_type>; // msvc crash, separate in 2 lines
+            if constexpr (b)
+            {
+                if (value.is_null()) return value_if_null;
+                else return value.get<native_type>();
+            }
+            else
+            {
+                if (value.is_null()) return value_if_null;
+                else return ndb::custom_type<Field_value_type, Database>::template decode<Field_value_type>(value.get<native_type>());
+            }
+        }
+
         ndb::value operator[](int index) const
         {
             if (index >= values_.size()) ndb_error("ndb::value out of range");
@@ -36,8 +59,9 @@ namespace ndb
         auto operator[](const Field& f) const
         {
             if (!value_index_.count(ndb::field_id<Field>)) ndb_error("Field does not exist in the result, check the select clause");
-
             size_t index = value_index_.at(ndb::field_id<Field>);
+            auto& value = values_.at(index);
+
             using Engine = typename Database::engine;
             using native_type = ndb::native_type<typename Field::value_type, Database>;
             using value_type = typename Field::value_type;
@@ -45,9 +69,9 @@ namespace ndb
             constexpr auto b = Engine::template is_native<value_type>; // msvc crash, separate in 2 lines
             if constexpr (b)
             {
-                return values_.at(index).template get<native_type>();
+                return value.get<native_type>();
             }
-            else return ndb::custom_type<value_type, Database>::template decode<value_type>(values_.at(index).template get<native_type>());
+            else return ndb::custom_type<value_type, Database>::template decode<value_type>(value.get<native_type>());
         }
 
     private:

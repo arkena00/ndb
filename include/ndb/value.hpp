@@ -7,6 +7,8 @@
 #include <vector>
 #include <variant>
 
+#include <ndb/engine/type.hpp>
+
 namespace ndb
 {
     class value
@@ -30,8 +32,13 @@ namespace ndb
             }
         }
 
+        bool is_null() const
+        {
+            return std::holds_alternative<null_type>(value_);
+        }
+
     private:
-        std::variant<int, double, float, std::string, std::vector<char>> value_;
+        std::variant<ndb::null_type, int, double, float, std::string, std::vector<char>> value_;
     };
 } // ndb
 

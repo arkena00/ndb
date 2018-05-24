@@ -119,13 +119,13 @@ namespace ndb
 
                 for(int field_it = 0; field_it < field_count; field_it++)
                 {
+                    //const char* table_name = sqlite3_column_table_name(statement, field_it);
                     const char* field_name = sqlite3_column_name(statement, field_it);
                     int field_id = -1;
                     if (field_name[0] == 'F') field_id = std::stoi(std::string(field_name + 1));
 
                     int field_type_id = sqlite3_column_type(statement, field_it);
                     sqlite3_value* field_value = sqlite3_column_value(statement, field_it);
-
 
                     switch(field_type_id)
                     {
@@ -136,9 +136,8 @@ namespace ndb
                             line.add(field_id, sqlite3_value_double(field_value)); break;
 
                         case ndb::engine_type_id<sqlite, string_>::value:
-                            using cpptype = typename ndb::cpp_type<ndb::string_, Database>::type;
                             line.add(field_id,
-                                     cpptype( reinterpret_cast<const char*>(sqlite3_value_text(field_value))) );
+                                     cpp_type_t<string_, Database>( reinterpret_cast<const char*>(sqlite3_value_text(field_value))) );
                             break;
 
                         case ndb::engine_type_id<sqlite, byte_array_>::value:
@@ -146,7 +145,9 @@ namespace ndb
                             //line.add(field_id, std::vector<char>(data, data + 100));
                             break;
 
-                            //TODO null value
+                        case ndb::engine_type_id<sqlite, null_>::value:
+                            line.add(field_id,
+                                     cpp_type_t<null_, Database>() ); break;
 
                         default:
                             ndb_error("unknown engine type");

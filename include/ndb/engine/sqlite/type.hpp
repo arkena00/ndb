@@ -15,12 +15,14 @@ namespace ndb
     class sqlite;
 
     // associate engine type id to ndb type
+    template<> struct engine_ndb_type<sqlite, SQLITE_NULL> { using type = null_; };
     template<> struct engine_ndb_type<sqlite, SQLITE_INTEGER> { using type = int_; };
     template<> struct engine_ndb_type<sqlite, SQLITE_FLOAT> { using type = double_; };
     template<> struct engine_ndb_type<sqlite, SQLITE3_TEXT> { using type = string_; };
     template<> struct engine_ndb_type<sqlite, SQLITE_BLOB> { using type = byte_array_; };
 
     // associate ndb type to engine type id
+    template<> struct engine_type_id<sqlite, null_> { static constexpr auto value = SQLITE_NULL; };
     template<> struct engine_type_id<sqlite, int_> { static constexpr auto value = SQLITE_INTEGER; };
     template<> struct engine_type_id<sqlite, double_> { static constexpr auto value = SQLITE_FLOAT; };
     template<> struct engine_type_id<sqlite, string_> { static constexpr auto value = SQLITE3_TEXT; };
