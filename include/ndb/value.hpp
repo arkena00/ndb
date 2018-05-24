@@ -28,7 +28,7 @@ namespace ndb
         auto& get()
         {
             if (auto value = std::get_if<T>(&value_)) return *value;
-            else  ndb_error("Can't get unknown type");
+            else ndb_error("Can't get unknown type");
         }
 
         bool is_null() const
