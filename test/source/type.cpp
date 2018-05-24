@@ -12,7 +12,7 @@ struct user_string{};
 ndb_table(
     movie
     , ndb_field(id, int)
-    , ndb_field(custom, ::user_type)
+    , ndb_field(custom, user_type)
     , ndb_field(name, std::string, ndb::size<255>)
 )
 
@@ -53,6 +53,7 @@ ASSERT_TRUE(( std::is_same_v< ndb::ndb_type_t<CPP_TYPE>, NDB_TYPE > ));
 
 TEST(type_map, global)
 {
+    TYPE_MAP_CHECK(ndb::null_, ndb::null_type);
     TYPE_MAP_CHECK(ndb::int_, int);
     TYPE_MAP_CHECK(ndb::float_, float);
     TYPE_MAP_CHECK(ndb::double_, double);

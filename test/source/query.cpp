@@ -3,8 +3,26 @@
 #include <ndb/initializer.hpp>
 #include <ndb/query.hpp>
 #include <ndb/function.hpp>
+#include <ndb/preprocessor.hpp>
 
-#include "../database.hpp"
+ndb_table(
+         movie
+        , ndb_field(id, int)
+        , ndb_field(name, std::string, ndb::size<255>)
+        , ndb_field(image, std::string, ndb::size<255>)
+)
+
+ndb_model(library, movie)
+
+ndb_project(
+    query,
+    ndb_database(db, library, ndb::sqlite)
+)
+
+namespace dbs
+{
+    using zeta = ndb::databases::query::db_;
+}
 
 // aliases
 static constexpr const auto movie = ndb::models::library.movie;
@@ -44,28 +62,35 @@ TYPED_TEST(query, general)
 {
     using Engine = TypeParam;
 
-    ndb::result<dbs::zeta> result;
+    try
+    {
 
-    // insert 2 rows with unique data
-    ASSERT_NO_THROW( (result = ndb::query<dbs::zeta>() + (movie.id = 1, movie.name = "2", movie.image = "9")) );
-    ASSERT_NO_THROW( (result = ndb::query<dbs::zeta>() + (movie.id = 3, movie.name = "4")) );
+        ndb::result<dbs::zeta> result;
 
-    // get data
-    ASSERT_NO_THROW( (result = ndb::query<dbs::zeta>() << (movie.id, movie.name, movie.image)) );
+        // insert 2 rows with unique data
+        ASSERT_NO_THROW((result = ndb::query<dbs::zeta>() + (movie.id = 1, movie.name = "2", movie.image = "9")));
+        ASSERT_NO_THROW((result = ndb::query<dbs::zeta>() + (movie.id = 3, movie.name = "4")));
 
-    // check data count
-    ASSERT_TRUE( result.size() == 2 );
+        // get data
+        ASSERT_NO_THROW((result = ndb::query<dbs::zeta>() << (movie.id, movie.name, movie.image)));
 
-    // check ndb::line access
-    //ASSERT_TRUE(result_line_field_eq<Engine>(result, 0, movie.id));
-    //ASSERT_TRUE(result_line_field_eq<Engine>(result, 1, movie.name));
-    //ASSERT_TRUE(result_line_field_eq<Engine>(result, 2, movie.image));
+        // check data count
+        ASSERT_TRUE(result.size() == 2);
 
-    // check values
-    ASSERT_TRUE( result[0][movie.id] == 1 );
-    ASSERT_TRUE( result[0][movie.name] == "2" );
+        // check ndb::line access
+        //ASSERT_TRUE(result_line_field_eq<Engine>(result, 0, movie.id));
+        //ASSERT_TRUE(result_line_field_eq<Engine>(result, 1, movie.name));
+        //ASSERT_TRUE(result_line_field_eq<Engine>(result, 2, movie.image));
 
-    ASSERT_TRUE( result[1][movie.id] == 3 );
-    ASSERT_TRUE( result[1][movie.name] == "4" );
+        // check values
+        ASSERT_TRUE(result[0][movie.id] == 1);
+        ASSERT_TRUE(result[0][movie.name] == "2");
 
+        ASSERT_TRUE(result[1][movie.id] == 3);
+        ASSERT_TRUE(result[1][movie.name] == "4");
+
+    } catch(const std::exception& e)
+    {
+        std::cout << e.what();
+    }
 }
