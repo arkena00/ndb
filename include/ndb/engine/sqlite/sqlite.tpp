@@ -149,7 +149,7 @@ namespace ndb
 
                         case ndb::engine_type_id<sqlite, null_>::value:
                             line.add(field_id,
-                                     cpp_type_t<null_, Database>{} ); break;
+                                     ndb::null_type{} ); break;
 
                         default:
                             ndb_error("unknown engine type");

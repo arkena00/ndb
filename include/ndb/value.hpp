@@ -16,29 +16,29 @@ namespace ndb
     public:
         template<class T>
 		value(T v) :
+            is_null_{ false },
             value_{ std::move(v) }
         {}
 
+        value(ndb::null_type) :
+            is_null_{ true }
+        {}
+
         template<class T>
-        const auto& get() const
+        auto& get()
         {
-            try
-            {
-                return std::get<T>(value_);
-            }
-            catch (const std::exception&)
-            {
-                ndb_error("Can't get unknown type");
-            }
+            if (auto value = std::get_if<T>(&value_)) return *value;
+            else  ndb_error("Can't get unknown type");
         }
 
         bool is_null() const
         {
-            return std::holds_alternative<null_type>(value_);
+            return is_null_;
         }
 
     private:
-        std::variant<ndb::null_type, int, double, float, std::string, std::vector<char>> value_;
+        bool is_null_;
+        std::variant<int, double, float, std::string, std::vector<char>> value_;
     };
 } // ndb
 

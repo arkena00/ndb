@@ -40,7 +40,7 @@ namespace ndb
     template<class...>
     struct ndb_types;
 
-    using ndb_types_t = ndb_types<null_, int_, float_, double_, string_, byte_array_>;
+    using ndb_types_t = ndb_types<int_, float_, double_, string_, byte_array_>;
 
     // mapping ndb types
     template<class Cpp_type, class Database, class Group = typename Database::group, class Engine = typename Database::engine>
@@ -51,7 +51,6 @@ namespace ndb
     struct type_map<ndb::types::NDB_TYPE, Database, Group, Engine> { using type = CPP_TYPE; };
 
     // default type mapping for all configurations
-    ndb_internal_type_map(null_, ndb::null_type);
     ndb_internal_type_map(int_, int);
     ndb_internal_type_map(float_, float);
     ndb_internal_type_map(double_, double);

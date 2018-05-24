@@ -27,7 +27,7 @@ namespace ndb
         }
 
         template<class Field, class Field_value_type = typename Field::value_type>
-        auto get(const Field& f, Field_value_type value_if_null) const
+        auto get(const Field& f, Field_value_type value_if_null)
         {
             if (!value_index_.count(ndb::field_id<Field>)) ndb_error("Field does not exist in the result, check the select clause");
             size_t index = value_index_.at(ndb::field_id<Field>);
@@ -49,14 +49,14 @@ namespace ndb
             }
         }
 
-        ndb::value operator[](int index) const
+        ndb::value operator[](int index)
         {
             if (index >= values_.size()) ndb_error("ndb::value out of range");
             return values_.at(index);
         }
 
         template<class Field>
-        auto operator[](const Field& f) const
+        auto operator[](const Field& f)
         {
             if (!value_index_.count(ndb::field_id<Field>)) ndb_error("Field does not exist in the result, check the select clause");
             size_t index = value_index_.at(ndb::field_id<Field>);
@@ -76,7 +76,7 @@ namespace ndb
 
     private:
         std::vector<ndb::value> values_;
-        std::unordered_map<size_t, size_t> value_index_;
+        std::unordered_map<unsigned, unsigned> value_index_;
     };
 } // ndb
 
