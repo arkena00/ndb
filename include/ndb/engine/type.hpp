@@ -137,7 +137,7 @@ namespace ndb
     //
 
     template<class T>
-    struct line;
+    class line;
     template<class T, class U, class Database, class Group, class Engine>
     struct custom_type<std::chrono::duration<T, U>, Database, Group, Engine>
     {
