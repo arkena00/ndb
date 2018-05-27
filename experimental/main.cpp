@@ -55,7 +55,7 @@ ndb_table(music,
 )
 ndb_model(library, movie, music)
 
-ndb_project(my_project,
+ndb_project(exp_main,
             ndb_database(library, library, ndb::sqlite)
 )
 
@@ -67,7 +67,7 @@ int main()
 {
     using ndb::sqlite;
     // using db = dbs::zeta;
-    using db = ndb::databases::my_project::library_;
+    using db = ndb::databases::exp_main::library_;
     constexpr auto library = ndb::models::library;
 
     std::stringstream result;
@@ -79,38 +79,6 @@ int main()
 
 
 
-        //! add records
-        //ndb::query<db>() + (library.movie.name = "Interstellar");
-        //ndb::query<db>() + (library.movie.name = "Watchmen");
-
-        auto [test] = ndb::oquery<db>() << (library.music);
-        std::cout << "\n___" << test.image;
-
-
-        auto [interstellar] = ndb::oquery<db>() << (library.movie.id == 1);
-        std::cout << interstellar.id << " | " << interstellar.name << std::endl;
-
-        for (auto [id, name] : ndb::oquery<db>() << library.movie)
-        {
-            std::cout << "id : " << id << std::endl;
-            std::cout << "name : " << name << std::endl;
-        }
-
-        //auto q = (movie.id << movie);
-        //auto z = ((movie.id, q) << movie);
-
-    /*
-        auto z = (movie.id << movie);
-        auto u = ndb::limit(3);
-        ndb::query<dbs::zeta> v;
-        ndb::result<dbs::zeta> res = z << u;
-        v = z << u;
-    */
-
-    /*
-        ndb::query_view<dbs::zeta> q;
-        q << (movie.id, movie.name, ndb::get(movie.image));
-        std::cout << q.view();*/
 
     } catch(const std::exception& e)
     {
