@@ -83,6 +83,14 @@ namespace ndb
 
     // function
     template<class T>
+    constexpr auto sum(const T& t)
+    {
+        auto keyword = ndb::expr_make_keyword<expr_keyword_code::sum>();
+        auto expr = ndb::expr_make(t);
+        return ndb::expression<decltype(keyword), expr_type_code::op_function, decltype(expr)> { keyword, expr };
+    }
+
+    template<class T>
     constexpr auto count(const T& t)
     {
         auto keyword = ndb::expr_make_keyword<expr_keyword_code::count>();

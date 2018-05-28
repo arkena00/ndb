@@ -37,6 +37,7 @@ namespace ndb
         // function
         now,
         count,
+        sum
     };
 
     template<expr_keyword_code Keyword_code>
