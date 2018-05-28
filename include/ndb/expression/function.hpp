@@ -81,6 +81,18 @@ namespace ndb
         return ndb::expression<decltype(expr), expr_type_code::null, decltype(keyword)> { expr, keyword };
     }
 
+    template<class T, class N1, class N2>
+    constexpr auto range(const T& t, const N1& a, const N2& b)
+    {
+        auto keyword = ndb::expr_make_keyword<expr_keyword_code::between>();
+        auto expr_field = ndb::expression<T, ndb::expr_type_code::field, void, ndb::expr_clause_code::condition> {};
+        auto expr_values = ndb::expr_make(a) && ndb::expr_make(b);
+
+        auto expr = ndb::expression<decltype(keyword), expr_type_code::null, decltype(expr_values)> { keyword, expr_values };
+
+        return ndb::expression<decltype(expr_field), expr_type_code::null, decltype(expr)> { expr_field, expr };
+    }
+
     // function
     template<class T>
     constexpr auto sum(const T& t)

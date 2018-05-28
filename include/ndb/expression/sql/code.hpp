@@ -31,6 +31,8 @@ namespace ndb
     template<> struct keyword_code<expr_keyword_code::desc, expr_category_code::sql> { constexpr static auto value = " DESC "; };
     template<> struct keyword_code<expr_keyword_code::group, expr_category_code::sql> { constexpr static auto value = " GROUP BY "; };
 
+    template<> struct keyword_code<expr_keyword_code::between, expr_category_code::sql> { constexpr static auto value = " BETWEEN "; };
+
     template<> struct keyword_code<expr_keyword_code::values, expr_category_code::sql> { constexpr static auto value = " VALUES "; };
 
     template<> struct keyword_code<expr_keyword_code::now, expr_category_code::sql> { constexpr static auto value = " DATETIME"; };

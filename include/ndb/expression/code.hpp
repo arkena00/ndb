@@ -34,6 +34,7 @@ namespace ndb
         sort, asc, desc,
         group,
         values,
+        between,
         // function
         now,
         count,
