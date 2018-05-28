@@ -73,7 +73,7 @@ namespace ndb
     auto sqlite::exec(const Expr& expr) const
     {
         constexpr auto str_query = ndb::sql_expression<Expr>{};
-        #ifdef NDB_QUERY_DEBUG
+        #ifdef NDB_DEBUG_QUERY
             std::cout << str_query.c_str() << std::endl;
         #endif
 
