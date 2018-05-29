@@ -38,6 +38,8 @@ namespace ndb
         // function
         now,
         count,
+        min,
+        max,
         sum
     };
 

@@ -110,6 +110,22 @@ namespace ndb
         return ndb::expression<decltype(keyword), expr_type_code::op_function, decltype(expr)> { keyword, expr };
     }
 
+    template<class T>
+    constexpr auto min(const T& t)
+    {
+        auto keyword = ndb::expr_make_keyword<expr_keyword_code::min>();
+        auto expr = ndb::expr_make(t);
+        return ndb::expression<decltype(keyword), expr_type_code::op_function, decltype(expr)> { keyword, expr };
+    }
+
+    template<class T>
+    constexpr auto max(const T& t)
+    {
+        auto keyword = ndb::expr_make_keyword<expr_keyword_code::max>();
+        auto expr = ndb::expr_make(t);
+        return ndb::expression<decltype(keyword), expr_type_code::op_function, decltype(expr)> { keyword, expr };
+    }
+
     constexpr auto now()
     {
         auto keyword = ndb::expr_make_keyword<expr_keyword_code::now>();

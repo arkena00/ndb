@@ -37,6 +37,8 @@ namespace ndb
 
     template<> struct keyword_code<expr_keyword_code::now, expr_category_code::sql> { constexpr static auto value = " DATETIME"; };
     template<> struct keyword_code<expr_keyword_code::count, expr_category_code::sql> { constexpr static auto value = " COUNT"; };
+    template<> struct keyword_code<expr_keyword_code::min, expr_category_code::sql> { constexpr static auto value = " MIN"; };
+    template<> struct keyword_code<expr_keyword_code::max, expr_category_code::sql> { constexpr static auto value = " MAX"; };
     template<> struct keyword_code<expr_keyword_code::sum, expr_category_code::sql> { constexpr static auto value = " SUM"; };
 } // ndb
 
