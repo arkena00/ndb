@@ -1,7 +1,7 @@
 #ifndef LINE_H_NDB
 #define LINE_H_NDB
 
-#include <ndb/engine/type.hpp>
+#include <ndb/type.hpp>
 #include <ndb/utility.hpp>
 #include <ndb/error.hpp>
 #include <ndb/value.hpp>
