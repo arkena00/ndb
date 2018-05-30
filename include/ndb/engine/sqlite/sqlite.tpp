@@ -127,6 +127,9 @@ namespace ndb
                     int field_type_id = sqlite3_column_type(statement, field_it);
                     sqlite3_value* field_value = sqlite3_column_value(statement, field_it);
 
+                    const char* data = nullptr;
+                    int data_size = 0;
+
                     switch(field_type_id)
                     {
                         case ndb::engine_type_id<sqlite, int_>::value:
@@ -143,8 +146,10 @@ namespace ndb
                             break;
 
                         case ndb::engine_type_id<sqlite, byte_array_>::value:
-                            //data = reinterpret_cast<const char*>(sqlite3_value_blob(field_value));
-                            //line.add(field_id, std::vector<char>(data, data + 100));
+                            data = reinterpret_cast<const char*>(sqlite3_value_blob(field_value));
+                            data_size = sqlite3_value_bytes(field_value);
+                            line.add(field_id,
+                                     cpp_type_t<string_, Database>{ data, data + data_size) };
                             break;
 
                         case ndb::engine_type_id<sqlite, null_>::value:
@@ -165,7 +170,6 @@ namespace ndb
                 step = sqlite3_step(statement);
             } // while
             sqlite3_finalize(statement);
-
         } // if
         else ndb_error("exec error : " + str_query.to_string());
 
