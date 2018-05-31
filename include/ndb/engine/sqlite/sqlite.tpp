@@ -1,7 +1,7 @@
 #include <ndb/expression/sql.hpp>
 #include <ndb/engine/sqlite/function.hpp>
 #include <ndb/engine/sqlite/type.hpp>
-#include <ndb/engine/sqlite/statement.hpp>
+#include <ndb/engine/sqlite/query.hpp>
 #include <ndb/expression/deduce.hpp>
 #include <ndb/option.hpp>
 #include <iostream> // query_debug
