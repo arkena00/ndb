@@ -65,7 +65,7 @@ namespace ndb
     template<class Database>
     auto last_id()
     {
-        return ndb::engine<Database::engine>::get().last_id<Database>();
+        return ndb::engine<Database::engine>::get().template last_id<Database>();
     }
 } // ndb
 
