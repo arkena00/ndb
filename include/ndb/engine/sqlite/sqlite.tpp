@@ -52,7 +52,7 @@ namespace ndb
     auto sqlite::exec(const Expr& expr) const
     {
         constexpr auto str_query = ndb::sql_expression<Expr>{};
-        sqlite_query<Database> statement{ str_query.c_str() };
+        sqlite_query<Database> query{ str_query.c_str() };
 
         // bind values from expression
         expr.eval([&](auto&& e)
@@ -64,7 +64,7 @@ namespace ndb
                           using value_type = std::decay_t<decltype(e.value())>;
                           using native_type = ndb::native_type<value_type, Database>;
 
-                          statement.bind(e.value());
+                          query.bind(e.value());
                       }
                   });
 
@@ -75,13 +75,13 @@ namespace ndb
             ndb::line<Database>
         >;
 
-        return exec<Database, Result_type>(statement);
+        return exec<Database, Result_type>(query);
     };
 
     template<class Database, class Result_type>
-    auto sqlite::exec(sqlite_query<Database>& statement) const
+    auto sqlite::exec(sqlite_query<Database>& query) const
     {
-        return statement.exec();
+        return query.exec();
     }
 
     template<class Database>
