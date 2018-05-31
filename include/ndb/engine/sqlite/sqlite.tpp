@@ -73,9 +73,6 @@ namespace ndb
     auto sqlite::exec(const Expr& expr) const
     {
         constexpr auto str_query = ndb::sql_expression<Expr>{};
-        #ifdef NDB_DEBUG_QUERY
-            std::cout << str_query.c_str() << std::endl;
-        #endif
 
         using Result_type = typename
         std::conditional_t<
@@ -108,6 +105,12 @@ namespace ndb
                     else bind(statement, bind_index++, ndb::custom_type<value_type, Database>::encode(e.value())); //check encoders if you have an error here
                 }
             });
+
+
+            #ifdef NDB_DEBUG_QUERY
+                const char* str_statement = sqlite3_expanded_sql(statement);
+                std::cout << "[ndb:debug_query]" << std::string(str_statement) << std::endl;
+            #endif
 
             step = sqlite3_step(statement);
 
@@ -149,7 +152,7 @@ namespace ndb
                             data = reinterpret_cast<const char*>(sqlite3_value_blob(field_value));
                             data_size = sqlite3_value_bytes(field_value);
                             line.add(field_id,
-                                     cpp_type_t<string_, Database>{ data, data + data_size) };
+                                     cpp_type_t<string_, Database>{ data, data + data_size } );
                             break;
 
                         case ndb::engine_type_id<sqlite, null_>::value:
