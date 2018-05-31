@@ -44,6 +44,12 @@ namespace ndb
         template<class Database>
         inline void make();
 
+        template<class Database>
+        auto last_id() const
+        {
+            return sqlite3_last_insert_rowid(connection<Database>().database());
+        }
+
         template<class Expr>
         inline static std::string to_string(const Expr&);
 
