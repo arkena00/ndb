@@ -18,7 +18,7 @@ namespace ndb
         void add(int field_id, ndb::value field_value)
         {
             // value accessible by field
-            if (field_id >= 0) value_index_.emplace(field_id, values_.size());
+            if (field_id >= 0) value_index_.emplace(field_id, static_cast<unsigned int>(values_.size()));
             values_.emplace_back(std::move(field_value));
         }
 
@@ -77,7 +77,7 @@ namespace ndb
 
     private:
         std::vector<ndb::value> values_;
-        std::unordered_map<unsigned, unsigned> value_index_;
+        std::unordered_map<unsigned int, unsigned int> value_index_;
     };
 } // ndb
 
