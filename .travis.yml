@@ -14,6 +14,8 @@ addons:
       - cmake3
       - libmongo-client-dev
       - libmongo-client0
+      - libpq-dev
+      - libpq5
 
 install:
     - export CC=gcc-7
