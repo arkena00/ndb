@@ -3,6 +3,7 @@
 
 #include <sqlite3.h>
 
+#include <ndb/engine/connection_param.hpp>
 #include <ndb/error.hpp>
 #include <ndb/option.hpp>
 #include <ndb/setup.hpp>
@@ -17,25 +18,19 @@ namespace ndb
     class sqlite_connection
     {
     public:
-        sqlite_connection(const std::string& db_name, const std::string& path = "", ndb::connection_flag flags = connection_flag::default_) :
-            db_name_{ db_name },
+        sqlite_connection(ndb::connection_param params) :
             database_{ nullptr },
-            path_{ path },
-            flags_{ flags }
-        {}
-
-        void connect()
+            params_{ std::move(params) }
         {
-            if (path_.empty()) path_ = "./";
-            if (!fs::exists(path_)) fs::create_directory(path_);
-            std::string fullpath = path_ + "/" + db_name_ + setup<sqlite>::ext;
+            if (params_.path.empty()) params_.path = "./";
+            if (!fs::exists(params_.path)) fs::create_directory(params_.path);
+            std::string fullpath = params_.path + "/" + params_.db_name + setup<sqlite>::ext;
 
             int native_flag = SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE;
-            if ((int)flags_ & (int)ndb::connection_flag::read_only)
+            if ((int)params_.flag & (int)ndb::connection_flag::read_only)
             {
                 native_flag = SQLITE_OPEN_READONLY;
             }
-
 
             auto status = sqlite3_open_v2(fullpath.c_str(), &database_, native_flag, nullptr);
 
@@ -47,16 +42,6 @@ namespace ndb
             sqlite3_close(database_);
         }
 
-        void flag_add(ndb::connection_flag flag)
-        {
-            flags_ = static_cast<ndb::connection_flag>((int)flags_ | (int)flag);
-        }
-
-        ndb::connection_flag flags()
-        {
-            return flags_;
-        }
-
         sqlite3* database()
         {
             return database_;
@@ -64,10 +49,8 @@ namespace ndb
 
     private:
         sqlite3* database_;
-        std::string db_name_;
-        std::string path_;
 
-        ndb::connection_flag flags_;
+        ndb::connection_param params_;
     };
 
 } // ndb
