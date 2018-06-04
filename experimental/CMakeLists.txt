@@ -9,7 +9,7 @@ function(exp_make target_file)
     target_link_libraries(${targetname} lib_ndb)
     add_dependencies(${targetname} lib_ndb)
     set_target_properties(${targetname} PROPERTIES
-            RUNTIME_OUTPUT_DIRECTORY "${NDB_BIN_ROOT}/${target_type}"
+            RUNTIME_OUTPUT_DIRECTORY "${NDB_BIN_ROOT}/experimental"
             OUTPUT_NAME  ${target_file})
 
 endfunction()
