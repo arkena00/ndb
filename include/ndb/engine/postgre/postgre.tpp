@@ -4,15 +4,6 @@
 
 namespace ndb
 {
-    template<class Database>
-    void postgre::connect(ndb::connection_param params)
-    {
-        auto conn = std::make_unique<postgre_connection>(std::move(params));
-        connections_.emplace(ndb::database_id<Database>, std::move(conn));
-
-        make<Database>();
-    }
-
     template<class Database, class Result_type>
     auto postgre::exec(postgre_query<Database>& query) const
     {
@@ -48,13 +39,6 @@ namespace ndb
 
         return exec<Database, Result_type>(query);
     };
-
-    template<class Database>
-    postgre_connection& postgre::connection() const
-    {
-        if (!connections_.count(ndb::database_id<Database>)) ndb_error("database connection not found : D" + std::to_string(ndb::database_id<Database>));
-        return *connections_.at(ndb::database_id<Database>).get();
-    }
 
     template<class Database>
     void postgre::make()

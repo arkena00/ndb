@@ -1,25 +1,32 @@
 #ifndef ENGINE_POSTGRE_CONNECTION_H_NDB
 #define ENGINE_POSTGRE_CONNECTION_H_NDB
 
-#include <libpq-fe.h>
-
+#include <ndb/engine/basic_connection.hpp>
 #include <ndb/engine/connection_param.hpp>
 #include <ndb/error.hpp>
 
 #include <array>
+#include <libpq-fe.h>
 
 namespace ndb
 {
-    class postgre_connection
+    template<class Engine>
+    class engine_connection;
+
+    class postgre;
+
+    template<>
+    class engine_connection<postgre> : basic_connection<postgre>
     {
     public:
-        postgre_connection(ndb::connection_param params) :
-            connection_{ nullptr },
-            params_{ std::move(params) }
+        engine_connection(ndb::connection_param params) :
+            basic_connection(std::move(params)),
+            connection_{ nullptr }
         {
+            constexpr auto param_count = 4;
             unsigned int param_index = 0;
-            std::array<const char*, 4> keys;
-            std::array<const char*, 4> values;
+            std::array<const char*, param_count> keys;
+            std::array<const char*, param_count> values;
 
             auto param_add = [&](const char* key, const char* value)
             {
@@ -31,7 +38,7 @@ namespace ndb
             param_add("user", params_.user.c_str());
             param_add("port", std::to_string(params_.port).c_str());
             param_add("host", params_.host.c_str());
-            param_add("dbname", params_.db_name.c_str());
+            //param_add("dbname", params_.db_name.c_str());
             param_add(nullptr, nullptr);
 
             // check server status
@@ -48,19 +55,18 @@ namespace ndb
             }
         }
 
+        ~engine_connection()
+        {
+            PQfinish(connection_);
+        }
+
         operator PGconn*()
         {
             return connection_;
         }
 
-        ~postgre_connection()
-        {
-            PQfinish(connection_);
-        }
-
     private:
         PGconn* connection_;
-        ndb::connection_param params_;
     };
 } // ndb
 

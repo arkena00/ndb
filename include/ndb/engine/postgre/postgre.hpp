@@ -1,13 +1,8 @@
 #ifndef ENGINE_POSTGRE_POSTGRE_H_NDB
 #define ENGINE_POSTGRE_POSTGRE_H_NDB
 
-#include <libpq-fe.h>
-
 #include <ndb/engine/basic.hpp>
 #include <ndb/engine/postgre/connection.hpp>
-
-#include <unordered_map>
-#include <memory>
 
 namespace ndb
 {
@@ -22,12 +17,6 @@ namespace ndb
     public:
         inline postgre() = default;
 
-        template<class Database>
-        inline void connect(ndb::connection_param);
-
-        template<class Database>
-        inline postgre_connection& connection() const;
-
         template<class Database, class Result_type = ndb::line<Database>>
         inline auto exec(postgre_query<Database>& query) const;
 
@@ -36,9 +25,6 @@ namespace ndb
 
         template<class Database>
         inline void make();
-
-    private:
-        std::unordered_map<int, std::unique_ptr<postgre_connection>> connections_;
     };
 } // ndb
 

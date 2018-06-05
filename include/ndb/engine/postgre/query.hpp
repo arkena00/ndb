@@ -33,7 +33,7 @@ namespace ndb
         {
             //data_values_.push_back('a');
             //data_values_.push_back('b');
-            data_sizes_.push_back(2);
+            //data_sizes_.push_back(2);
         }
 
         template<class T>
@@ -49,12 +49,13 @@ namespace ndb
             ndb::result<Database, Result_type> result;
 
             const char* values = data_values_.data();
-            auto values_address = std::addressof(values);
+            auto data_values = std::addressof(values);
+            auto data_sizes = data_sizes_.data();
 
             PGresult* res = PQexecParams(connection(), str_query_.c_str(),
                                          data_count_,
                                          nullptr,
-                                         values_address,
+                                         data_values,
                                          data_sizes_.data(), nullptr, 0);
 
             if (PQresultStatus(res) != PGRES_COMMAND_OK)
@@ -69,7 +70,7 @@ namespace ndb
             return result;
         }
 
-        postgre_connection& connection() const
+        ndb::engine_connection<postgre>& connection() const
         {
             return ndb::engine<ndb::postgre>::get().connection<Database>();
         }
