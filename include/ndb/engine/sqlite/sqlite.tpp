@@ -46,9 +46,9 @@ namespace ndb
     };
 
     template<class Database, class Result_type>
-    auto sqlite::exec(sqlite_query<Database>& query) const
+    auto sqlite::exec(const sqlite_query<Database>& query) const
     {
-        return query.exec();
+        return query.template exec<Result_type>();
     }
 
     template<class Database>
