@@ -137,7 +137,7 @@ namespace ndb
             return str_statement_;
         }
 
-        auto connection() const
+        ndb::engine_connection<sqlite>& connection() const
         {
             return ndb::engine<ndb::sqlite>::get().connection<Database>();
         }
