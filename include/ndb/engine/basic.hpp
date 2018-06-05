@@ -24,6 +24,9 @@ namespace ndb
         basic_engine();
         ~basic_engine();
 
+        basic_engine(const basic_engine&) = delete;
+        basic_engine& operator=(const basic_engine&) = delete;
+
         template<class Database>
         inline void make();
 

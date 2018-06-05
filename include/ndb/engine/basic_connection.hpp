@@ -30,6 +30,10 @@ namespace ndb
             params_{ std::move(params) }
         {}
 
+        basic_connection(const basic_connection&) = delete;
+        basic_connection& operator=(const basic_connection&) = delete;
+
+    protected:
         ndb::connection_param params_;
     };
 } // ndb
