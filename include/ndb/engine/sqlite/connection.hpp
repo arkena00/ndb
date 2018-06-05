@@ -1,26 +1,28 @@
 #ifndef ENGINE_SQLITE_CONNECTION_H_NDB
 #define ENGINE_SQLITE_CONNECTION_H_NDB
 
-#include <sqlite3.h>
-
+#include <ndb/engine/basic_connection.hpp>
 #include <ndb/engine/connection_param.hpp>
 #include <ndb/error.hpp>
-#include <ndb/option.hpp>
 #include <ndb/setup.hpp>
 
+#include <sqlite3.h>
 #include <experimental/filesystem>
-#include <unordered_map>
 
 namespace ndb
 {
     namespace fs = std::experimental::filesystem;
 
-    class sqlite_connection
+    template<class Engine>
+    class engine_connection;
+
+    template<>
+    class engine_connection<sqlite> : basic_connection<sqlite>
     {
     public:
-        sqlite_connection(ndb::connection_param params) :
-            database_{ nullptr },
-            params_{ std::move(params) }
+        engine_connection(ndb::connection_param params) :
+            basic_connection(params),
+            connection_{ nullptr }
         {
             if (params_.path.empty()) params_.path = "./";
             if (!fs::exists(params_.path)) fs::create_directory(params_.path);
@@ -32,27 +34,24 @@ namespace ndb
                 native_flag = SQLITE_OPEN_READONLY;
             }
 
-            auto status = sqlite3_open_v2(fullpath.c_str(), &database_, native_flag, nullptr);
+            auto status = sqlite3_open_v2(fullpath.c_str(), &connection_, native_flag, nullptr);
 
             if (status != SQLITE_OK) ndb_error("database connection failed");
         }
 
-        ~sqlite_connection()
+        ~engine_connection()
         {
-            sqlite3_close(database_);
+            sqlite3_close(connection_);
         }
 
-        sqlite3* database()
+        operator sqlite3*()
         {
-            return database_;
+            return connection_;
         }
 
     private:
-        sqlite3* database_;
-
-        ndb::connection_param params_;
+        sqlite3* connection_;
     };
-
 } // ndb
 
 #endif // ENGINE_SQLITE_CONNECTION_H_NDB
