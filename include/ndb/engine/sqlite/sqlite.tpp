@@ -8,27 +8,6 @@
 
 namespace ndb
 {
-    sqlite::sqlite() {}
-
-    template<class Database>
-    void sqlite::connect(ndb::connection_param params)
-    {
-        params.db_name = ndb::name<Database>();
-        auto conn = std::make_unique<sqlite_connection>(std::move(params));
-        connections_.emplace(ndb::database_id<Database>, std::move(conn));
-
-        // database connected, add foreign keys and create model
-        exec<Database>(std::string("PRAGMA foreign_keys = ON;"));
-        make<Database>();
-    }
-
-    template<class Database>
-    sqlite_connection& sqlite::connection() const
-    {
-        if (!connections_.count(ndb::database_id<Database>)) ndb_error("database connection not found : D" + std::to_string(ndb::database_id<Database>));
-        return *connections_.at(ndb::database_id<Database>).get();
-    }
-
     template<class Database>
     void sqlite::exec(const std::string& str_statement) const
     {
@@ -75,6 +54,8 @@ namespace ndb
     template<class Database>
     void sqlite::make()
     {
+        exec<Database>(std::string("PRAGMA foreign_keys = ON;"));
+
         using Model = typename Database::model;
 
         std::string output;
