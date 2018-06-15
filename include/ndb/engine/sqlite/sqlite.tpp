@@ -75,7 +75,7 @@ namespace ndb
 
                 // field type
                 using field_value_type = typename std::decay_t<decltype(field)>::value_type;
-                using field_storage_type = ndb::storage_type_t<ndb_type_t<field_value_type, Database>>;
+                using field_storage_type = ndb::storage_type_t<ndb::sqlite, ndb_type_t<field_value_type, Database>>;
 
                 if constexpr (std::is_same_v<int64_, field_storage_type>) output += " integer ";
                 if constexpr (std::is_same_v<double_, field_storage_type>) output += " float ";
