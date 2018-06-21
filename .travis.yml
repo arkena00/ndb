@@ -14,6 +14,8 @@ addons:
       - cmake3
       - libmongo-client-dev
       - libmongo-client0
+      - libpq-dev
+      - libpq5
 
 install:
     - export CC=gcc-7
@@ -22,6 +24,6 @@ install:
 script:
   - export CC=gcc-7
   - export CXX=g++-7
-  - cmake -DNDB_ENGINE_SQLITE=ON -DNDB_BUILD_TEST=ON -DCMAKE_BUILD_TYPE=Release
+  - cmake -DNDB_ENGINE_SQLITE=ON -DNDB_ENGINE_POSTGRE=ON -DNDB_BUILD_TEST=ON -DCMAKE_BUILD_TYPE=Release
   - make
   - make test

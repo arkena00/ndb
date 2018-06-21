@@ -21,7 +21,10 @@ namespace ndb
         op_assign,
         op_shift_left,
         op_list,
-        op_function
+        op_function,
+        op_match,
+        op_like,
+        op_glob
     };
 
     enum class expr_keyword_code
@@ -38,6 +41,8 @@ namespace ndb
         // function
         now,
         count,
+        min,
+        max,
         sum
     };
 
