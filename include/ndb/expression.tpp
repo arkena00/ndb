@@ -32,45 +32,5 @@
 
 namespace ndb
 {
-    template<class L, expr_type_code T, class R, expr_clause_code Clause>
-    constexpr expression<L, T, R, Clause>::expression(const L& lhs, const R& rhs) :
-        lhs_(lhs),
-        rhs_(rhs)
-    {}
 
-    template<class L, expr_type_code T, class R, expr_clause_code Clause>
-    constexpr expr_clause_code expression<L, T, R, Clause>::clause()
-    {
-        return L::clause() | R::clause() | Clause;
-    }
-
-    template<class L, expr_type_code T, class R, expr_clause_code Clause>
-    template<class F>
-    constexpr void expression<L, T, R, Clause>::eval(F&& f) const
-    {
-        lhs_.eval(f);
-        rhs_.eval(f);
-    }
-
-    template<class L, expr_type_code T, class R, expr_clause_code Clause>
-    template<class F>
-    constexpr auto expression<L, T, R, Clause>::static_eval(F&& f)
-    {
-        L::static_eval(f);
-        R::static_eval(f);
-    }
-
-    template<class L, expr_type_code T, class R, expr_clause_code Clause>
-    template<class Native_expression>
-    constexpr void expression<L, T, R, Clause>::make(Native_expression& ne) const
-    {
-        expression_type<T, Native_expression::expr_category>::make(lhs_, rhs_, ne);
-    }
-
-    template<class L, expr_type_code T, class R, expr_clause_code Clause>
-    template<expr_clause_code SM_Clause, int Pass, class Native_expression>
-    constexpr void expression<L, T, R, Clause>::static_make(Native_expression& ne)
-    {
-        expression_type<T, Native_expression::expr_category>::template static_make<L, R, SM_Clause, Pass>(ne);
-    }
 } // ndb

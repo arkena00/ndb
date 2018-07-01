@@ -25,30 +25,7 @@ namespace mpl = kvasir::mpl;
 
 namespace ndb::internal
 {
-    template<class Expr>
-    struct linearize_impl
-    {
-        using make = mpl::list<>;
-    };
 
-    template<class Expr>
-    using linearize = typename linearize_impl<Expr>::make;
-
-    template<class Expr>
-    using linearize_rec_impl =
-    typename mpl::conditional<ndb::expr_is_scalar<Expr>>
-    ::template f<mpl::listify, mpl::cfe<linearize>>
-    ::template f<Expr>
-    ;
-
-    template<class L, ndb::expr_type_code T, class R, ndb::expr_clause_code Clause>
-    struct linearize_impl<ndb::expression<L, T, R, Clause>>
-    {
-        using make = typename mpl::join<>::template f<
-        linearize_rec_impl<L>,
-        linearize_rec_impl<R>
-        >;
-    };
 } // ndb::internal
 
 struct error
@@ -68,24 +45,9 @@ namespace ndb
     template<class Expr>
     struct deduce
     {
-        using linear_type = internal::linearize<Expr>;
-        using tables = mpl::eager::filter<linear_type, internal::expr_is_table>;
 
-        // must be expr<...>, fail if pack is empty
-        using main_table = typename
-        mpl::call<
-            mpl::unpack<
-                mpl::filter<
-                    mpl::fork<
-                        mpl::cfe<internal::expr_is_field>,
-                        mpl::cfe<internal::expr_is_table>,
-                        mpl::logical_or<>
-                    >,
-                    mpl::front<>
-                >
-            >
-        , linear_type
-        >::table;
+        //using main_table = typename
+
     };
 } // ndb
 

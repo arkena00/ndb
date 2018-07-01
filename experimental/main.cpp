@@ -76,12 +76,84 @@ ndb_project(exp_main,
 
 
 
+
+
+/*
+// binary
+template<class Type>
+struct expression_make<ndb::expression<Type, T1, T2>>
+{
+    static void process(std::string& s)
+    {
+        expression_make<T1>::process(s);
+        s+="_";
+        s += expr_code<Type>::value ;
+        expression_make<T2>::process(s);
+    }
+};
+
+/*
+// unary
+template<class Type, class T>
+struct expression_make<ndb::expression<Type, T>>
+{
+    static void process(std::string& s)
+    {
+        s += expr_code<Type>::value ;
+        expression_make<T>::process(s);
+    }
+};
+
+//! statement< clause_list >
+template< class... Args>
+struct expression_make<ndb::expression<ndb::expression_types::statement, Args...>>
+{
+    static void process(std::string& s)
+    {
+        std::cout << sizeof...(Args);
+
+        (expression_make<Args>::process(s), ...);
+    }
+};
+
+
+template<class... Args>
+struct expression_make<ndb::expression<ndb::expression_types::get, Args...>>
+{
+    static void process(std::string& s)
+    {
+        s += "(";
+        s += "SELECT ";
+        (expression_make<Args>::process(s), ...);
+        s += ")";
+    }
+};
+*/
+
+
+
+
+namespace ndb
+{
+    struct statement_
+    {
+        template<class Expr>
+        constexpr auto operator<<(const Expr& e) const
+        {
+            auto expr = ndb::expr_make(e);
+            return ndb::expression<ndb::expression_types::statement, decltype(expr)> { expr };
+        }
+    };
+    static constexpr statement_ statement;
+}
+
 int main()
 {
     using ndb::sqlite;
     // using db = dbs::zeta;
     using db = ndb::databases::exp_main::library_;
-    constexpr auto library = ndb::models::library;
+    constexpr auto& library = ndb::models::library;
+    constexpr auto& movie = ndb::models::library.movie;
 
     std::stringstream result;
 
@@ -90,38 +162,33 @@ int main()
         ndb::initializer<sqlite> init;
         ndb::connect<db>();
 
-        std::string match_expr = "%test%";
+
+        //auto xpr = (movie.id, ndb::get(movie.name), movie.id) << movie;
+        //auto xpr2 = ndb::get(movie.id = 0, movie.name = 1, movie.id = 2) ;
+
+        auto xpr = ndb::statement << ndb::get(movie.id, movie.name)  << ndb::source(movie) << ndb::filter( movie.id == 3 );
+
+
+
+        std::string output;
 
         /*
-        ndb::types<bool_ int8, int16, int32>
+        get< list< list<A, B>, C > >
+         expr< get<get_list<F, GET<>> >
 
-        ndb::engine_types<sqlite, null_, int_, float_, string_, vector_>
-
-        // storage types from engine types
-        ndb::storage_type<sqlite, int64_t, null_type, double, std::string>
-
-        int int_
-        int8_t int8_
-        int16_t int16_
-
-        int_ int64
-        int8_ int64
-        int16_ int64
-        bool_ int64
-
-*/
+         */
 
 
-        ndb::query<db>() + (library.movie.name = "test");
+        using Expr = std::decay_t<decltype(xpr)>;
+       // std::cout << ndb::type_str<Expr>();
+        Expr::make(output);
+        std::cout << "\noutput : " << output;
 
-        std::cout << ndb::last_id<db>();
-
-
-
-        //ndb::query<db>() << (library.movie.name << ndb::native("native_expr") );
-
-
-        //ndb::query<db>() << (ndb::match( library.movie.name, match_expr ) || ndb::match( library.movie.director, match_expr ));
+        /*
+        output = "";
+        //std::cout << "\n\n" << ndb::type_str<decltype(xpr2)>();
+        expression_make<std::decay_t<decltype(xpr2)>>::process(output);
+        std::cout << "\noutput : " << output;*/
 
 
     } catch(const std::exception& e)

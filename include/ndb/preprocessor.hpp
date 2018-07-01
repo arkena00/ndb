@@ -22,10 +22,9 @@
 template<class R> \
 constexpr const auto operator=(const R& rhs) const \
 { \
-    using L = std::decay_t<decltype(*this)>; \
-    constexpr auto lhs = ::ndb::expression<L, ::ndb::expr_type_code::field, void> {}; \
+    auto lhs = ndb::expr_make(*this); \
     auto expr_value = ndb::expr_make(rhs); \
-    return ::ndb::expression<decltype(lhs), ::ndb::expr_type_code::op_assign, decltype(expr_value), ::ndb::expr_clause_code::add> { lhs, expr_value }; \
+    return ::ndb::expression< ::ndb::expression_types::assign,  decltype(lhs), decltype(expr_value)> { lhs, expr_value }; \
 }
 
 ////////////////////////////////////////////////////////////////////////////////

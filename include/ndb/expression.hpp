@@ -1,7 +1,7 @@
 #ifndef EXPRESSION_H_NDB
 #define EXPRESSION_H_NDB
 
-#include <ndb/expression/code.hpp>
+#include <ndb/expression/type.hpp>
 
 //! .tpp include operators to overload them
 
@@ -9,32 +9,71 @@ namespace ndb
 {
     struct expression_base {};
 
-    template<class L = void, expr_type_code T = expr_type_code::value, class R = void, expr_clause_code Clause = expr_clause_code::none>
+    template<class Type, class... Args>
     struct expression : expression_base
     {
-        static constexpr auto type = T;
-        using Lexpr = L;
-        using Rexpr = R;
+        using type = Type;
 
-        const L lhs_;
-        const R rhs_;
+        std::tuple<Args...> args;
 
-        inline constexpr expression(const L& lhs, const R& rhs);
+        //template<class... Z>
+        //constexpr expression(Z... args) {}
 
-        template<class F>
-        inline constexpr void eval(F&& f) const;
+        inline constexpr expression(Args... args_) : args(args_...) {}
+        inline constexpr expression(std::tuple<Args...> args_) : args(args_) {}
+
 
         template<class Native_expression>
-        inline constexpr void make(Native_expression& ne) const;
+        static constexpr auto make(Native_expression& ne)
+        {
+            expression_type<Type>::template make<Native_expression, Args...>(ne);
+        }
 
-        template<class F>
-        inline static constexpr auto static_eval(F&& f);
-
-        template<expr_clause_code SM_Clause = Clause, int Pass = 0, class Native_expression>
-        inline static constexpr void static_make(Native_expression& ne);
-
-        inline static constexpr expr_clause_code clause();
     };
+
+    template<class Type, class... Args>
+    struct scalar_expression : expression_base
+    {
+        using type = Type;
+
+        template<class Native_expression>
+        static constexpr auto make(Native_expression& ne)
+        {
+            ne += "S";
+        }
+    };
+
+
+    template<class T>
+    struct expression<expression_types::field, T> : scalar_expression<expression_types::field, T>
+    {
+        std::tuple<T> args;
+
+        constexpr expression() {}
+
+        template<class Native_expression>
+        static constexpr auto make(Native_expression& ne)
+        {
+            ne += "F";
+        }
+
+    };
+
+    template<class T>
+    struct expression<expression_types::table, T> : scalar_expression<expression_types::table, T>
+    {
+        std::tuple<T> args;
+
+        constexpr expression() {}
+
+        template<class Native_expression>
+        static constexpr auto make(Native_expression& ne)
+        {
+            ne += "T";
+        }
+
+    };
+
 } // ndb
 
 #include <ndb/expression.tpp>

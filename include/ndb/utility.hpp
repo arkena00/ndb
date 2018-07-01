@@ -6,7 +6,7 @@
 #include <ndb/fwd.hpp>
 #include <ndb/cx_error.hpp>
 #include <ndb/engine/type.hpp>
-#include <ndb/expression/code.hpp>
+#include <ndb/expression/type.hpp>
 #include <ndb/scope.hpp>
 
 #include <utility>
@@ -14,6 +14,8 @@
 #ifdef __GNUC__
     #include <cxxabi.h>
 #endif
+
+#include <boost/algorithm/string/replace.hpp>
 
 namespace ndb
 {
@@ -100,7 +102,7 @@ namespace ndb
     static constexpr bool is_table = internal::is_base_of<ndb::table_base, T>::value;
 
     template<class T>
-    static constexpr bool is_field =  internal::is_base_of<ndb::field_base, T>::value;
+    static constexpr bool is_field =  internal::is_base_of<ndb::field_base, std::decay_t<T>>::value;
 
     template<class T>
     static constexpr bool is_field_entity = internal::is_base_of<ndb::table_base, typename T::value_type>::value;
@@ -274,6 +276,18 @@ namespace ndb
         #else
             output = typeid(T).name();
         #endif
+
+        boost::algorithm::replace_all(output, "struct ", "");
+
+        boost::algorithm::replace_all(output, "ndb::expression_types::", "type::");
+        boost::algorithm::replace_all(output, "ndb::tables::movie<ndb::models::library_>::", "movie::");
+
+        boost::algorithm::replace_all(output, "ndb::expression<", "expr<");
+
+        boost::algorithm::replace_all(output, ",expr<", ",\nexpr<");
+
+        boost::algorithm::replace_all(output, "> >", ">\n>");
+
 
         return output;
     }
