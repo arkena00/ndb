@@ -16,17 +16,17 @@ namespace ndb
 
 
 
-    template<expr_clause_code Clause = expr_clause_code::none, class T>
+    template<class T>
     constexpr auto expr_make(const T& v)
     {
         if constexpr (ndb::is_expression<T>) return v;
         else if constexpr (ndb::is_field<T>)
         {
-            return ndb::expression<ndb::expression_types::field, T>{};
+            return ndb::expression<ndb::expressions::field, T>{};
         }
-        else if constexpr (ndb::is_table<T>) return ndb::expression<ndb::expression_types::table, T> {};
+        else if constexpr (ndb::is_table<T>) return ndb::expression<ndb::expressions::table_, T> {};
         // return value expression
-        else return ndb::expression<expression_types::value> {  };
+        else return ndb::expression<expressions::value, T> { v };
     }
 } // ndb
 

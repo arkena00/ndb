@@ -1,7 +1,6 @@
 #ifndef FUNCTION_GENERIC_H_NDB
 #define FUNCTION_GENERIC_H_NDB
 
-#include <ndb/expression/code.hpp>
 #include <ndb/cx_error.hpp>
 
 namespace ndb::functions

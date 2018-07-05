@@ -26,9 +26,6 @@
  * to append the expression to the Native_expression object
  */
 
-#include <ndb/expression/scalar.hpp>
-#include <ndb/expression/operator.hpp>
-#include <ndb/expression/type.hpp>
 
 namespace ndb
 {

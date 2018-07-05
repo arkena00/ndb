@@ -1,8 +1,8 @@
-#include <ndb/expression/sql.hpp>
+#include <ndb/expression/sql/native.hpp>
 #include <ndb/engine/sqlite/function.hpp>
 #include <ndb/engine/sqlite/type.hpp>
 #include <ndb/engine/sqlite/query.hpp>
-#include <ndb/expression/deduce.hpp>
+#include <ndb/expression/category.hpp>
 #include <ndb/option.hpp>
 #include <iostream> // query_debug
 
@@ -18,6 +18,7 @@ namespace ndb
     template<class Database, class Query_option, class Expr>
     auto sqlite::exec(const Expr& expr) const
     {
+        /*
         constexpr auto str_query = ndb::sql_expression<Expr>{};
         sqlite_query<Database> query{ str_query.c_str() };
 
@@ -37,9 +38,9 @@ namespace ndb
             ndb::has_option_v<query_option::object, Query_option>,
             typename ndb::deduce<Expr>::main_table::Detail_::object_type,
             ndb::line<Database>
-        >;
+        >;*/
 
-        return exec<Database, Result_type>(query);
+        return exec<Database, ndb::line<Database>>("");
     };
 
     template<class Database, class Result_type>
@@ -118,12 +119,14 @@ namespace ndb
     template<class Expr>
     std::string sqlite::to_string(const Expr&)
     {
+        /*
         constexpr auto str_query = ndb::sql_expression<Expr>{};
-        return str_query.to_string();
+        return str_query.to_string();*/
+        return "";
     }
 
     constexpr auto sqlite::expr_category()
     {
-        return expr_category_code::sql;
+        return expression_categories::sql;
     }
 } // ndb

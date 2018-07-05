@@ -24,7 +24,7 @@ constexpr const auto operator=(const R& rhs) const \
 { \
     auto lhs = ndb::expr_make(*this); \
     auto expr_value = ndb::expr_make(rhs); \
-    return ::ndb::expression< ::ndb::expression_types::assign,  decltype(lhs), decltype(expr_value)> { lhs, expr_value }; \
+    return ::ndb::expression< ::ndb::expressions::assign,  decltype(lhs), decltype(expr_value)> { lhs, expr_value }; \
 }
 
 ////////////////////////////////////////////////////////////////////////////////
