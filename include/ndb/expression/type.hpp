@@ -1,7 +1,6 @@
 #ifndef EXPRESSION_TYPE_NDB
 #define EXPRESSION_TYPE_NDB
 
-#include <ndb/expression.hpp>
 #include <ndb/expression/form.hpp>
 
 namespace ndb
@@ -40,6 +39,7 @@ namespace ndb
         struct set : basic_type<>{};
         struct add : basic_type<>{};
         static constexpr struct del_ : basic_type<>{} del;
+
         struct source_ : basic_type<>
         {
             template<class Ts>
@@ -50,21 +50,23 @@ namespace ndb
                 return ndb::expression<source_, decltype(expr)> { expr };
             }
         };
-        static constexpr ndb::expression<source_> source;
+        //static constexpr ndb::expression<source_> source;
 
-        static constexpr struct filter_ : basic_type<>
+        struct filter_ : basic_type<>
         {
             template<class T>
             constexpr auto operator()(const T& t) const
             {
-                return ndb::expression<ndb::expressions::filter_, T> { t };
+                return ndb::expression<filter_, T> { t };
             }
-        } filter;
+        };
+        //static constexpr ndb::expression<filter_> filter;
 
         struct clause_list : basic_type<>{};
 
         struct logical_and : basic_type<expression_forms::a_op_b>{};
     }
+
 
     // generic
     template<class Type>
@@ -72,12 +74,35 @@ namespace ndb
     {
         // make all args
         template<class Native_expression, class... Args>
-        static constexpr void make(Native_expression& s)
+        static constexpr void make(Native_expression& ne)
         {
-            expression_form<Type::form, Native_expression::category>::template make<Type, Native_expression, Args...>(s);
+            expression_form<Type::form, Native_expression::category>::template make<Type, Native_expression, Args...>(ne);
         }
     };
 
+
+    // scalar
+    template<>
+    struct expression_type<expressions::field>
+    {
+        template<class Native_expression, class Field>
+        static constexpr void make(Native_expression& s)
+        {
+            s.append("F");
+        }
+    };
+
+    template<>
+    struct expression_type<expressions::value>
+    {
+        template<class Native_expression, class Field>
+        static constexpr void make(Native_expression& s)
+        {
+            s.append("$");
+        }
+    };
+
+    // specific
     template<>
     struct expression_type<expressions::range>
     {
@@ -98,7 +123,7 @@ namespace ndb
         template<class Native_expression, class Field>
         static constexpr void make(Native_expression& s)
         {
-            s.append("T");
+            s.append("TTT");
         }
     };
 

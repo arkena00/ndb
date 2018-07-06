@@ -1,8 +1,10 @@
 #include <ndb/expression/sql/native.hpp>
+#include <ndb/expression/sql/code.hpp>
+
 #include <ndb/engine/sqlite/function.hpp>
 #include <ndb/engine/sqlite/type.hpp>
 #include <ndb/engine/sqlite/query.hpp>
-#include <ndb/expression/category.hpp>
+
 #include <ndb/option.hpp>
 #include <iostream> // query_debug
 

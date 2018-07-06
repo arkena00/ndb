@@ -8,6 +8,7 @@ namespace ndb
 {
     struct statement_;
 
+
     template<class L, class R>
     using enable_expression = std::enable_if_t<(ndb::is_expression<L> || ndb::is_expression<R>
                                                || ndb::is_field<L> || ndb::is_field<R>
@@ -22,7 +23,7 @@ namespace ndb
         if constexpr (ndb::is_expression<T>) return v;
         else if constexpr (ndb::is_field<T>)
         {
-            return ndb::expression<ndb::expressions::field, T>{};
+            return ndb::expression<ndb::expressions::field, T>{ v };
         }
         else if constexpr (ndb::is_table<T>) return ndb::expression<ndb::expressions::table_, T> {};
         // return value expression

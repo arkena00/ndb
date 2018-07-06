@@ -17,6 +17,7 @@ namespace ndb
             size_{ 0 },
             data_{}
         {
+            //ndb::expression_make<Expr>
             Expr::template make(*this);
         }
 

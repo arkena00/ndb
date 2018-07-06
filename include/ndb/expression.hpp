@@ -36,7 +36,10 @@ namespace ndb
         }
     };
 
-
+    namespace expressions
+    {
+        static constexpr ndb::expression<filter_> filter;
+    }
 
 } // ndb
 
