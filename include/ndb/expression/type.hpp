@@ -2,14 +2,12 @@
 #define EXPRESSION_TYPE_NDB
 
 #include <ndb/expression/form.hpp>
-#include <ndb/expression/utility.hpp>
 #include <ndb/expression.hpp>
 
 namespace ndb
 {
     template<class Type, class... Args>
     struct expression;
-
 
     namespace expressions
     {
@@ -21,7 +19,6 @@ namespace ndb
             static constexpr auto form = Form;
         };
 
-        struct statement_ : basic_type<expression_forms::none>{};
         struct substatement_ : basic_type<expression_forms::brace>{};
 
         struct list_ : basic_type<expression_forms::a_op_b>{};
@@ -92,7 +89,9 @@ namespace ndb
 
         // operation
         struct logical_and_ : basic_type<expression_forms::a_op_b>{};
-    }
+    } // expression
+
+    // instances
 
 
 
@@ -106,18 +105,7 @@ namespace ndb
         {
             expression_form<Type::form, Engine, Native_expression::category>::template make<Type, Native_expression, Args...>(ne);
         }
-
-        template<class F, class... Args>
-        static constexpr void eval(F&& f, const std::tuple<Args...>& args)
-        {
-            std::apply([&](auto&& arg)
-                       {
-                           //arg.eval(std::forward<F>(f), arg.args);
-                       }, args);
-        }
     };
-
-
 } // ndb
 
 

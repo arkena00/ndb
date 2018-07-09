@@ -10,16 +10,17 @@
 namespace ndb
 {
     template<class Expr, class Engine>
-    struct native_expression<Expr, Engine, expression_categories::sql>
+    class native_expression<Expr, Engine, expression_categories::sql>
     {
+    public:
         static constexpr auto category = expression_categories::sql;
+        static constexpr auto Capacity = 1000;
 
         constexpr native_expression() :
             size_{ 0 },
             value_index_{ 1 },
             data_{}
         {
-            //ndb::expression_make<Expr>
             Expr::template make<Engine>(*this);
         }
 
@@ -60,8 +61,7 @@ namespace ndb
             return result;
         }
 
-        static constexpr auto Capacity = 1000;
-
+    private:
         size_t size_;
         unsigned int value_index_;
         std::array<char, Capacity> data_;

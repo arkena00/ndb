@@ -6,7 +6,6 @@
 #include <ndb/engine.hpp>
 #include <ndb/result.hpp>
 #include <ndb/option.hpp>
-#include <ndb/expression/utility.hpp>
 
 namespace ndb
 {

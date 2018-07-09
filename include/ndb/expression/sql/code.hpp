@@ -7,6 +7,7 @@
 
 namespace ndb
 {
+    template<class Engine> struct expression_code<statement_, Engine, expression_categories::sql> { static constexpr const char* value = "[root_]"; };
 
     template<class Engine> struct expression_code<expressions::get_, Engine, expression_categories::sql> { static constexpr const char* value = "SELECT "; };
     template<class Engine> struct expression_code<expressions::assign_, Engine, expression_categories::sql> { static constexpr const char* value = "="; };
@@ -19,7 +20,6 @@ namespace ndb
     template<class Engine> struct expression_code<expressions::filter_, Engine, expression_categories::sql> { static constexpr const char* value = " WHERE "; };
     template<class Engine> struct expression_code<expressions::range_, Engine, expression_categories::sql> { static constexpr const char* value = " BETWEEN "; };
 
-    template<class Engine> struct expression_code<expressions::statement_, Engine, expression_categories::sql> { static constexpr const char* value = "[root_]"; };
     template<class Engine> struct expression_code<expressions::substatement_, Engine, expression_categories::sql> { static constexpr const char* value = "[]"; };
     template<class Engine> struct expression_code<expressions::value_, Engine, expression_categories::sql> { static constexpr const char* value = "$"; };
 } // ndb

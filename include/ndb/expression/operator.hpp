@@ -2,11 +2,16 @@
 #define EXPRESSION_OPERATOR_H_NDB
 
 #include <ndb/expression/type.hpp>
-#include <ndb/expression/utility.hpp>
 #include <ndb/expression/deduce.hpp>
 
 namespace ndb
 {
+    template<class L, class R>
+    using enable_expression = std::enable_if_t<(ndb::is_expression<L> || ndb::is_expression<R>
+                                                || ndb::is_field<L> || ndb::is_field<R>
+                                                || ndb::is_table<L> || ndb::is_table<R>) && !std::is_same_v<L, ndb::statement_>
+    >;
+
     // op_list
     template<class L, class R, class = ndb::enable_expression<L, R>>
     constexpr const auto operator,(L&& l, R&& r)
@@ -38,18 +43,18 @@ namespace ndb
         auto expr_l = ndb::expr_make(l);
         auto expr_r = ndb::expr_make(r);
 
-        return ndb::expression<expressions::statement_, decltype(expr_l), decltype(expr_r)> { expr_l, expr_r };
+        return ndb::expression<ndb::statement_, decltype(expr_l), decltype(expr_r)> { expr_l, expr_r };
     }
 
     // add clause to statement
     template<class... Ls, class R>
-    constexpr const auto operator<<(const ndb::expression<ndb::expressions::statement_, Ls...>& l, R&& r)
+    constexpr const auto operator<<(const ndb::expression<ndb::statement_, Ls...>& l, R&& r)
     {
         auto expr_r = ndb::expr_make(std::forward<R>(r));
         /*
         auto expr_deduced = ndb::deduction<decltype(l), decltype(expr_r)>::process(l, expr_r);
         return expr_deduced;*/
-        return ndb::expression<expressions::statement_, Ls..., R> { std::tuple_cat(l.args(), expr_r.args()) };
+        return ndb::expression<ndb::statement_, Ls..., decltype(expr_r)> { std::tuple_cat(l.args(), expr_r.args()) };
     }
 
 } // ndb

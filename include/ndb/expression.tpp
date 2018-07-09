@@ -1,33 +1,68 @@
-/*! expression<Left_expression, expression_type ( [operators, field, value] ), Right_expression>
- * expression::type : [operator, field, value, function]
- * expression::clause : get, condition
- *
- * Void expression :
- * expression<>
- *
- * Scalar types :
- * expression<Encapsuled_type, Scalar_type>
- *
- * Process of static_make to generate a Native_expression:
- * Given expression<L, Type, R>
- * call expression<L, Type, R>::static_make
- * call expression_type<Type, Native_expression::expr_category>::static_make(lhs_, rhs_, ne);
- * Default for all Type of expression :
- *          L::template static_make<Pass>(ne);
- *          ne.push_back(expr_code<T, expr_category_code::sql>::value);
- *          R::template static_make<Pass>(ne);
- *
- * static_make can be specialized for Type
- * recursion stop on scalar expressions (specialized expressions by expression_type) ex : expression<T, spe, ...>
- *
- * scalar expressions call :
- * native_expression<Native_expression::expr_category, Type>::static_make<Expr, Clause>(ne);
- *
- * to append the expression to the Native_expression object
- */
-
+#include <ndb/expression/type.hpp>
+#include <ndb/utility.hpp>
 
 namespace ndb
 {
+    template<class Type, class... Args>
+    constexpr expression<Type, Args...>::expression(Args&&... args) :
+        args_( std::forward<Args>(args)... )
+    {}
 
+    template<class Type, class... Args>
+    constexpr expression<Type, Args...>::expression(std::tuple<Args...> args) :
+        args_( std::move(args) )
+    {}
+
+    template<class Type, class... Args>
+    template<class... Ts>
+    constexpr auto expression<Type, Args...>::operator()(const Ts&... ts) const
+    {
+        return Type{}(ts...);
+    }
+
+    template<class Type, class... Args>
+    const std::tuple<Args...>& expression<Type, Args...>::args() const
+    {
+        return args_;
+    }
+
+    template<class Type, class... Args>
+    constexpr auto expression<Type, Args...>::arg_count() const
+    {
+        return sizeof...(Args);
+    }
+
+    template<class Type, class... Args>
+    template<class F>
+    constexpr void expression<Type, Args...>::eval(F&& f) const
+    {
+        if constexpr( ndb::expr_is_scalar<decltype(*this)> ) f(*this);
+        else
+        {
+            std::apply([&f](auto&&... arg)
+                       {
+                           (arg.eval(f), ...);
+                       }, args_);
+        }
+    }
+
+    template<class Type, class... Args>
+    template<class Engine, int Pass, class Native_expression>
+    constexpr auto expression<Type, Args...>::make(Native_expression& ne)
+    {
+        expression_type<Type, Engine, Engine::expr_category()>::template make<Native_expression, Args...>(ne);
+    }
+
+    template<class T>
+    constexpr auto expr_make(T&& v)
+    {
+        if constexpr (ndb::is_expression<T>) return v;
+        else if constexpr (ndb::is_field<T>)
+        {
+            return ndb::expression<ndb::expressions::field_, T>{ v };
+        }
+        else if constexpr (ndb::is_table<T>) return ndb::expression<ndb::expressions::table_, T> {};
+            // return value expression
+        else return ndb::expression<expressions::value_, T> { std::forward<T>(v) };
+    }
 } // ndb
