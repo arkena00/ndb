@@ -12,6 +12,8 @@
 
 #include <experimental/filesystem>
 #include <unordered_map>
+#include <ndb/expression/sql/native.hpp>
+#include <ndb/expression/sql/type.hpp>
 
 namespace ndb
 {

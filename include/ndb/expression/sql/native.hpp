@@ -5,20 +5,22 @@
 #include <ndb/utility.hpp>
 
 #include <string>
+#include <array>
 
 namespace ndb
 {
-    template<class Expr>
-    struct native_expression<Expr, expression_categories::sql>
+    template<class Expr, class Engine>
+    struct native_expression<Expr, Engine, expression_categories::sql>
     {
         static constexpr auto category = expression_categories::sql;
 
         constexpr native_expression() :
             size_{ 0 },
+            value_index_{ 1 },
             data_{}
         {
             //ndb::expression_make<Expr>
-            Expr::template make(*this);
+            Expr::template make<Engine>(*this);
         }
 
         constexpr void append(char v)
@@ -32,6 +34,13 @@ namespace ndb
             auto s = cx_str_len(v);
             for (int i = 0; i != s; i++) data_[size_ + i] = v[i];
             size_ += s;
+        }
+
+        constexpr void add_value()
+        {
+            data_[size_] = '0' + value_index_;
+            size_ ++;
+            value_index_++;
         }
 
         constexpr auto size() const
@@ -54,6 +63,7 @@ namespace ndb
         static constexpr auto Capacity = 1000;
 
         size_t size_;
+        unsigned int value_index_;
         std::array<char, Capacity> data_;
     };
 } // ndb

@@ -17,18 +17,6 @@ namespace ndb
 
 
 
-    template<class T>
-    constexpr auto expr_make(const T& v)
-    {
-        if constexpr (ndb::is_expression<T>) return v;
-        else if constexpr (ndb::is_field<T>)
-        {
-            return ndb::expression<ndb::expressions::field, T>{ v };
-        }
-        else if constexpr (ndb::is_table<T>) return ndb::expression<ndb::expressions::table_, T> {};
-        // return value expression
-        else return ndb::expression<expressions::value, T> { v };
-    }
 } // ndb
 
 #endif // EXPRESSION_UTILITY_H_NDB

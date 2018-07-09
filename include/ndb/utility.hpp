@@ -6,7 +6,6 @@
 #include <ndb/fwd.hpp>
 #include <ndb/cx_error.hpp>
 #include <ndb/engine/type.hpp>
-#include <ndb/expression/type.hpp>
 #include <ndb/scope.hpp>
 
 #include <utility>
@@ -117,10 +116,10 @@ namespace ndb
     static constexpr bool is_option = internal::is_base_of<ndb::option_base, T>::value;
 
     template<class T>
-    static constexpr bool is_expression = internal::is_base_of<ndb::expression_base, T>::value;
+    static constexpr bool is_expression = internal::is_base_of<ndb::expression_base, std::decay_t<T>>::value;
 
     template<class Field>
-    constexpr unsigned char field_id = index_of<std::decay_t<Field>, typename Field::table::Detail_::entity>::value;
+    constexpr unsigned char field_id = index_of<std::decay_t<Field>, typename std::decay_t<Field>::table::Detail_::entity>::value;
 
     template<class Table>
     constexpr unsigned char table_id = index_of<std::decay_t<Table>, typename Table::model::Detail_::entity>::value;
@@ -135,15 +134,15 @@ namespace ndb
     namespace internal
     {
         template<class Expr, class T>
-        struct expr_type_check { static constexpr auto value = std::is_same<Expr, T>::value; };
+        struct expr_type_check { static constexpr auto value = std::is_same<typename std::decay_t<Expr>::type, T>::value; };
 
         template<class Expr>
         struct expr_is_value :
-            std::conditional_t<is_expression<Expr>, expr_type_check<Expr, expressions::value>, std::false_type>{};
+            std::conditional_t<is_expression<Expr>, expr_type_check<Expr, expressions::value_>, std::false_type>{};
 
         template<class Expr>
         struct expr_is_field :
-            std::conditional_t<is_expression<Expr>, expr_type_check<Expr, expressions::field>, std::false_type>{};
+            std::conditional_t<is_expression<Expr>, expr_type_check<Expr, expressions::field_>, std::false_type>{};
 
         template<class Expr>
         struct expr_is_table :

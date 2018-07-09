@@ -5,7 +5,7 @@
 
 namespace ndb
 {
-    template<class Expr, expression_categories>
+    template<class Expr, class Engine, expression_categories Expr_category = Engine::expr_category()>
     struct native_expression;
 } // ndb
 

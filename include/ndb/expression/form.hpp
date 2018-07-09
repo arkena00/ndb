@@ -12,72 +12,72 @@ namespace ndb
 {
     enum class expression_forms { none, scalar, brace, op_args, a_op_b, op_a_b };
 
-    template<expression_forms Form, expression_categories Category>
+    template<expression_forms Form, class Engine, expression_categories Category = Engine::expr_category()>
     struct expression_form;
 
-    template<expression_categories Category>
-    struct expression_form<expression_forms::none, Category>
+    template<class Engine, expression_categories Category>
+    struct expression_form<expression_forms::none, Engine, Category>
     {
         template<class Type, class Native_expression, class... Args>
         static constexpr void make(Native_expression& ne)
         {
-            (std::decay_t<Args>::make(ne), ...);
+            (std::decay_t<Args>::template make<Engine>(ne), ...);
         }
     };
 
-    template<expression_categories Category>
-    struct expression_form<expression_forms::scalar, Category>
+    template<class Engine, expression_categories Category>
+    struct expression_form<expression_forms::scalar, Engine, Category>
     {
         template<class Type, class Native_expression, class... Args>
         static constexpr void make(Native_expression& ne)
         {
-            ne.append(expression_code<Type, Category>::value);
+            ne.append(expression_code<Type, Engine, Category>::value);
         }
     };
 
-    template<expression_categories Category>
-    struct expression_form<expression_forms::brace, Category>
+    template<class Engine, expression_categories Category>
+    struct expression_form<expression_forms::brace, Engine, Category>
     {
         template<class Type, class Native_expression, class... Args>
         static constexpr void make(Native_expression& ne)
         {
             ne.append('(');
-            (std::decay_t<Args>::make(ne), ...);
+            (std::decay_t<Args>::template make<Engine>(ne), ...);
             ne.append(')');
         }
     };
 
-    template<expression_categories Category>
-    struct expression_form<expression_forms::op_args, Category>
+    template<class Engine, expression_categories Category>
+    struct expression_form<expression_forms::op_args, Engine, Category>
     {
         template<class Type, class Native_expression, class... Args>
         static constexpr void make(Native_expression& ne)
         {
-            ne.append(expression_code<Type, Category>::value);
-            (std::decay_t<Args>::make(ne), ...);
+            ne.append(expression_code<Type, Engine, Category>::value);
+            (std::decay_t<Args>::template make<Engine>(ne), ...);
         }
     };
-    template<expression_categories Category>
-    struct expression_form<expression_forms::a_op_b, Category>
+    template<class Engine, expression_categories Category>
+    struct expression_form<expression_forms::a_op_b, Engine, Category>
     {
         template<class Type, class Native_expression, class T1, class T2>
         static constexpr void make(Native_expression& ne)
         {
-            T1::make(ne);
-            ne.append(expression_code<Type, Category>::value);
-            T2::make(ne);
+            T1::template make<Engine>(ne);
+            ne.append(expression_code<Type, Engine, Category>::value);
+            T2::template make<Engine>(ne);
         }
     };
 
-    template<expression_categories Category>
-    struct expression_form<expression_forms::op_a_b, Category>
+    template<class Engine, expression_categories Category>
+    struct expression_form<expression_forms::op_a_b, Engine, Category>
     {
         template<class Type, class Native_expression, class T1, class T2>
         static constexpr void make(Native_expression& ne)
         {
-            ne.append(expression_code<Type, Category>::value);
-            T1::make(ne);
-            T2::make(ne);
+            ne.append(expression_code<Type, Engine, Category>::value);
+            T1::template make<Engine>(ne);
+            T2::template make<Engine>(ne);
         }
     };
 } // ndb

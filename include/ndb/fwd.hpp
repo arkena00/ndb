@@ -36,6 +36,13 @@ namespace ndb
     class sql;
     class bson;
 
+    namespace expressions
+    {
+        struct value_;
+        struct field_;
+        struct table_;
+    }
+
 } // ndb
 
 #endif // FWD_H_NDB

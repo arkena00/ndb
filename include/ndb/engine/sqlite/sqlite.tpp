@@ -5,6 +5,8 @@
 #include <ndb/engine/sqlite/type.hpp>
 #include <ndb/engine/sqlite/query.hpp>
 
+#include <ndb/expression/operator.hpp>
+
 #include <ndb/option.hpp>
 #include <iostream> // query_debug
 
@@ -31,7 +33,7 @@ namespace ndb
                       // e is expr_value
                       if constexpr (ndb::expr_is_value<expr_type>)
                       {
-                          query.bind(e.value());
+                          query.bind(std::get<0>(e.args()));
                       }
                   });
 

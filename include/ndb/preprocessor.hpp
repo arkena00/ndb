@@ -20,11 +20,11 @@
 // operator= for fields
 #define ndb_internal_field_op \
 template<class R> \
-constexpr const auto operator=(const R& rhs) const \
+constexpr const auto operator=(R&& r) const \
 { \
-    auto lhs = ndb::expr_make(*this); \
-    auto expr_value = ndb::expr_make(rhs); \
-    return ::ndb::expression< ::ndb::expressions::assign,  decltype(lhs), decltype(expr_value)> { lhs, expr_value }; \
+    auto expr_l = ndb::expr_make(*this); \
+    auto expr_r = ndb::expr_make(std::forward<R>(r)); \
+    return ::ndb::expression< ::ndb::expressions::assign_, decltype(expr_l), decltype(expr_r)> { std::move(expr_l), std::move(expr_r) }; \
 }
 
 ////////////////////////////////////////////////////////////////////////////////
