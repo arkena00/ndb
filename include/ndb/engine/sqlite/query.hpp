@@ -20,17 +20,36 @@ namespace ndb
     public:
         using Engine = typename Database::engine;
 
+        sqlite_query() = default;
+
         sqlite_query(std::string str_statement) :
-            statement_{ nullptr },
-            str_statement_{ std::move(str_statement) },
-            bind_index_{ 1 }
+            statement_{ nullptr }
         {
+            prepare(std::move(str_statement));
+        }
+
+        void bind_clear()
+        {
+            bind_index_ = 1;
+            sqlite3_clear_bindings(statement_);
+        }
+
+        void prepare(std::string str_statement)
+        {
+            #ifdef NDB_DEBUG_QUERY
+                std::cout << "[ndb:debug_query]" << str_statement << std::endl;
+            #endif
+
+            sqlite3_finalize(statement_);
+            str_statement_ = std::move(str_statement);
+            bind_index_ = 1;
+
             auto status = sqlite3_prepare_v2(connection(), str_statement_.c_str(), -1, &statement_, nullptr);
 
             if (status != SQLITE_OK)
             {
                 std::string error = sqlite3_errmsg(connection());
-                ndb_error("query error : " + error);
+                ndb_error("query error : " + error + "\nquery : " + str_statement_);
             }
         }
 
@@ -38,6 +57,9 @@ namespace ndb
         {
             sqlite3_finalize(statement_);
         }
+
+        sqlite_query(const sqlite_query&) = delete;
+        sqlite_query& operator=(const sqlite_query&) = delete;
 
         template<class T>
         void bind_value(const T& value)
@@ -68,7 +90,7 @@ namespace ndb
         {
             if constexpr (ndb::is_custom_type_v<T, Database>) bind_value(ndb::custom_type<T, Database>::internal_encode(value));
             else bind_value(value);
-        };
+        }
 
         template<class Result_type = ndb::line<Database>>
         auto exec() const
@@ -76,11 +98,6 @@ namespace ndb
             int step = SQLITE_DONE;
 
             ndb::result<Database, Result_type> result;
-
-            #ifdef NDB_DEBUG_QUERY
-                auto str_statement = std::string(sqlite3_expanded_sql(statement_));
-                std::cout << "[ndb:debug_query]" << str_statement << std::endl;
-            #endif
 
             step = sqlite3_step(statement_);
 

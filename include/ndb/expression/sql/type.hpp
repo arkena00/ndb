@@ -36,7 +36,6 @@ namespace ndb
             template<int Pass, class Native_expression>
             static constexpr void process(Native_expression& ne)
             {
-                //( (std::cout << "_________" <<  ndb::type_str<Assigns>()), ...);
                 (expr_builder<Engine, expr_build_type<expressions::add_>, Assigns>::template process<Pass>(ne), ...);
             }
         };
@@ -48,8 +47,13 @@ namespace ndb
         template<class Native_expression, class List>
         static constexpr void make(Native_expression& ne)
         {
+            using Table = typename std::decay_t<typename List::template arg_at<0>::template arg_at<0>::template arg_at<0>>::table;
+            std::cout << type_str<Table>();
+
             ne.append(expression_code<expressions::add_, Engine, Native_expression::category>::value);
-            ne.append("table(");
+            ne.append("T");
+            ne.append(ndb::table_id<Table> + '0');
+            ne.append("(");
 
             internal::expr_builder<Engine, internal::expr_build_type<expressions::add_>, List>::template process<0>(ne);
             ne.pop();

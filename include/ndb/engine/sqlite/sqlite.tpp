@@ -22,8 +22,8 @@ namespace ndb
     template<class Database, class Query_option, class Expr>
     auto sqlite::exec(const Expr& expr) const
     {
-        /*
-        constexpr auto str_query = ndb::sql_expression<Expr>{};
+
+        constexpr auto str_query = ndb::native_expression<Expr, ndb::sqlite>{};
         sqlite_query<Database> query{ str_query.c_str() };
 
         // bind values from expression
@@ -33,10 +33,11 @@ namespace ndb
                       // e is expr_value
                       if constexpr (ndb::expr_is_value<expr_type>)
                       {
-                          query.bind(std::get<0>(e.args()));
+                          //query.bind(std::get<0>(e.args()));
                       }
                   });
 
+        /*
         using Result_type = typename
         std::conditional_t<
             ndb::has_option_v<query_option::object, Query_option>,
@@ -44,7 +45,7 @@ namespace ndb
             ndb::line<Database>
         >;*/
 
-        return exec<Database, ndb::line<Database>>("");
+        return exec<Database, ndb::line<Database>>(std::move(query));
     };
 
     template<class Database, class Result_type>

@@ -9,8 +9,10 @@
 
 namespace ndb
 {
+    class query_base{};
+
     template<class Database, class Option = ndb::option<>>
-    class basic_query
+    class basic_query : query_base
     {
     public:
         using Engine = typename Database::engine;
@@ -18,15 +20,14 @@ namespace ndb
         constexpr basic_query() {}
 
         template<class T>
-        constexpr auto operator<<(const T& t)
+        constexpr auto operator<<(T&& t)
         {
             const auto& engine = ndb::engine<Engine>::get();
+            auto expr = ndb::statement << ndb::expr_make(t);
 
-            auto expr = ndb::expr_make(t);
-            // ndb::statement << t;
-            //auto e = ndb::expression<decltype(expr), expr_type_code::root, void, expr_clause_code::get> { std::move(expr) };
+            //std::cout << ndb::type_str<decltype(expr)>();
 
-            //return engine.template exec<Database, Option>(e);
+            return engine.template exec<Database, Option>(std::move(expr));
         }
 
         template<class T>
@@ -68,7 +69,7 @@ namespace ndb
 
     // utility class to display querys
     template<class Database>
-    class query_str
+    class query_str : query_base
     {
         using Engine = typename Database::engine;
     public:

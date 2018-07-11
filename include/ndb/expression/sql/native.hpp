@@ -37,6 +37,12 @@ namespace ndb
             size_ += s;
         }
 
+        constexpr void pop()
+        {
+            data_[size_] = 0;
+            size_--;
+        }
+
         constexpr void add_value()
         {
             data_[size_] = '0' + value_index_;
@@ -47,6 +53,11 @@ namespace ndb
         constexpr auto size() const
         {
             return size_;
+        }
+
+        constexpr const char* c_str() const
+        {
+            return data_.data();
         }
 
 

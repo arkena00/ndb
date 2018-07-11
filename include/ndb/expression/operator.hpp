@@ -9,7 +9,8 @@ namespace ndb
     template<class L, class R>
     using enable_expression = std::enable_if_t<(ndb::is_expression<L> || ndb::is_expression<R>
                                                 || ndb::is_field<L> || ndb::is_field<R>
-                                                || ndb::is_table<L> || ndb::is_table<R>) && !std::is_same_v<L, ndb::statement_>
+                                                || ndb::is_table<L> || ndb::is_table<R>)
+                                                && !ndb::is_query<L>
     >;
 
     // op_list
@@ -38,12 +39,12 @@ namespace ndb
     }
 
     template<class L, class R, class = ndb::enable_expression<L, R>>
-    constexpr const auto operator<<(const L& l, const R& r)
+    constexpr const auto operator<<(L&& l, R&& r)
     {
-        auto expr_l = ndb::expr_make(l);
-        auto expr_r = ndb::expr_make(r);
+        auto expr_l = ndb::expr_make(std::forward<L>(l));
+        auto expr_r = ndb::expr_make(std::forward<R>(r));
 
-        return ndb::expression<ndb::statement_, decltype(expr_l), decltype(expr_r)> { expr_l, expr_r };
+        return ndb::expression<ndb::statement_, decltype(expr_l), decltype(expr_r)> { std::move(expr_l), std::move(expr_r) };
     }
 
     // add clause to statement
@@ -54,7 +55,7 @@ namespace ndb
         /*
         auto expr_deduced = ndb::deduction<decltype(l), decltype(expr_r)>::process(l, expr_r);
         return expr_deduced;*/
-        return ndb::expression<ndb::statement_, Ls..., decltype(expr_r)> { std::tuple_cat(l.args(), expr_r.args()) };
+        return ndb::expression<ndb::statement_, Ls..., decltype(expr_r)> { std::tuple_cat(l.args(), std::forward_as_tuple(std::move(expr_r))) };
     }
 
 } // ndb

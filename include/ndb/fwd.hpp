@@ -21,6 +21,7 @@ namespace ndb
     class table_base;
     class option_base;
     class database_base;
+    class query_base;
 
     // type
     struct proxy_type_base;

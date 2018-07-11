@@ -19,6 +19,9 @@ namespace ndb
     public:
         using type = Type;
 
+        template <std::size_t N>
+        using arg_at = typename std::tuple_element<N, std::tuple<Args...>>::type;
+
         inline constexpr expression(Args&&... args);
         inline constexpr expression(std::tuple<Args...> args);
 

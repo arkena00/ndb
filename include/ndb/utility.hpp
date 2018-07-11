@@ -98,6 +98,9 @@ namespace ndb
 ////////////////////////              NDB               ////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
     template<class T>
+    static constexpr bool is_query = internal::is_base_of<ndb::query_base, T>::value;
+
+    template<class T>
     static constexpr bool is_table = internal::is_base_of<ndb::table_base, T>::value;
 
     template<class T>
@@ -130,7 +133,6 @@ namespace ndb
 /////////////////////////////////////////////////////////////////////////////////
 ////////////////////////           EXPRESSION            ////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
-//TODO wrap expression enum to type for easier traits (exrp_type::field class)
     namespace internal
     {
         template<class Expr, class T>
