@@ -3,10 +3,10 @@
 #include <ndb/initializer.hpp>
 #include <ndb/engine/sqlite/sqlite.hpp>
 #include <ndb/query.hpp>
+#include <ndb/statement.hpp>
 #include <iostream>
 #include <sstream>
 
-#include <ndb/expression/deduce.hpp>
 #include <ndb/preprocessor.hpp>
 
 /* tree_table
@@ -71,81 +71,12 @@ ndb_project(exp_main,
             ndb_database(library, library, ndb::sqlite)
 )
 
-
-//#include "database.hpp"
-
-
-
-
-
-/*
-// binary
-template<class Type>
-struct expression_make<ndb::expression<Type, T1, T2>>
+template<class T>
+constexpr auto zeta(const T& t)
 {
-    static void process(std::string& s)
-    {
-        expression_make<T1>::process(s);
-        s+="_";
-        s += expr_code<Type>::value ;
-        expression_make<T2>::process(s);
-    }
-};
-
-/*
-// unary
-template<class Type, class T>
-struct expression_make<ndb::expression<Type, T>>
-{
-    static void process(std::string& s)
-    {
-        s += expr_code<Type>::value ;
-        expression_make<T>::process(s);
-    }
-};
-
-//! statement< clause_list >
-template< class... Args>
-struct expression_make<ndb::expression<ndb::expression_types::statement, Args...>>
-{
-    static void process(std::string& s)
-    {
-        std::cout << sizeof...(Args);
-
-        (expression_make<Args>::process(s), ...);
-    }
-};
-
-
-template<class... Args>
-struct expression_make<ndb::expression<ndb::expression_types::get, Args...>>
-{
-    static void process(std::string& s)
-    {
-        s += "(";
-        s += "SELECT ";
-        (expression_make<Args>::process(s), ...);
-        s += ")";
-    }
-};
-*/
-
-
-
-
-namespace ndb
-{
-    struct statement_
-    {
-        template<class Expr>
-        constexpr auto operator<<(const Expr& e) const
-        {
-            auto expr = ndb::expr_make(e);
-            return ndb::expression<ndb::expression_types::statement, decltype(expr)> { expr };
-        }
-    };
-    static constexpr statement_ statement;
+    return ndb::expression<ndb::expressions::filter_, T> { t };
 }
+
 
 int main()
 {
@@ -162,34 +93,56 @@ int main()
         ndb::initializer<sqlite> init;
         ndb::connect<db>();
 
+        using namespace ndb::expressions;
+
+        //TESTS
+        // statement
+        // composition
+        // nested
+        // dynamic
+        // deduction : clause, keywork
 
         //auto xpr = (movie.id, ndb::get(movie.name), movie.id) << movie;
         //auto xpr2 = ndb::get(movie.id = 0, movie.name = 1, movie.id = 2) ;
 
-        auto xpr = ndb::statement << ndb::get(movie.id, movie.name)  << ndb::source(movie) << ndb::filter( movie.id == 3 );
+        //auto sub1 = ndb::get(movie.id) ;
+        //auto xpr = ndb::statement << (movie.id, movie.name) << (movie) << ( movie.id == ndb::substatement( sub1 ) );
+        //auto xpr2 = xpr << ndb::filter( movie.id == ndb::substatement( sub1 ) );
 
+        //auto xpr_del = ndb::expressions::source << ndb::filter(movie.id == 3);
 
+        int x = 3;
+        constexpr auto xpr_del =  ndb::get(movie.id, movie.name) << ndb::filter(movie.id == 99);
+        //constexpr auto xpr_add = ndb::add(movie.id = 3, movie.name = "aze", movie.name = "aze");
+
+        //ndb::query<db>() << ndb::add(movie.name = "test");
+
+        /*
+        ndb::query<db>() << (
+            ndb::get(movie.id, movie.name)
+            << ndb::source(movie)
+            << ndb::filter(movie.id == 99)
+        );*/
 
         std::string output;
 
-        /*
-        get< list< list<A, B>, C > >
-         expr< get<get_list<F, GET<>> >
+        using Expr = std::decay_t<decltype(xpr_del)>;
+        constexpr auto sql = ndb::native_expression<Expr, ndb::sqlite>{};
+        std::cout << "\nsql str :" << sql.str();
+        //std::cout << "\n str : " << ndb::type_str<Expr>();
 
-         */
+        ndb::syntax_check(xpr_del);
 
 
-        using Expr = std::decay_t<decltype(xpr)>;
-       // std::cout << ndb::type_str<Expr>();
-        Expr::make(output);
-        std::cout << "\noutput : " << output;
+        ndb::dynamic_statement stmt;
+        stmt << ndb::get(movie.id, movie.name) << ndb::source(movie) << ndb::filter;
+        for (int i = 0; i < 3; ++i)
+        {
+            stmt << (movie.id == 3);
 
-        /*
-        output = "";
-        //std::cout << "\n\n" << ndb::type_str<decltype(xpr2)>();
-        expression_make<std::decay_t<decltype(xpr2)>>::process(output);
-        std::cout << "\noutput : " << output;*/
-
+            if (i < 3 - 1) stmt << ndb::logical_and;
+        }
+        std::cout << "\ndyn output : " << stmt.native();
 
     } catch(const std::exception& e)
     {

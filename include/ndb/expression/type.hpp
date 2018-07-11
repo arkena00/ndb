@@ -7,7 +7,7 @@
 namespace ndb
 {
     template<class Type, class... Args>
-    struct expression;
+    class expression;
 
     namespace expressions
     {

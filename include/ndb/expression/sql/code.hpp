@@ -14,8 +14,8 @@ namespace ndb
     template<class Engine> struct expression_code<expressions::equal_, Engine, expression_categories::sql> { static constexpr const char* value = "="; };
     template<class Engine> struct expression_code<expressions::logical_and_, Engine, expression_categories::sql> { static constexpr const char* value = " AND "; };
     template<class Engine> struct expression_code<expressions::list_, Engine, expression_categories::sql> { static constexpr const char* value = ","; };
-    template<class Engine> struct expression_code<expressions::del_, Engine, expression_categories::sql> { static constexpr const char* value = " DELETE "; };
-    template<class Engine> struct expression_code<expressions::add_, Engine, expression_categories::sql> { static constexpr const char* value = " INSERT INTO "; };
+    template<class Engine> struct expression_code<expressions::del_, Engine, expression_categories::sql> { static constexpr const char* value = "DELETE "; };
+    template<class Engine> struct expression_code<expressions::add_, Engine, expression_categories::sql> { static constexpr const char* value = "INSERT INTO "; };
     template<class Engine> struct expression_code<expressions::source_, Engine, expression_categories::sql> { static constexpr const char* value = " FROM "; };
     template<class Engine> struct expression_code<expressions::filter_, Engine, expression_categories::sql> { static constexpr const char* value = " WHERE "; };
     template<class Engine> struct expression_code<expressions::range_, Engine, expression_categories::sql> { static constexpr const char* value = " BETWEEN "; };
