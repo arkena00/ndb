@@ -12,7 +12,7 @@ namespace ndb
 {
     enum class expression_forms { none, scalar, brace, op_args, a_op_b, op_a_b };
 
-    template<expression_forms Form, class Engine, expression_categories Category = Engine::expr_category()>
+    template<expression_forms Form, class Engine, expression_categories Category = Engine::expr_category>
     struct expression_form;
 
     template<class Engine, expression_categories Category>

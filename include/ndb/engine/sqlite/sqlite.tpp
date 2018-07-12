@@ -129,9 +129,4 @@ namespace ndb
         return str_query.to_string();*/
         return "";
     }
-
-    constexpr auto sqlite::expr_category()
-    {
-        return expression_categories::sql;
-    }
 } // ndb

@@ -5,7 +5,7 @@
 
 namespace ndb
 {
-    template<class Type, class Engine, expression_categories Category = Engine::expr_category()>
+    template<class Type, class Engine, expression_categories Category = Engine::expr_category>
     struct expression_code
     {
         static constexpr const char* value = " _expr_code_undefined_ ";

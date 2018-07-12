@@ -8,7 +8,7 @@
 
 namespace ndb
 {
-    template<class Type, class Engine, expression_categories Expr_category = Engine::expr_category()>
+    template<class Type, class Engine, expression_categories Expr_category = Engine::expr_category>
     struct expression_type;
 
     struct expression_base {};

@@ -50,7 +50,7 @@ namespace ndb
     template<class Engine, int Pass, class Native_expression>
     constexpr auto expression<Type, Args...>::make(Native_expression& ne)
     {
-        expression_type<Type, Engine, Engine::expr_category()>::template make<Native_expression, Args...>(ne);
+        expression_type<Type, Engine, Engine::expr_category>::template make<Native_expression, Args...>(ne);
     }
 
     template<class T>

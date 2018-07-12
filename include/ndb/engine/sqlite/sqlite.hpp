@@ -14,6 +14,7 @@
 #include <unordered_map>
 #include <ndb/expression/sql/native.hpp>
 #include <ndb/expression/sql/type.hpp>
+#include <ndb/expression/category.hpp>
 
 namespace ndb
 {
@@ -46,7 +47,7 @@ namespace ndb
         template<class Expr>
         inline static std::string to_string(const Expr&);
 
-        inline static constexpr auto expr_category();
+        inline static constexpr expression_categories expr_category = expression_categories::sql;
     };
 } // ndb
 
