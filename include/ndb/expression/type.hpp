@@ -108,10 +108,13 @@ namespace ndb
         template<class Native_expression, class... Args>
         static constexpr void make(Native_expression& ne)
         {
-            expression_form<Type::form, Engine, Native_expression::category>::template make<Type, Native_expression, Args...>(ne);
+            if constexpr (sizeof...(Args) == 0)
+            {
+                ne.append(expression_code<Type, Engine, Native_expression::category>::value);
+            }
+            else expression_form<Type::form, Engine, Native_expression::category>::template make<Type, Native_expression, Args...>(ne);
         }
     };
 } // ndb
-
 
 #endif // EXPRESSION_TYPE_NDB

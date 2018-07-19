@@ -25,8 +25,6 @@ namespace ndb
             const auto& engine = ndb::engine<Engine>::get();
             auto expr = ndb::statement << ndb::expr_make(t);
 
-            //std::cout << ndb::type_str<decltype(expr)>();
-
             return engine.template exec<Database, Option>(std::move(expr));
         }
 

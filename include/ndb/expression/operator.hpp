@@ -38,10 +38,10 @@ namespace ndb
         return ndb::expression<ndb::expressions::logical_and_, decltype(expr_l), decltype(expr_r)> { std::move(expr_l), std::move(expr_r) };
     }
 
-    template<class L, class R, class = ndb::enable_expression<L, R>>
-    constexpr const auto operator<<(L&& l, R&& r)
+    template<class... Ls, class R>
+    constexpr const auto operator<<(ndb::expression<Ls...>&& l, R&& r)
     {
-        auto expr_l = ndb::expr_make(std::forward<L>(l));
+        auto expr_l = ndb::expr_make(std::forward<ndb::expression<Ls...>>(l));
         auto expr_r = ndb::expr_make(std::forward<R>(r));
 
         return ndb::expression<ndb::statement_, decltype(expr_l), decltype(expr_r)> { std::move(expr_l), std::move(expr_r) };
@@ -52,9 +52,6 @@ namespace ndb
     constexpr const auto operator<<(const ndb::expression<ndb::statement_, Ls...>& l, R&& r)
     {
         auto expr_r = ndb::expr_make(std::forward<R>(r));
-        /*
-        auto expr_deduced = ndb::deduction<decltype(l), decltype(expr_r)>::process(l, expr_r);
-        return expr_deduced;*/
         return ndb::expression<ndb::statement_, Ls..., decltype(expr_r)> { std::tuple_cat(l.args(), std::forward_as_tuple(std::move(expr_r))) };
     }
 

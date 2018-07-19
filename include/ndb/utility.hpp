@@ -288,6 +288,30 @@ namespace ndb
     {
         return name<T>();
     }
+
+
+////////////////////////////////////////////////////////////////////////////////
+    namespace internal
+    {
+        template<class...>
+        struct msvc_fix_fold
+        {
+            template<class Engine, class Native_expression>
+            static constexpr void make(Native_expression& s)
+            {}
+        };
+
+        template<class T, class... Ts>
+        struct msvc_fix_fold<T, Ts...>
+        {
+            template<class Engine, class Native_expression>
+            static constexpr void make(Native_expression& s)
+            {
+                T::template make<Engine>(s);
+                msvc_fix_fold<Ts...>::template make<Engine>(s);
+            }
+        };
+    } // internal
 } // ndb
 
 #endif // UTILITY_H_NDB

@@ -2,6 +2,7 @@
 #define STATEMENT_NDB
 
 #include <ndb/expression.hpp>
+#include <iostream>
 
 namespace ndb
 {
@@ -14,11 +15,12 @@ namespace ndb
         template<class Expr>
         dynamic_statement& operator<<(const Expr& e)
         {
-            //Expr::make(output_);
+            auto s = ndb::native_expression<Expr, ndb::sqlite>{};
+            output_ += s.c_str();
             return *this;
         }
 
-        auto& native()
+        const auto& native()
         {
             return output_;
         }

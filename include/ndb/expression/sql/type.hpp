@@ -65,17 +65,32 @@ namespace ndb
     };
 
 //
+
     template<class Engine>
     struct expression_type<ndb::statement_, Engine, expression_categories::sql>
     {
         template<class Native_expression, class... Args>
         static constexpr void make(Native_expression& s)
         {
-            //s.append(sizeof...(Args));
-
-            (Args::template make<Engine>(s), ...);
+            // normal compiler
+            // (Args::template make<Engine>(s)), ...);
+            // msvc fix
+            internal::msvc_fix_fold<Args...>::template make<Engine>(s);
         }
     };
+/*
+    template<class Engine>
+    struct expression_type<ndb::statement_, Engine, expression_categories::sql>
+    {
+        template<class Native_expression, class T1, class T2>
+        static constexpr void make(Native_expression& s)
+        {
+            //s.append(sizeof...(Args));
+
+            T1::template make<Engine>(s);
+            T2::template make<Engine>(s);
+        }
+    };*/
 
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////////             SCALAR             ////////////////////////

@@ -14,14 +14,14 @@ namespace ndb
     {
     public:
         static constexpr auto category = expression_categories::sql;
-        static constexpr auto Capacity = 1000;
+        static constexpr auto capacity = 50;
 
         constexpr native_expression() :
             size_{ 0 },
             value_index_{ 1 },
             data_{}
         {
-            Expr::template make<Engine>(*this);
+            std::decay_t<Expr>::template make<Engine>(*this);
         }
 
         constexpr void append(char v)
@@ -64,7 +64,7 @@ namespace ndb
         std::string str() const
         {
             std::string result;
-            for (int i = 0; i != Capacity; i++)
+            for (int i = 0; i != capacity; i++)
             {
                 if (data_.at(i) != 0) result.push_back(data_.at(i));
             }
@@ -75,7 +75,7 @@ namespace ndb
     private:
         size_t size_;
         unsigned int value_index_;
-        std::array<char, Capacity> data_;
+        std::array<char, capacity> data_;
     };
 } // ndb
 

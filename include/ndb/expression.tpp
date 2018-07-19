@@ -21,7 +21,7 @@ namespace ndb
     }
 
     template<class Type, class... Args>
-    const std::tuple<Args...>& expression<Type, Args...>::args() const
+    constexpr const std::tuple<Args...>& expression<Type, Args...>::args() const
     {
         return args_;
     }
@@ -47,8 +47,8 @@ namespace ndb
     }
 
     template<class Type, class... Args>
-    template<class Engine, int Pass, class Native_expression>
-    constexpr auto expression<Type, Args...>::make(Native_expression& ne)
+    template<class Engine, class Native_expression>
+    constexpr void expression<Type, Args...>::make(Native_expression& ne)
     {
         expression_type<Type, Engine, Engine::expr_category>::template make<Native_expression, Args...>(ne);
     }

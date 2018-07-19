@@ -33,7 +33,7 @@ namespace ndb
                       // e is expr_value
                       if constexpr (ndb::expr_is_value<expr_type>)
                       {
-                          //query.bind(std::get<0>(e.args()));
+                          query.bind(std::get<0>(e.args()));
                       }
                   });
 

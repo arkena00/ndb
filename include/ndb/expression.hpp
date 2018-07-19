@@ -28,14 +28,14 @@ namespace ndb
         template<class... Ts>
         inline constexpr auto operator()(const Ts&... ts) const;
 
-        const std::tuple<Args...>& args() const;
+        inline constexpr const std::tuple<Args...>& args() const;
         inline constexpr auto arg_count() const;
 
         template<class F>
         inline constexpr void eval(F&& f) const;
 
-        template<class Engine, int Pass = 0, class Native_expression>
-        inline static constexpr auto make(Native_expression& ne);
+        template<class Engine, class Native_expression>
+        inline static constexpr void make(Native_expression& ne);
 
     private:
         std::tuple<Args...> args_;
