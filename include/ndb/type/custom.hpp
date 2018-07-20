@@ -17,9 +17,6 @@ namespace ndb
     {
         // used to check if T is custom
         using ndb_type = internal::custom_type_not_found;
-
-        static double encode(const T& v);
-        static T decode(const T& v);
     };
 
     template<class T, class Ndb_type, class Database>

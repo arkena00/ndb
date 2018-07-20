@@ -2,12 +2,12 @@
 #define STATEMENT_NDB
 
 #include <ndb/expression.hpp>
-#include <iostream>
 
 namespace ndb
 {
     static constexpr ndb::expression<expressions::statement_> statement;
 
+    template<class Database>
     struct dynamic_statement
     {
         std::string output_;
@@ -15,7 +15,7 @@ namespace ndb
         template<class Expr>
         dynamic_statement& operator<<(const Expr& e)
         {
-            auto s = ndb::native_expression<Expr, ndb::sqlite>{};
+            auto s = ndb::native_expression<Expr, typename Database::engine>{};
             output_ += s.c_str();
             return *this;
         }

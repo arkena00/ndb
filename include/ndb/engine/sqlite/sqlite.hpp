@@ -15,6 +15,7 @@
 #include <ndb/expression/sql/native.hpp>
 #include <ndb/expression/sql/type.hpp>
 #include <ndb/expression/category.hpp>
+#include <ndb/function/sql.hpp>
 
 namespace ndb
 {

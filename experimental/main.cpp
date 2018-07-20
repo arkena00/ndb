@@ -112,29 +112,36 @@ int main()
         //auto xpr_del = ndb::expressions::source << ndb::filter(movie.id == 3);
 
         int x = 3;
-        constexpr auto xpr_del =  ndb::get(movie.id, movie.name) << ndb::filter(movie.id == 99);
-        //constexpr auto xpr_add = ndb::add(movie.id = 3, movie.name = "aze", movie.name = "aze");
+        constexpr auto xpr_del =  ndb::statement << ndb::filter(movie.id == 99);
+        constexpr auto xpr_add = ndb::statement << ndb::add(movie.id = 3);
 
-        //ndb::query<db>() << ndb::add(movie.name = "test");
+        //ndb::query<db>() << (ndb::add(movie.name = std::string("eryz"), movie.director = std::string("director")));
 
-        /*
-        ndb::query<db>() << (
+
+        ndb::query<db>() <<
+        (
             ndb::get(movie.id, movie.name)
             << ndb::source(movie)
             << ndb::filter(movie.id == 99)
-        );*/
+        );
+
+        const auto& engine = ndb::engine<ndb::sqlite>::get();
+
+
+        //engine.template exec<db, int>(std::move(expr));
+
+
 
         std::string output;
 
-        using Expr = std::decay_t<decltype(xpr_del)>;
+        /*using Expr = std::decay_t<decltype(expr)>;
         constexpr auto sql = ndb::native_expression<Expr, ndb::sqlite>{};
         std::cout << "\nsql str :" << sql.str();
-        //std::cout << "\n str : " << ndb::type_str<Expr>();
+        std::cout << "\n str : " << ndb::type_str<Expr>();*/
 
         ndb::syntax_check(xpr_del);
 
-
-        ndb::dynamic_statement stmt;
+        ndb::dynamic_statement<db> stmt;
         stmt << ndb::get(movie.id, movie.name) << ndb::source(movie) << ndb::filter;
         for (int i = 0; i < 3; ++i)
         {

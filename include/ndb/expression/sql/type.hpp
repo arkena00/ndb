@@ -47,7 +47,7 @@ namespace ndb
         template<class Native_expression, class List>
         static constexpr void make(Native_expression& ne)
         {
-            using Table = typename std::decay_t<typename List::template arg_at<0>::template arg_at<0>::template arg_at<0>>::table;
+            using Table = typename std::decay_t<typename std::decay_t<List>::template arg_at<0>::template arg_at<0>::template arg_at<0>>::table;
 
             ne.append(expression_code<expressions::add_, Engine, Native_expression::category>::value);
             ne.append("T");

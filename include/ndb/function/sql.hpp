@@ -10,18 +10,18 @@
 namespace ndb::functions
 {
     template<class Engine, class Database, class Table>
-    struct clear<Engine, Database, Table, ndb::expr_category_code::sql>
+    struct clear<Engine, Database, Table, ndb::expression_categories::sql>
     {
         static auto process()
         {
             const auto& engine = ndb::engine<Engine>::get();
-            auto q = "TRUNCATE TABLE `T" + std::to_string(ndb::table_id<Table>) + "`";
+            auto q = "DELETE FROM `T" + std::to_string(ndb::table_id<Table>) + "`";
             return engine.template exec<Database>(q);
         }
     };
 
     template<class Engine, class Database>
-    struct remove<Engine, ndb::expr_category_code::sql, Database>
+    struct remove<Engine, ndb::expression_categories::sql, Database>
     {
         static auto process()
         {

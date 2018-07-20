@@ -1,4 +1,3 @@
-#include <ndb/expression/type.hpp>
 #include <ndb/utility.hpp>
 
 namespace ndb

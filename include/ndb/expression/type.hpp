@@ -65,6 +65,17 @@ namespace ndb
 
         static constexpr struct del_ : basic_expression_type<>{} del;
 
+        struct clear_ : basic_expression_type<>
+        {
+            template<class... Ts>
+            constexpr auto operator()(Ts&&... t) const
+            {
+                // msvc fix : use (( )) to compile
+                auto expr = ((ndb::expr_make(t), ...));
+                return ndb::expression<add_, decltype(expr)> { std::move(expr) };
+            }
+        };
+
         // clause
         struct source_ : basic_expression_type<>
         {

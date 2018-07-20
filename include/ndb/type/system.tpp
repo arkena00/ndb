@@ -35,7 +35,9 @@ namespace ndb
         {
             return cpp_type_t<string_, Database>{ v };
         }
+
     };
+
 
     template<class T, class U, class Database>
     struct custom_type<std::chrono::duration<T, U>, Database> : basic_type<std::chrono::duration<T, U>, double_, Database>

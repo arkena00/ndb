@@ -5,7 +5,7 @@
 
 namespace ndb::functions
 {
-    template<class Engine, class Database, class Table, ndb::expr_category_code Expr_category = Engine::expr_category>
+    template<class Engine, class Database, class Table, ndb::expression_categories Expr_category = Engine::expr_category>
     struct clear
     {
         static auto process()
@@ -14,7 +14,7 @@ namespace ndb::functions
         }
     };
 
-    template<class Engine, ndb::expr_category_code Expr_category, class Database>
+    template<class Engine, ndb::expression_categories Expr_category, class Database>
     struct remove
     {
         static auto process()
