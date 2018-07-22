@@ -51,8 +51,18 @@ namespace ndb
     template<class... Ls, class R>
     constexpr const auto operator<<(const ndb::expression<ndb::statement_, Ls...>& l, R&& r)
     {
-        auto expr_r = ndb::expr_make(std::forward<R>(r));
-        return ndb::expression<ndb::statement_, Ls..., decltype(expr_r)> { std::tuple_cat(l.args(), std::forward_as_tuple(std::move(expr_r))) };
+        // msvc fix
+        if constexpr (sizeof...(Ls) == 0)
+        {
+            auto expr_r = ndb::expr_make(std::forward<R>(r));
+            return ndb::expression<ndb::statement_, decltype(expr_r)> { (std::move(expr_r)) };
+        }
+        // normal compiler
+        else
+        {
+            auto expr_r = ndb::expr_make(std::forward<R>(r));
+            return ndb::expression<ndb::statement_, Ls..., decltype(expr_r)> { std::tuple_cat(l.args(), std::forward_as_tuple(std::move(expr_r))) };
+        }
     }
 
 } // ndb
