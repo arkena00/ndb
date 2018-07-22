@@ -14,7 +14,7 @@
     #include <cxxabi.h>
 #endif
 
-#include <boost/algorithm/string/replace.hpp>
+//#include <boost/algorithm/string/replace.hpp>
 
 namespace ndb
 {
@@ -257,6 +257,7 @@ namespace ndb
             output = typeid(T).name();
         #endif
 
+            /*
         boost::algorithm::replace_all(output, "struct ", "");
 
         boost::algorithm::replace_all(output, "ndb::expressions::", "type::");
@@ -267,6 +268,7 @@ namespace ndb
         boost::algorithm::replace_all(output, ",expr<", ",\nexpr<");
 
         boost::algorithm::replace_all(output, "> >", ">\n>");
+             */
 
 
         return output;
