@@ -118,26 +118,23 @@ int main()
         //ndb::query<db>() << (ndb::add(movie.name = std::string("eryz"), movie.director = std::string("director")));
 
 
+        /*
         ndb::query<db>() <<
         (
             ndb::get(movie.id, movie.name)
             << ndb::source(movie)
             << ndb::filter(movie.id == 99)
-        );
-
-        const auto& engine = ndb::engine<ndb::sqlite>::get();
+        );*/
 
 
-        //engine.template exec<db, int>(std::move(expr));
-
-
+        constexpr auto expr = ndb::statement << ndb::del << ndb::source(movie) << ndb::filter(movie.id == 3);
 
         std::string output;
 
-        /*using Expr = std::decay_t<decltype(expr)>;
+        using Expr = std::decay_t<decltype(expr)>;
         constexpr auto sql = ndb::native_expression<Expr, ndb::sqlite>{};
         std::cout << "\nsql str :" << sql.str();
-        std::cout << "\n str : " << ndb::type_str<Expr>();*/
+        std::cout << "\n str : " << ndb::type_str<Expr>();
 
         ndb::syntax_check(xpr_del);
 

@@ -58,7 +58,7 @@ namespace ndb
         if constexpr (ndb::is_expression<T>) return v;
         else if constexpr (ndb::is_field<T>)
         {
-            return ndb::expression<ndb::expressions::field_, T>{ v };
+            return ndb::expression<ndb::expressions::field_, T>{ std::forward<T>(v) };
         }
         else if constexpr (ndb::is_table<T>) return ndb::expression<ndb::expressions::table_, T> {};
             // return value expression
