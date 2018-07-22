@@ -63,7 +63,8 @@ namespace ndb
         };
         static constexpr ndb::expression<add_> add;
 
-        static constexpr struct del_ : basic_expression_type<>{} del;
+        struct del_ : basic_expression_type<>{};
+        static constexpr ndb::expression<del_> del;
 
         struct clear_ : basic_expression_type<>
         {
