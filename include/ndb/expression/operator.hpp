@@ -39,9 +39,9 @@ namespace ndb
     }
 
     template<class... Ls, class R>
-    constexpr const auto operator<<(ndb::expression<Ls...>&& l, R&& r)
+    constexpr const auto operator<<(ndb::expression<Ls...> l, R&& r)
     {
-        auto expr_l = ndb::expr_make(std::forward<ndb::expression<Ls...>>(l));
+        auto expr_l = ndb::expr_make(std::move(l));
         auto expr_r = ndb::expr_make(std::forward<R>(r));
 
         return ndb::expression<ndb::statement_, decltype(expr_l), decltype(expr_r)> { std::move(expr_l), std::move(expr_r) };
