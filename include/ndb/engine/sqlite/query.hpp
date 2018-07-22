@@ -62,7 +62,7 @@ namespace ndb
         sqlite_query& operator=(const sqlite_query&) = delete;
 
         template<class T>
-        void bind_value(T&& value)
+        void bind_value(const T& value)
         {
             using storage_type = ndb::storage_type_t<typename Database::engine, ndb_type_t<T, Database>>;
 
@@ -86,7 +86,7 @@ namespace ndb
         }
 
         template<class T>
-        void bind(T&& value)
+        void bind(const T& value)
         {
             if constexpr (ndb::is_custom_type_v<T, Database>) bind_value(ndb::custom_type<T, Database>::internal_encode(value));
             else bind_value(value);

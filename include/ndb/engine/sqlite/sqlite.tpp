@@ -22,8 +22,12 @@ namespace ndb
     template<class Database, class Query_option, class Expr>
     auto sqlite::exec(const Expr& expr) const
     {
-
-        constexpr auto str_query = ndb::native_expression<Expr, ndb::sqlite>{};
+        // msvc fix, remove constexpr to compile
+        #ifdef _MSC_VER
+            auto str_query = ndb::native_expression<Expr, ndb::sqlite>{};
+        #else
+            constexpr auto str_query = ndb::native_expression<Expr, ndb::sqlite>{};
+        #endif
         sqlite_query<Database> query{ str_query.c_str() };
 
         // bind values from expression
