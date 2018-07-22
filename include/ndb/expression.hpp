@@ -4,7 +4,6 @@
 //! .tpp include operators to overload them
 
 #include <tuple>
-#include <ndb/expression/type.hpp>
 
 namespace ndb
 {
