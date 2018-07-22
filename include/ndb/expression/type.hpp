@@ -49,7 +49,17 @@ namespace ndb
         };
         static constexpr ndb::expression<get_> get;
 
-        struct set : basic_expression_type<>{};
+        struct set_ : basic_expression_type<>
+        {
+            template<class... Ts>
+            constexpr auto operator()(Ts&&... t) const
+            {
+                // msvc fix : use (( )) to compile
+                auto expr = ((ndb::expr_make(t), ...));
+                return ndb::expression<set_, decltype(expr)> { std::move(expr) };
+            }
+        };
+        static constexpr ndb::expression<set_> set;
 
         struct add_ : basic_expression_type<>
         {
