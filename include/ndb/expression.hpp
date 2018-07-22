@@ -3,6 +3,7 @@
 
 //! .tpp include operators to overload them
 
+#include <ndb/expression/category.hpp>
 #include <tuple>
 
 namespace ndb

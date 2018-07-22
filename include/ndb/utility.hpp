@@ -8,6 +8,7 @@
 #include <ndb/engine/type.hpp>
 #include <ndb/scope.hpp>
 
+#include <string>
 #include <utility>
 
 #ifdef __GNUC__
