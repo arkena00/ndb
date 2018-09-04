@@ -18,8 +18,8 @@
 #include <ndb/result.hpp>
 
 // operator= for fields
-#define ndb_internal_field_op \
-template<class R> \
+#define ndb_internal_field_op(NAME) \
+template<class R, class E = std::enable_if_t<!std::is_same_v<std::decay_t<R>, NAME##_>>> \
 constexpr const auto operator=(R&& r) const \
 { \
     auto expr_l = ndb::expr_make(*this); \
@@ -53,7 +53,7 @@ BOOST_PP_LIST_FOR_EACH_I( \
 
 // make field
 #define ndb_internal_make_field_impl(PARENT, NAME, ...) static constexpr struct NAME##_ : \
-    ::ndb::field<PARENT, __VA_ARGS__> { ndb_internal_field_op } NAME {};
+    ::ndb::field<PARENT, __VA_ARGS__> { ndb_internal_field_op(NAME) } NAME {};
 #define ndb_internal_make_field_impl_args(TABLE, FIELD) (TABLE, FIELD)
 #define ndb_internal_make_field(r, TABLE, i, FIELD_PACK) BOOST_PP_EXPAND(ndb_internal_make_field_impl ndb_internal_make_field_impl_args(TABLE, ndb_internal_unpack(FIELD_PACK)) )
 
