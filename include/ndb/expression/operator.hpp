@@ -2,7 +2,7 @@
 #define EXPRESSION_OPERATOR_H_NDB
 
 #include <ndb/expression/type.hpp>
-#include <ndb/expression/deduce.hpp>
+#include <ndb/expression/deduction.hpp>
 
 namespace ndb
 {
