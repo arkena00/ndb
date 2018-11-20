@@ -70,17 +70,17 @@ namespace ndb
     template<class Engine>
     struct expression_type<expressions::set_, Engine, expression_categories::sql>
     {
-        template<class Native_expression, class List>
+        template<class Native_expression, class Expr>
         static constexpr void make(Native_expression& ne)
         {
-            using Table = typename std::decay_t<typename std::decay_t<List>::template arg_at<0>::template arg_at<0>::template arg_at<0>>::table;
+            using Table = ndb::deductions::table<Expr>;
 
             ne.append("UPDATE ");
             ne.append("T");
             ne.append(ndb::table_id<Table> + '0');
             ne.append(" SET ");
 
-            List::template make<Engine>(ne);
+            Expr::template make<Engine>(ne);
         }
     };
 
