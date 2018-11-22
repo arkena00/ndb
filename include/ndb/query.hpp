@@ -29,14 +29,12 @@ namespace ndb
         }
 
         template<class T>
-        constexpr auto operator>>(const T& t)
+        constexpr auto operator>>(T&& t)
         {
             const auto& engine = ndb::engine<Engine>::get();
+            auto expr = ndb::statement << ndb::expressions::set(ndb::expr_make(t));
 
-            auto expr = ndb::expr_make(t);
-            //auto e = ndb::expression<decltype(expr), expr_type_code::root, void, expr_clause_code::set> { std::move(expr) };
-
-            //return engine.template exec<Database, Option>(e);
+            return engine.template exec<Database, Option>(std::move(expr));
         }
 
         template<class T>
@@ -48,13 +46,13 @@ namespace ndb
             return engine.template exec<Database, Option>(std::move(expr));
         }
 
-        template<class Expr>
-        constexpr auto operator-(const Expr& expr)
+        template<class T>
+        constexpr auto operator-(T&& t)
         {
             const auto& engine = ndb::engine<Engine>::get();
-            //auto e = ndb::expression<Expr, expr_type_code::root, void, expr_clause_code::del> { expr };
+            auto expr = ndb::statement << ndb::del << ndb::expr_make(t);
 
-            //return engine.template exec<Database, Option>(e);
+            return engine.template exec<Database, Option>(std::move(expr));
         }
     };
 
