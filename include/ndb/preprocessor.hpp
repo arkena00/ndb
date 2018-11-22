@@ -36,6 +36,8 @@ namespace ndb::models{}
 namespace ndb::tables{}
 namespace ndb::objects{}
 
+// TODO remove macros in 2023
+
 // common
 // unpack macro
 #define ndb_internal_unpack(ITEM) BOOST_PP_CAT(ndb_internal_unpack_, ITEM)
@@ -76,6 +78,7 @@ object.BOOST_PP_VARIADIC_ELEM(0, ndb_internal_unpack(FIELD_PACK)) = line[::ndb::
 #define ndb_table(TABLE_NAME, ...) namespace ndb::objects { struct TABLE_NAME; } namespace ndb::tables { \
     template<class Model> struct TABLE_NAME : ::ndb::table<Model> { \
         ndb_internal_for_each_fields(TABLE_NAME, ndb_internal_make_field, __VA_ARGS__) \
+         static constexpr auto all() { return ndb::expression<ndb::expressions::table_all_, TABLE_NAME>{ TABLE_NAME{} }; }; \
      \
     using Detail_ = ::ndb::table_detail \
     < \

@@ -112,6 +112,20 @@ namespace ndb
         }
     };*/
 
+    //
+
+    template<class Engine>
+    struct expression_type<expressions::table_all_, Engine, expression_categories::sql>
+    {
+        template<class Native_expression, class Table>
+        static constexpr void make(Native_expression& ne)
+        {
+            ne.append("T");
+            ne.append('0' + ndb::table_id<Table>);
+            ne.append(".*");
+        }
+    };
+
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////////             SCALAR             ////////////////////////
     ////////////////////////////////////////////////////////////////////////////////

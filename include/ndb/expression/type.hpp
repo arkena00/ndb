@@ -17,6 +17,7 @@ namespace ndb
         struct basic_expression_type
         {
             static constexpr auto form = Form;
+            static constexpr bool is_scalar = false;
         };
 
         struct statement_ : basic_expression_type<expression_forms::none>{};
@@ -32,13 +33,24 @@ namespace ndb
         struct equal_ : basic_expression_type<expression_forms::a_op_b>{};
 
         // scalar
-        struct field_ : basic_expression_type<>{};
-        struct table_ : basic_expression_type<>{};
-        struct value_ : basic_expression_type<>{};
+        struct all_ : basic_expression_type<>{};
+        static constexpr ndb::expression<all_> all;
+
+        struct table_all_ : basic_expression_type<expression_forms::none>{ static constexpr bool is_scalar = true; };
+
+        struct field_ : basic_expression_type<>{ static constexpr bool is_scalar = true; };
+        struct table_ : basic_expression_type<>{ static constexpr bool is_scalar = true; };
+        struct value_ : basic_expression_type<>{ static constexpr bool is_scalar = true; };
 
         // command
         struct get_ : basic_expression_type<>
         {
+            constexpr auto operator()() const
+            {
+                auto expr = ndb::expressions::all;
+                return ndb::expression<get_, decltype(expr)> { std::move(expr) };
+            }
+
             template<class... Ts>
             constexpr auto operator()(Ts&&... t) const
             {

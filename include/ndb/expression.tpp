@@ -35,7 +35,7 @@ namespace ndb
     template<class F>
     constexpr void expression<Type, Args...>::eval(F&& f) const
     {
-        if constexpr( ndb::expr_is_scalar<decltype(*this)> ) f(*this);
+        if constexpr( Type::is_scalar ) f(*this);
         else
         {
             std::apply([&f](auto&&... arg)
@@ -55,7 +55,7 @@ namespace ndb
     template<class T>
     constexpr auto expr_make(T&& v)
     {
-        if constexpr (ndb::is_expression<T>) return v;
+        if constexpr (ndb::is_expression<T>) return std::move(v);
         else if constexpr (ndb::is_field<T>)
         {
             return ndb::expression<ndb::expressions::field_, T>{ std::forward<T>(v) };

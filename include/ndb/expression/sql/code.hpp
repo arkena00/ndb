@@ -22,6 +22,7 @@ namespace ndb
 
     template<class Engine> struct expression_code<expressions::substatement_, Engine, expression_categories::sql> { static constexpr const char* value = "[]"; };
     template<class Engine> struct expression_code<expressions::value_, Engine, expression_categories::sql> { static constexpr const char* value = "$"; };
+    template<class Engine> struct expression_code<expressions::all_, Engine, expression_categories::sql> { static constexpr const char* value = "*"; };
 } // ndb
 
 #endif // EXPRESSION_SQL_CODE_NDB
