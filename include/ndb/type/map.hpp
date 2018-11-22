@@ -11,6 +11,9 @@ namespace ndb
     template<> struct type_map<NDB_TYPE, SCOPE> { using type = CPP_TYPE; }; \
     template<> struct type_map<CPP_TYPE, SCOPE> { using type = NDB_TYPE; };
 
+    #define ndb_type_map(TYPE1, TYPE2, SCOPE) \
+    template<> struct type_map<TYPE1, SCOPE> { using type = TYPE2; }; \
+
     // not found type
     namespace internal
     {
