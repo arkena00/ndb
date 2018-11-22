@@ -2,7 +2,7 @@
 #define EXPRESSION_DEDUCTION_H_NDB
 
 #include <ndb/utility.hpp>
-#include <iostream>
+#include <ndb/cx_error.hpp>
 #include <ndb/expression/type.hpp>
 
 namespace ndb
@@ -20,7 +20,7 @@ namespace ndb
             template<>
             struct extract_expr<>
             {
-                using result = cx_err_type_not_found;
+                using result = ::ndb::cx_err<>;
             };
 
             template<class Expr_0, class... Exprs>
