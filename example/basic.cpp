@@ -45,13 +45,12 @@ int main()
         ndb::clear<dbs::library>(movie);
 
         //! add records
-        ndb::query<dbs::library>() + (movie.name = "Interstellar", movie.duration = 2.49h);
-        ndb::query<dbs::library>() + (movie.name = "Watchmen", movie.duration = 3.30h);
+        ndb::query<dbs::library>() + (movie.name = std::string("Interstellar"), movie.duration = 2.49h);
+        ndb::query<dbs::library>() + (movie.name = std::string("Watchmen"), movie.duration = 3.30h);
 
         //! get movie with specified duration
-        //! missing informations of the query are deduced compile time
         //! for SQL-like engines, the string is generated compile time
-        for (auto& line : ndb::query<dbs::library>() << (movie.duration == 3.30h))
+        for (auto& line : ndb::query<dbs::library>() << (ndb::get() << ndb::source(movie) << ndb::filter(movie.duration == 3.30h)))
         {
             //! access fields from result using field name
             std::cout << "movie.id : " << line[movie.id] << std::endl;
