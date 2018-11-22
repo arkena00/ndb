@@ -36,25 +36,32 @@ int main()
     using namespace std::chrono_literals;
     const auto& movie = ndb::models::library.movie;
 
-    ndb::initializer<ndb::sqlite> init;
-    //! connect to database library
-    ndb::connect<dbs::library>();
-    //! clear movie table
-    ndb::clear<dbs::library>(movie);
-
-    //! add records
-    ndb::query<dbs::library>() + (movie.name = "Interstellar", movie.duration = 2.49h);
-    ndb::query<dbs::library>() + (movie.name = "Watchmen", movie.duration = 3.30h);
-
-
-    auto [interstellar] = ndb::oquery<dbs::library>() << (movie.name == "Watchmen");
-    std::cout << interstellar.id << " | " << interstellar.name << std::endl;
-
-    for (auto [id, name, duration] : ndb::oquery<dbs::library>() << movie)
+    try
     {
-        std::cout << "id : " << id << std::endl;
-        std::cout << "name : " << name << std::endl;
-        std::cout << "name : " << duration.count() << std::endl;
+        ndb::initializer<ndb::sqlite> init;
+        //! connect to database library
+        ndb::connect<dbs::library>();
+        //! clear movie table
+        ndb::clear<dbs::library>(movie);
+
+        //! add records
+        ndb::query<dbs::library>() + (movie.name = std::string("Interstellar"), movie.duration = 2.49h);
+        ndb::query<dbs::library>() + (movie.name = std::string("Watchmen"), movie.duration = 3.30h);
+
+        //! query version
+        // auto [interstellar] = ndb::oquery<dbs::library>() << (ndb::get() << ndb::source(movie) << ndb::filter(movie.id == 1));
+        //! function version
+        auto [interstellar] = ndb::oget<dbs::library>(movie, 1);
+        std::cout << interstellar.id << " | " << interstellar.name << " | "  << interstellar.duration.count() << std::endl;
+
+        for (auto [id, name, duration] : ndb::oget<dbs::library>(movie))
+        {
+            std::cout << "id : " << id << std::endl;
+            std::cout << "name : " << name << std::endl;
+            std::cout << "name : " << duration.count() << std::endl;
+        }
     }
+    catch (const std::exception& e) { std::cout << e.what(); }
+
     return 0;
 }
