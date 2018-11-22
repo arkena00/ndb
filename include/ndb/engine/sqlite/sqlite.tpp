@@ -1,3 +1,4 @@
+#include <ndb/expression/deduction.hpp>
 #include <ndb/expression/sql/native.hpp>
 #include <ndb/expression/sql/code.hpp>
 
@@ -36,15 +37,14 @@ namespace ndb
                       }
                   });
 
-        /*
         using Result_type = typename
         std::conditional_t<
-            ndb::has_option_v<query_option::object, Query_option>,
-            typename ndb::deduce<Expr>::main_table::Detail_::object_type,
-            ndb::line<Database>
-        >;*/
+            ndb::has_option_v<query_option::object, Query_option>
+            , typename ndb::deductions::table<std::decay_t<Expr>>::Detail_::object_type
+            , ndb::line<Database>
+        >;
 
-        return exec<Database, ndb::line<Database>>(std::move(query));
+        return exec<Database, Result_type>(std::move(query));
     };
 
     template<class Database, class Result_type>

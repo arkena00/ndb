@@ -4,9 +4,22 @@
 #define FUNCTION_H_NDB
 
 #include <ndb/function/generic.hpp>
+#include <ndb/query.hpp>
 
 namespace ndb
 {
+    template<class Database, class Table>
+    auto oget(Table&& table)
+    {
+        return ndb::oquery<Database>() << (ndb::get() << ndb::source(table));
+    }
+
+    template<class Database, class Table, class ID>
+    auto oget(Table&& table, ID&& id)
+    {
+        return ndb::oquery<Database>() << (ndb::get() << ndb::source(table) << ndb::filter(table.id == id));
+    }
+
     template<class Database, class Table>
     auto clear(Table table)
     {
