@@ -123,9 +123,7 @@ namespace ndb
     template<class Expr>
     std::string sqlite::to_string(const Expr&)
     {
-        /*
-        constexpr auto str_query = ndb::sql_expression<Expr>{};
-        return str_query.to_string();*/
-        return "";
+        constexpr auto str_query = ndb::native_expression<Expr, ndb::sqlite>{};
+        return str_query.c_str();
     }
 } // ndb

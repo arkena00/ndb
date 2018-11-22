@@ -1,6 +1,6 @@
 #include <ndb/expression/sql.hpp>
 #include <ndb/engine/postgre/query.hpp>
-#include <ndb/expression/deduce.hpp>
+#include <ndb/expression/deduction.hpp>
 #include <ndb/option.hpp>
 
 namespace ndb
