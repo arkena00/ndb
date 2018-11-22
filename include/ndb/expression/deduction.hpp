@@ -17,6 +17,12 @@ namespace ndb
             template<class...>
             struct extract;
 
+            template<class T>
+            struct extract<T>
+            {
+                using result = ncx_error_type(extract, cx_err_query, T);
+            };
+
             template<>
             struct extract_expr<>
             {
@@ -35,10 +41,18 @@ namespace ndb
                 using result = typename extract_expr<Args..., Exprs...>::result;
             };
 
+            // field found
             template<class Field, class... Exprs>
             struct extract<ndb::expression<ndb::expressions::field_, Field>, Exprs...>
             {
                 using result = typename std::decay_t<Field>::table;
+            };
+
+            // table found
+            template<class Table, class... Exprs>
+            struct extract<ndb::expression<ndb::expressions::table_, Table>, Exprs...>
+            {
+                using result = typename std::decay_t<Table>;
             };
         } // internal
 

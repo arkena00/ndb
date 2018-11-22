@@ -47,6 +47,9 @@ namespace ndb
 
     template<class T, template<class...> class Container>
     struct cx_err_type_not_found;
+
+    template<class Query>
+    struct cx_err_query;
 } // ndb
 
 #endif // CX_ERROR_H_NDB
