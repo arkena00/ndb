@@ -66,9 +66,9 @@ namespace ndb
         {
             using storage_type = ndb::storage_type_t<typename Database::engine, ndb_type_t<T, Database>>;
 
-            if constexpr (std::is_same_v<int_, storage_type>) sqlite3_bind_int(statement_, bind_index_, value);
-            else if constexpr (std::is_same_v<int64_, storage_type>) sqlite3_bind_int64(statement_, bind_index_, value);
-            else if constexpr (std::is_same_v<double_, storage_type>) sqlite3_bind_double(statement_, bind_index_, value);
+            if constexpr (std::is_same_v<int_, storage_type>) sqlite3_bind_int(statement_, bind_index_, static_cast<cpp_type_t<int_, Database>>(value));
+            else if constexpr (std::is_same_v<int64_, storage_type>) sqlite3_bind_int64(statement_, bind_index_, static_cast<cpp_type_t<int64_, Database>>(value));
+            else if constexpr (std::is_same_v<double_, storage_type>) sqlite3_bind_double(statement_, bind_index_, static_cast<cpp_type_t<double_, Database>>(value));
             else if constexpr (std::is_same_v<string_, storage_type>)
             {
                 auto data = ndb::type_data(value);

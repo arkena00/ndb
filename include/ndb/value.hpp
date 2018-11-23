@@ -31,25 +31,21 @@ namespace ndb
             using Engine = typename Database::engine;
             using value_type = typename Field::value_type;
             using value_ndb_type = ndb::ndb_type_t<value_type, Database>;
+            using value_cpp_type = ndb::cpp_type_t<value_ndb_type, Database>;
             using value_storage_type = ndb::storage_type_t<Engine, value_ndb_type>;
 
-            constexpr bool b_storage_type = ndb::is_storage_type_v<Engine, value_ndb_type>;
-            constexpr bool b_custom_type = ndb::is_custom_type_v<value_type, Database>;
-
-
-
             // custom type
-            if constexpr (b_custom_type) // msvc crash, separate in 2 lines
+            if constexpr (ndb::is_custom_type_v<value_type, Database>)
             {
                 return ndb::custom_type<value_type, Database>::internal_decode(get< ndb::cpp_type_t<value_storage_type, Database> >());
             }
             // storage type (mapped by engine)
-            else if constexpr (b_storage_type)
+            else if constexpr (ndb::is_storage_type_v<Engine, value_ndb_type>)
             {
                 return value_type( get< ndb::cpp_type_t<value_storage_type, Database> >() );
             }
             // native type
-            else return get<value_type>();
+            else return get<value_cpp_type>();
         }
 
         // get ref on engine storage type
