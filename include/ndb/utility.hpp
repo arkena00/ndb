@@ -237,7 +237,7 @@ namespace ndb
 
     template<class Engine, class T>
     struct is_storage_type { static constexpr bool value = is_proxy_type<T>::value
-                                                           && !std::is_same_v<T, ndb::storage_type_t<Engine, T>>; };
+                                                           && std::is_same_v<T, ndb::storage_type_t<Engine, T>>; };
     template<class Engine, class T>
     static constexpr bool is_storage_type_v = is_storage_type<Engine, T>::value;
 
