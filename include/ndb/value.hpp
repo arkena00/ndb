@@ -39,13 +39,8 @@ namespace ndb
             {
                 return ndb::custom_type<value_type, Database>::internal_decode(get< ndb::cpp_type_t<value_storage_type, Database> >());
             }
-            // storage type (mapped by engine)
-            else if constexpr (ndb::is_storage_type_v<Engine, value_ndb_type>)
-            {
-                return value_type( get< ndb::cpp_type_t<value_storage_type, Database> >() );
-            }
-            // native type
-            else return get<value_cpp_type>();
+            //
+            else return static_cast<value_type>(get<ndb::cpp_type_t<value_storage_type, Database>>());
         }
 
         // get ref on engine storage type
