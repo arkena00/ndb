@@ -29,7 +29,7 @@ namespace ndb
             std::string fullpath = params_.path + "/" + params_.db_name + setup<sqlite>::ext;
 
             int native_flag = SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE;
-            if ((int)params_.flag & (int)ndb::connection_flag::read_only)
+            if (static_cast<int>(params_.flag) & static_cast<int>(ndb::connection_flag::read_only))
             {
                 native_flag = SQLITE_OPEN_READONLY;
             }

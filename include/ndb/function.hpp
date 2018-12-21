@@ -21,7 +21,7 @@ namespace ndb
     }
 
     template<class Database, class Table>
-    auto clear(Table table)
+    auto clear(Table)
     {
         return ndb::functions::clear<typename Database::engine, Database, Table>::process();
     }

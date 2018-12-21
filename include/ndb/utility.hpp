@@ -204,7 +204,7 @@ namespace ndb
 
     // for_each on model entity
     template<class DB_Entity, class F>
-    void for_each_entity(DB_Entity&& e, F&& f)
+    void for_each_entity(DB_Entity&&, F&& f)
     {
         using Entity = typename std::decay_t<DB_Entity>::Detail_::entity;
         using Ns = std::make_index_sequence<Entity::count()>;

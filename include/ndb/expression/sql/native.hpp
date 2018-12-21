@@ -33,7 +33,7 @@ namespace ndb
         constexpr void append(const char* v)
         {
             auto s = cx_str_len(v);
-            for (int i = 0; i != s; i++) data_[size_ + i] = v[i];
+            for (unsigned int i = 0; i != s; i++) data_[size_ + i] = v[i];
             size_ += s;
         }
 

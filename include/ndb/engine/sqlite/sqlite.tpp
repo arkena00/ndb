@@ -45,7 +45,7 @@ namespace ndb
         >;
 
         return exec<Database, Result_type>(std::move(query));
-    };
+    }
 
     template<class Database, class Result_type>
     auto sqlite::exec(const sqlite_query<Database>& query) const
@@ -62,7 +62,7 @@ namespace ndb
 
         std::string output;
 
-        ndb::for_each_entity<Model>([this, &output](auto&& index, auto&& table)
+        ndb::for_each_entity<Model>([this, &output](auto&&, auto&& table)
         {
             using Table = std::decay_t<decltype(table)>;
 

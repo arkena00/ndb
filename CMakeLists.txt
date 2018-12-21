@@ -49,11 +49,58 @@ endif()
 if (MINGW)
     set(COMPILER_DIRNAME mingw)
     set(NDB_LIB stdc++fs)
+
+    #[[add_compile_options(-Waligned-new
+            -Wall
+            -Walloc-zero
+            -Walloca
+            -Warray-bounds=2
+            -Wcast-align
+            -Wcast-qual
+            -Wconditionally-supported
+            -Wdisabled-optimization
+            -Wdouble-promotion
+            -Wduplicated-branches
+            -Wduplicated-cond
+            -Wextra
+            -Wfloat-conversion
+            -Wfloat-equal
+            -Wformat-overflow
+            -Wformat-security
+            -Wformat-signedness
+            -Wformat=2
+            -Wlogical-op
+            -Wmissing-declarations
+            -Wmissing-include-dirs
+            -Wnon-virtual-dtor
+            -Wnull-dereference
+            -Wold-style-cast
+            -Wopenmp-simd
+            -Woverloaded-virtual
+            -Wpacked
+            -Wredundant-decls
+            -Wshadow=compatible-local
+            -Wsized-deallocation
+            -Wstrict-null-sentinel
+            -Wsuggest-attribute=noreturn
+            -Wsuggest-override
+            -Wtrampolines
+            -Wundef
+            -Wuninitialized
+            -Wunused-macros
+            -Wuseless-cast
+            -Wvector-operation-performance
+            -Wvla
+            -Wzero-as-null-pointer-constant
+            -fsized-deallocation
+            -pedantic)]]
 endif()
 
 if (UNIX)
     add_compile_options(-std=c++17)
     set(NDB_LIB stdc++fs pthread dl)
+
+
 endif()
 
 #-------------------------------------------------------
@@ -70,7 +117,6 @@ include(third_party/mongo.cmake)
 target_include_directories(lib_ndb INTERFACE
         include
         ${THIRD_PARTY_ROOT}/boost
-        ${THIRD_PARTY_ROOT}/mpl/src
         ${NDB_ENGINE_INCLUDE})
 target_link_libraries(lib_ndb INTERFACE ${NDB_ENGINE_LIB} ${NDB_LIB})
 

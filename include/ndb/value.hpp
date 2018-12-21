@@ -31,7 +31,7 @@ namespace ndb
             using Engine = typename Database::engine;
             using value_type = typename Field::value_type;
             using value_ndb_type = ndb::ndb_type_t<value_type, Database>;
-            using value_cpp_type = ndb::cpp_type_t<value_ndb_type, Database>;
+            //using value_cpp_type = ndb::cpp_type_t<value_ndb_type, Database>;
             using value_storage_type = ndb::storage_type_t<Engine, value_ndb_type>;
 
             // custom type
