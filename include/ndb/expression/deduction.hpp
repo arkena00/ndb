@@ -17,8 +17,8 @@ namespace ndb
             template<class...>
             struct extract;
 
-            template<class T>
-            struct extract<T>
+            template<class T, class... Exprs>
+            struct extract<T, Exprs...>
             {
                 using result = ncx_error_type(extract, cx_err_query, T);
             };
@@ -64,7 +64,7 @@ namespace ndb
     template<class Expr>
     void syntax_check(const Expr& expr)
     {
-        using expr_type = typename Expr::type;
+        //using expr_type = typename Expr::type;
 
         //expect<expr_type, ndb::expressions::statement>
 /*
