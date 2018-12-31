@@ -10,6 +10,7 @@
 #include <boost/preprocessor/variadic/to_list.hpp>
 
 #include <ndb/expression.hpp>
+#include <ndb/expression/type.hpp>
 #include <ndb/database.hpp>
 #include <ndb/model.hpp>
 #include <ndb/table.hpp>
