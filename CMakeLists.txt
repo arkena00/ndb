@@ -1,5 +1,7 @@
 ﻿cmake_minimum_required(VERSION 3.7)
-cmake_policy(SET CMP0077 OLD) # remove cmake option warning
+if (POLICY CMP0077)
+    cmake_policy(SET CMP0077 OLD) # remove cmake option warning
+endif()
 
 project(ndb C CXX)
 enable_testing()
