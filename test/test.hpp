@@ -6,6 +6,9 @@
 // engines
 #include <ndb/engine/sqlite/sqlite.hpp>
 
+// test database
+#include "database.hpp"
+
 #define TEST_SQLITE ndb::sqlite
 
 #ifdef NDB_ENGINE_MONGO

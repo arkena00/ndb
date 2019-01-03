@@ -7,7 +7,8 @@ set(GTEST_LIB $<TARGET_OBJECTS:lib_gtest>)
 
 include_directories(${THIRD_PARTY_ROOT}/gtest/include ../)
 
-file(GLOB_RECURSE SOURCES "source/*.cpp")
+# file(GLOB_RECURSE SOURCES "source/*.cpp")
+file(GLOB SOURCES "source/main.cpp" "source/query.cpp")
 add_executable(test_ndb ${SOURCES})
 add_dependencies(test_ndb lib_ndb lib_gtest)
 target_link_libraries(test_ndb lib_ndb ${GTEST_LIB})

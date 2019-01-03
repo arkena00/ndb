@@ -3,26 +3,7 @@
 #include <ndb/initializer.hpp>
 #include <ndb/query.hpp>
 #include <ndb/function.hpp>
-#include <ndb/preprocessor.hpp>
 
-ndb_table(
-         movie
-        , ndb_field(id, int)
-        , ndb_field(name, std::string, ndb::size<255>)
-        , ndb_field(image, std::string, ndb::size<255>)
-)
-
-ndb_model(library, movie)
-
-ndb_project(
-    query,
-    ndb_database(db, library, ndb::sqlite)
-)
-
-namespace dbs
-{
-    using zeta = ndb::databases::query::db_;
-}
 
 // aliases
 static constexpr const auto movie = ndb::models::library.movie;
@@ -68,11 +49,11 @@ TYPED_TEST(query, general)
         ndb::result<dbs::zeta> result;
 
         // insert 2 rows with unique data
-        ASSERT_NO_THROW((result = ndb::query<dbs::zeta>() + (movie.id = 1, movie.name = "2", movie.image = "9")));
-        ASSERT_NO_THROW((result = ndb::query<dbs::zeta>() + (movie.id = 3, movie.name = "4")));
+        ASSERT_NO_THROW((result = ndb::query<dbs::zeta>() + (movie.id = 1, movie.name = std::string("name_1"), movie.image = std::string("image_1"))));
+        ASSERT_NO_THROW((result = ndb::query<dbs::zeta>() + (movie.id = 3, movie.name = std::string("name_2"))));
 
         // get data
-        ASSERT_NO_THROW((result = ndb::query<dbs::zeta>() << (movie.id, movie.name, movie.image)));
+        ASSERT_NO_THROW(( result = ndb::query<dbs::zeta>() << (ndb::get(movie.id, movie.name, movie.image) << ndb::source(movie)) ));
 
         // check data count
         ASSERT_TRUE(result.size() == 2);
@@ -84,10 +65,10 @@ TYPED_TEST(query, general)
 
         // check values
         ASSERT_TRUE(result[0][movie.id] == 1);
-        ASSERT_TRUE(result[0][movie.name] == "2");
+        ASSERT_TRUE(result[0][movie.name] == std::string("name_1"));
 
         ASSERT_TRUE(result[1][movie.id] == 3);
-        ASSERT_TRUE(result[1][movie.name] == "4");
+        ASSERT_TRUE(result[1][movie.name] == std::string("name_2"));
 
     } catch(const std::exception& e)
     {
