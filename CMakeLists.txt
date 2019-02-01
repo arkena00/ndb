@@ -99,7 +99,7 @@ if (MINGW)
             -pedantic)]]
 endif()
 
-if (UNIX)
+if (UNIX AND NOT ANDROID)
     add_compile_options(-std=c++17)
     set(NDB_LIB stdc++fs pthread dl)
 
