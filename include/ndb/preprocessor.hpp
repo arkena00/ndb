@@ -55,26 +55,44 @@ BOOST_PP_LIST_FOR_EACH_I( \
 )
 
 // make field
+#define ndb_internal_unpack_ndb_field(...)  __VA_ARGS__
+#define ndb_internal_unpack_ndb_option(...) __VA_ARGS__
+
 #define ndb_internal_make_field_impl(PARENT, NAME, ...) static constexpr struct NAME##_ : \
     ::ndb::field<PARENT, __VA_ARGS__> { ndb_internal_field_op(NAME) } NAME {};
-#define ndb_internal_make_field_impl_args(TABLE, FIELD) (TABLE, FIELD)
-#define ndb_internal_make_field(r, TABLE, i, FIELD_PACK) BOOST_PP_EXPAND(ndb_internal_make_field_impl ndb_internal_make_field_impl_args(TABLE, ndb_internal_unpack(FIELD_PACK)) )
 
-#define ndb_internal_unpack_ndb_field(...)  __VA_ARGS__
+#define ndb_internal_make_field_filter(PARAM, FUNCTION) BOOST_PP_CAT(ndb_internal_make_field_filter_, PARAM)(FUNCTION)
+#define ndb_internal_make_field_filter_ndb_field(...) BOOST_PP_REM
+#define ndb_internal_make_field_filter_ndb_option(...) BOOST_PP_TUPLE_EAT
 
+#define ndb_internal_make_field(r, TABLE, i, PARAM)  BOOST_PP_CAT(ndb_internal_make_field_filter(PARAM, ndb_internal_make_field_impl), (TABLE, ndb_internal_unpack(PARAM)))
 
 // make object
-#define ndb_internal_make_object_field(r, TABLE_NAME, i, FIELD_PACK) \
-typename ::ndb::tables::TABLE_NAME<void>::BOOST_PP_CAT(BOOST_PP_VARIADIC_ELEM(0, ndb_internal_unpack(FIELD_PACK)), _)::value_type BOOST_PP_VARIADIC_ELEM(0, ndb_internal_unpack(FIELD_PACK));
+#define ndb_internal_make_object_field_impl(TABLE_NAME, FIELD_NAME, ...) \
+typename ::ndb::tables::TABLE_NAME<void>::FIELD_NAME##_::value_type FIELD_NAME;
+#define ndb_internal_make_object_field(r, TABLE, i, PARAM) BOOST_PP_CAT(ndb_internal_make_field_filter(PARAM, ndb_internal_make_object_field_impl), (TABLE, ndb_internal_unpack(PARAM)))
+
+
 // make object result encoder
-#define ndb_internal_make_object_result_encoder(r, TABLE_NAME, i, FIELD_PACK) \
-object.BOOST_PP_VARIADIC_ELEM(0, ndb_internal_unpack(FIELD_PACK)) = line[::ndb::tables::TABLE_NAME<void>::BOOST_PP_VARIADIC_ELEM(0, ndb_internal_unpack(FIELD_PACK))];
+#define ndb_internal_make_object_result_encoder_impl(TABLE_NAME, FIELD_NAME, ...) \
+object.FIELD_NAME = line[::ndb::tables::TABLE_NAME<void>::FIELD_NAME];
+
+#define ndb_internal_make_object_result_encoder(r, TABLE, i, PARAM) BOOST_PP_CAT(ndb_internal_make_field_filter(PARAM, ndb_internal_make_object_result_encoder_impl), (TABLE, ndb_internal_unpack(PARAM)))
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////             TABLE              ////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
+#define ndb_internal_make_option_filter(PARAM, FUNCTION) BOOST_PP_CAT(ndb_internal_make_option_filter_, PARAM)(FUNCTION)
+#define ndb_internal_make_option_filter_ndb_field(...) BOOST_PP_TUPLE_EAT
+#define ndb_internal_make_option_filter_ndb_option(...) BOOST_PP_REM
+
 // table detail
-#define ndb_internal_make_table_detail_entity(r, data, i, FIELD_PACK) BOOST_PP_COMMA_IF(BOOST_PP_NOT_EQUAL(i, 0)) BOOST_PP_CAT(BOOST_PP_VARIADIC_ELEM(0, ndb_internal_unpack(FIELD_PACK)), _)
+#define ndb_internal_make_table_detail_entity_impl(i, PARAM) BOOST_PP_COMMA_IF(BOOST_PP_NOT_EQUAL(i, 0)) BOOST_PP_CAT(BOOST_PP_VARIADIC_ELEM(0, ndb_internal_unpack(PARAM)), _)
+// entity
+#define ndb_internal_make_table_detail_entity(r, data, i, PARAM) ndb_internal_make_field_filter(PARAM, ndb_internal_make_table_detail_entity_impl)(i, PARAM)
+// option
+#define ndb_internal_make_table_detail_option_impl(i, PARAM) BOOST_PP_COMMA_IF(BOOST_PP_NOT_EQUAL(i, 0)) ndb_internal_unpack(PARAM)
+#define ndb_internal_make_table_detail_option(r, data, i, PARAM) ndb_internal_make_option_filter(PARAM, ndb_internal_make_table_detail_option_impl)(i, PARAM)
 
 #define ndb_table(TABLE_NAME, ...) namespace ndb::objects { struct TABLE_NAME; } namespace ndb::tables { \
     template<class Model> struct TABLE_NAME : ::ndb::table<Model> { \
@@ -86,7 +104,10 @@ object.BOOST_PP_VARIADIC_ELEM(0, ndb_internal_unpack(FIELD_PACK)) = line[::ndb::
         ::ndb::entity< \
             ndb_internal_for_each_fields(TABLE_NAME, ndb_internal_make_table_detail_entity, __VA_ARGS__) \
         >, \
-        ndb::parent<void>, ::ndb::objects::TABLE_NAME \
+        ndb::parent<void>, /* table relation */ \
+        ::ndb::objects::TABLE_NAME \
+        /* table option */ \
+        , ::ndb::option< void ndb_internal_for_each_fields(TABLE_NAME, ndb_internal_make_table_detail_option, __VA_ARGS__) > \
     >; \
 }; \
 } /* ndb::tables */ \
@@ -94,10 +115,7 @@ namespace ndb::objects \
 { \
     struct TABLE_NAME \
     { \
-         BOOST_PP_LIST_FOR_EACH_I( \
-                ndb_internal_make_object_field, \
-                TABLE_NAME, \
-                BOOST_PP_VARIADIC_TO_LIST(__VA_ARGS__)) \
+        ndb_internal_for_each_fields(TABLE_NAME, ndb_internal_make_object_field, __VA_ARGS__) \
     }; \
 } \
 namespace ndb { \
