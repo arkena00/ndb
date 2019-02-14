@@ -107,7 +107,7 @@ object.FIELD_NAME = line[::ndb::tables::TABLE_NAME<void>::FIELD_NAME];
         ndb::parent<void>, /* table relation */ \
         ::ndb::objects::TABLE_NAME \
         /* table option */ \
-        , ::ndb::option< void ndb_internal_for_each_fields(TABLE_NAME, ndb_internal_make_table_detail_option, __VA_ARGS__) > \
+        , ::ndb::option< ::ndb::void_ ndb_internal_for_each_fields(TABLE_NAME, ndb_internal_make_table_detail_option, __VA_ARGS__) > \
     >; \
 }; \
 } /* ndb::tables */ \
