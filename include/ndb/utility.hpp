@@ -84,6 +84,22 @@ namespace ndb
     template<class Needle, class Haystack>
     constexpr auto has_type_v = internal::has_type<Needle, Haystack>::value;
 
+    // is_same_tpl (T<> == U<>)
+    template<template<class...> class T, class U>
+    struct is_same_tpl
+    {
+        static constexpr const bool value = false;;
+    };
+
+    template<template<class...> class T, template<class...> class U, class... Us>
+    struct is_same_tpl<T, U<Us...>>
+    {
+        static constexpr const bool value = std::is_same_v<T<Us...>, U<Us...>>;
+    };
+
+    template<template<class...> class T, class U>
+    constexpr auto is_same_tpl_v = is_same_tpl<T, U>::value;
+
     struct void_{};
     template<class F, class... Args>
     constexpr auto call(F&& f, Args... args)
