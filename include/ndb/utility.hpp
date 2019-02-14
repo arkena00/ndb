@@ -170,6 +170,25 @@ namespace ndb
 ////////////////////////////////////////////////////////////////////////////////
     namespace detail
     {
+        template<class Pack>
+        struct for_each;
+
+        template<template<class...> class Pack, class... Ts>
+        struct for_each<Pack<Ts...>>
+        {
+            template<class F>
+            static void process(F&& f)
+            {
+                process(std::index_sequence_for<Ts...>{}, std::forward<F>(f));
+            }
+
+            template<std::size_t... Ns, class F>
+            static void process(std::index_sequence<Ns...>, F&& f)
+            {
+                (std::forward<F>(f)(std::integral_constant<std::size_t, Ns>{}, Ts{}), ...);
+            }
+        };
+
         // call f for each type
         template<class... Ts, std::size_t... Ns, class F>
         void for_each_impl(std::index_sequence<Ns...>, F&& f)
@@ -196,10 +215,10 @@ namespace ndb
     } // detail
 
     // for each on pack type
-    template<class... Ts, class F>
+    template<class Pack, class F>
     void for_each(F&& f)
     {
-        detail::for_each_impl<Ts...>(std::index_sequence_for<Ts...>{}, std::forward<F>(f));
+        detail::for_each<Pack>::process(std::forward<F>(f));
     }
 
     // for_each on model entity
