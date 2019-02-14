@@ -85,6 +85,17 @@ namespace ndb
         };
         static constexpr ndb::expression<add_> add;
 
+        struct add_ignore_ : basic_expression_type<>
+        {
+            template<class... Ts>
+            constexpr auto operator()(Ts&&... t) const
+            {
+                auto expr = (ndb::expr_make(t), ...);
+                return ndb::expression<add_ignore_, decltype(expr)> { std::move(expr) };
+            }
+        };
+        static constexpr ndb::expression<add_ignore_> add_ignore;
+
         struct del_ : basic_expression_type<>{};
         static constexpr ndb::expression<del_> del;
 

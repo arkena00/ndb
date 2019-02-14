@@ -65,6 +65,29 @@ namespace ndb
         }
     };
 
+    template<class Engine>
+    struct expression_type<expressions::add_ignore_, Engine, expression_categories::sql>
+    {
+        template<class Native_expression, class Expr>
+        static constexpr void make(Native_expression& ne)
+        {
+            using Table = ndb::deductions::table<Expr>;
+
+            ne.append(expression_code<expressions::add_ignore_, Engine, Native_expression::category>::value);
+            ne.append("T");
+            ne.append(ndb::table_id<Table> + '0');
+            ne.append("(");
+
+            internal::expr_builder<Engine, internal::expr_build_type<expressions::add_>, Expr>::template process<0>(ne);
+            ne.pop();
+
+            ne.append(") VALUES(");
+            internal::expr_builder<Engine, internal::expr_build_type<expressions::add_>, Expr>::template process<1>(ne);
+            ne.pop();
+            ne.append(")");
+        }
+    };
+
     //
 
     template<class Engine>
