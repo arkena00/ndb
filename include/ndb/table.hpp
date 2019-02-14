@@ -19,20 +19,36 @@ namespace ndb
     struct table : table_base
     {
         using model = Model;
+
         //using type = ndb::table<Model, Table>;
         //using Detail_ = typename Table::Detail_;
 
         //static constexpr Detail_ detail_ {};
     };
 
-    template<class Entity, class Parent = ndb::parent<void>, class Object_type = void, class... Options>
+    struct table_option
+    {
+        template<class... Tables>
+        struct unique {};
+    };
+
+
+    /*!
+     * @tparam Entity ndb::entity<field1, field2, ...>
+     * @tparam Parent table for relations
+     * @tparam Object_type type for orm
+     * @tparam Options table options
+     */
+
+    template<class Entity, class Parent = ndb::parent<void>, class Object_type = void, class Options = ndb::option<>>
     struct table_detail
     {
         using entity = Entity;
         using parent_table = typename Parent::table;
         using object_type = Object_type;
+        using option = Options;
 
-        static constexpr std::size_t size = Entity::size() + sizeof...(Options);
+        static constexpr std::size_t size = Entity::size();
     };
 } // ndb
 

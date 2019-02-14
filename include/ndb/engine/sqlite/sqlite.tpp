@@ -10,6 +10,7 @@
 
 #include <ndb/option.hpp>
 #include <iostream> // query_debug
+#include <ndb/table.hpp>
 
 namespace ndb
 {
@@ -112,6 +113,31 @@ namespace ndb
                     if constexpr (ndb::is_field_entity_vector<Field>) output += " VECTOR";*/
                 }
             });
+
+            // table options
+            using Table_option = Table::Detail_::option;
+            ndb::for_each<Table_option>([&output](auto&& i, auto&& type)
+            {
+                using Option = std::decay_t<decltype(type)>;
+
+                if constexpr (decltype(i){} != 0) output += ",";
+
+                // unique
+                if constexpr(ndb::is_same_tpl_v<ndb::table_option::unique, Option>)
+                {
+                    output += "unique(";
+                    // list fields
+                    ndb::for_each<Option>([&output](auto&& i, auto&& type)
+                    {
+                        if constexpr (decltype(i){} != 0) output += ",";
+                        using Field = std::decay_t<decltype(type)>;
+                        output += "F" + std::to_string(ndb::field_id<Field>);
+                    });
+
+                    output += ")"; // unique(
+                }
+            });
+
             output += ");";
 
             // exec create table
