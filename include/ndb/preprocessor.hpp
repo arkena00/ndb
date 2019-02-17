@@ -60,24 +60,44 @@ BOOST_PP_LIST_FOR_EACH_I( \
 
 #define ndb_internal_make_field_impl(PARENT, NAME, ...) static constexpr struct NAME##_ : \
     ::ndb::field<PARENT, __VA_ARGS__> { ndb_internal_field_op(NAME) } NAME {};
+#define ndb_internal_make_field_impl_args(TABLE, PARAM) (TABLE, ndb_internal_unpack(PARAM))
 
 #define ndb_internal_make_field_filter(PARAM, FUNCTION) BOOST_PP_CAT(ndb_internal_make_field_filter_, PARAM)(FUNCTION)
 #define ndb_internal_make_field_filter_ndb_field(...) BOOST_PP_REM
 #define ndb_internal_make_field_filter_ndb_option(...) BOOST_PP_TUPLE_EAT
 
-#define ndb_internal_make_field(r, TABLE, i, PARAM)  BOOST_PP_CAT(ndb_internal_make_field_filter(PARAM, ndb_internal_make_field_impl), (TABLE, ndb_internal_unpack(PARAM)))
+#define ndb_internal_make_field_filter_args(PARAM, FUNCTION) (PARAM, FUNCTION)
+
+#ifdef _MSC_VER
+    #define ndb_internal_make_field(r, TABLE, i, PARAM) BOOST_PP_CAT(ndb_internal_make_field_filter(PARAM, ndb_internal_make_field_impl), (TABLE, ndb_internal_unpack(PARAM)))
+#else
+    #define ndb_internal_make_field(r, TABLE, i, PARAM) BOOST_PP_EXPAND( ndb_internal_make_field_filter(PARAM, ndb_internal_make_field_impl) ndb_internal_make_field_impl_args(TABLE, PARAM) )
+#endif
 
 // make object
 #define ndb_internal_make_object_field_impl(TABLE_NAME, FIELD_NAME, ...) \
 typename ::ndb::tables::TABLE_NAME<void>::FIELD_NAME##_::value_type FIELD_NAME;
-#define ndb_internal_make_object_field(r, TABLE, i, PARAM) BOOST_PP_CAT(ndb_internal_make_field_filter(PARAM, ndb_internal_make_object_field_impl), (TABLE, ndb_internal_unpack(PARAM)))
+#define ndb_internal_make_object_field_impl_args(TABLE, PARAM) (TABLE, ndb_internal_unpack(PARAM))
+
+
+#ifdef _MSC_VER
+    #define ndb_internal_make_object_field(r, TABLE, i, PARAM) BOOST_PP_CAT(ndb_internal_make_field_filter(PARAM, ndb_internal_make_object_field_impl), (TABLE, ndb_internal_unpack(PARAM)))
+#else
+    #define ndb_internal_make_object_field(r, TABLE, i, PARAM) BOOST_PP_EXPAND( ndb_internal_make_field_filter(PARAM, ndb_internal_make_object_field_impl) ndb_internal_make_object_field_impl_args(TABLE, PARAM) )
+#endif
 
 
 // make object result encoder
 #define ndb_internal_make_object_result_encoder_impl(TABLE_NAME, FIELD_NAME, ...) \
 object.FIELD_NAME = line[::ndb::tables::TABLE_NAME<void>::FIELD_NAME];
+#define ndb_internal_make_object_result_encoder_impl_args(TABLE, PARAM) (TABLE, ndb_internal_unpack(PARAM))
 
-#define ndb_internal_make_object_result_encoder(r, TABLE, i, PARAM) BOOST_PP_CAT(ndb_internal_make_field_filter(PARAM, ndb_internal_make_object_result_encoder_impl), (TABLE, ndb_internal_unpack(PARAM)))
+
+#ifdef _MSC_VER
+    #define ndb_internal_make_object_result_encoder(r, TABLE, i, PARAM) BOOST_PP_CAT(ndb_internal_make_field_filter(PARAM, ndb_internal_make_object_result_encoder_impl), (TABLE, ndb_internal_unpack(PARAM)))
+#else
+    #define ndb_internal_make_object_result_encoder(r, TABLE, i, PARAM) BOOST_PP_EXPAND( ndb_internal_make_field_filter(PARAM, ndb_internal_make_object_result_encoder_impl) ndb_internal_make_object_result_encoder_impl_args(TABLE, PARAM) )
+#endif
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////             TABLE              ////////////////////////
