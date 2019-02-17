@@ -115,7 +115,7 @@ namespace ndb
             });
 
             // table options
-            using Table_option = Table::Detail_::option;
+            using Table_option = typename Table::Detail_::option;
             ndb::for_each<Table_option>([&output](auto&& i, auto&& type)
             {
                 using Option = std::decay_t<decltype(type)>;
