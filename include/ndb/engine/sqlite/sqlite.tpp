@@ -15,17 +15,17 @@
 namespace ndb
 {
     template<class Database>
-    void sqlite::exec(const std::string& str_statement) const
+    auto sqlite::exec(const std::string& str_statement) const
     {
         sqlite_query<Database> statement{ str_statement };
-        exec<Database>(statement);
+        return exec<Database>(statement);
     }
 
     template<class Database, class Query_option, class Expr>
     auto sqlite::exec(const Expr& expr) const
     {
         constexpr auto str_query = ndb::native_expression<Expr, ndb::sqlite>{};
-        sqlite_query<Database> query{ str_query.c_str() };
+        sqlite_query<Database> query{ str_query.data() };
 
         // bind values from expression
         expr.eval([&](auto&& e)
