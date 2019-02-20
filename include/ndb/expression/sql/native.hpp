@@ -55,7 +55,7 @@ namespace ndb
             return size_;
         }
 
-        constexpr const char* c_str() const
+        constexpr const char* data() const
         {
             return data_.data();
         }
