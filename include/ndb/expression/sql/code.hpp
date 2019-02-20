@@ -13,6 +13,7 @@ namespace ndb
     template<class Engine> struct expression_code<expressions::assign_, Engine, expression_categories::sql> { static constexpr const char* value = "="; };
     template<class Engine> struct expression_code<expressions::equal_, Engine, expression_categories::sql> { static constexpr const char* value = "="; };
     template<class Engine> struct expression_code<expressions::logical_and_, Engine, expression_categories::sql> { static constexpr const char* value = " AND "; };
+    template<class Engine> struct expression_code<expressions::logical_or_, Engine, expression_categories::sql> { static constexpr const char* value = " OR "; };
     template<class Engine> struct expression_code<expressions::list_, Engine, expression_categories::sql> { static constexpr const char* value = ","; };
     template<class Engine> struct expression_code<expressions::del_, Engine, expression_categories::sql> { static constexpr const char* value = "DELETE "; };
     template<class Engine> struct expression_code<expressions::add_, Engine, expression_categories::sql> { static constexpr const char* value = "INSERT INTO "; };

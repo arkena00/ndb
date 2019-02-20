@@ -137,6 +137,9 @@ namespace ndb
         // operation
         struct logical_and_ : basic_expression_type<expression_forms::a_op_b>{};
         static constexpr ndb::expression<logical_and_> logical_and;
+
+        struct logical_or_ : basic_expression_type<expression_forms::a_op_b>{};
+        static constexpr ndb::expression<logical_or_> logical_or;
     } // expression
 
     using namespace expressions;
