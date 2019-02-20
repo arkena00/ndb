@@ -10,17 +10,17 @@ namespace ndb
     template<class Database>
     struct dynamic_statement
     {
-        std::string output_;
+        typename Database::engine::statement_type output_;
 
         template<class Expr>
         dynamic_statement& operator<<(const Expr& e)
         {
             auto s = ndb::native_expression<Expr, typename Database::engine>{};
-            output_ += s.c_str();
+            output_ += s.data();
             return *this;
         }
 
-        const auto& native()
+        const auto& native() const
         {
             return output_;
         }

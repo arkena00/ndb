@@ -22,7 +22,7 @@ namespace ndb
 
         sqlite_query() = default;
 
-        sqlite_query(std::string str_statement) :
+        sqlite_query(typename Engine::statement_type str_statement) :
             statement_{ nullptr }
         {
             prepare(std::move(str_statement));
@@ -34,7 +34,7 @@ namespace ndb
             sqlite3_clear_bindings(statement_);
         }
 
-        void prepare(std::string str_statement)
+        void prepare(typename Engine::statement_type str_statement)
         {
             #ifdef NDB_DEBUG_QUERY
                 std::cout << "[ndb:debug_query]" << str_statement << std::endl;
@@ -177,7 +177,7 @@ namespace ndb
 
     private:
         sqlite3_stmt* statement_;
-        std::string str_statement_;
+        typename Engine::statement_type str_statement_;
         int bind_index_;
     };
 } // ndb

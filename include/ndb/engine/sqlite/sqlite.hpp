@@ -25,10 +25,12 @@ namespace ndb
     class sqlite : public basic_engine<sqlite>
     {
     public:
+        using statement_type = std::string;
+
         inline sqlite() = default;
 
         template<class Database>
-        inline void exec(const std::string& str_statement) const;
+        inline auto exec(const statement_type& str_statement) const;
 
         template<class Database, class Result_type = ndb::line<Database>>
         inline auto exec(const sqlite_query<Database>& query) const;
