@@ -3,6 +3,7 @@
 
 #include <ndb/error.hpp>
 #include <ndb/type.hpp>
+#include <ndb/engine/type.hpp>
 
 #include <variant>
 

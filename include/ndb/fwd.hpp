@@ -30,6 +30,12 @@ namespace ndb
     template<class T, class Database>
     struct custom_type;
 
+    template<class Engine, class T>
+    struct storage_type;
+
+    template<class Engine, class T>
+    using storage_type_t = typename storage_type<Engine, T>::type;
+
     // expression
     enum class expr_clause_code;
     enum class expr_type_code;

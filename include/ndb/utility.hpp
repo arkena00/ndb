@@ -5,7 +5,6 @@
 
 #include <ndb/fwd.hpp>
 #include <ndb/cx_error.hpp>
-#include <ndb/engine/type.hpp>
 #include <ndb/scope.hpp>
 
 #include <string>

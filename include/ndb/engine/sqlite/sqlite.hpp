@@ -4,6 +4,7 @@
 #include <sqlite3.h>
 
 #include <ndb/engine/basic.hpp>
+#include <ndb/engine/native_query.hpp>
 #include <ndb/engine/sqlite/connection.hpp>
 #include <ndb/error.hpp>
 #include <ndb/value.hpp>
@@ -19,9 +20,6 @@
 
 namespace ndb
 {
-    template<class Database>
-    class sqlite_query;
-
     class sqlite : public basic_engine<sqlite>
     {
     public:
@@ -33,7 +31,7 @@ namespace ndb
         inline auto exec(const statement_type& str_statement) const;
 
         template<class Database, class Result_type = ndb::line<Database>>
-        inline auto exec(const sqlite_query<Database>& query) const;
+        inline auto exec(const native_query<Database, sqlite>& query) const;
 
         template<class Database, class Query_option, class Expr>
         inline auto exec(const Expr& expr) const;

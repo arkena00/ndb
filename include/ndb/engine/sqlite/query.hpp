@@ -1,8 +1,9 @@
-#ifndef ENGINE_SQLITE_STATEMENT_H_NDB
-#define ENGINE_SQLITE_STATEMENT_H_NDB
+#ifndef ENGINE_SQLITE_QUERY_H_NDB
+#define ENGINE_SQLITE_QUERY_H_NDB
 
 #include <ndb/type.hpp>
 #include <ndb/engine.hpp>
+#include <ndb/engine/native_query.hpp>
 #include <ndb/engine/sqlite/type.hpp>
 #include <ndb/result.hpp>
 #include <ndb/type.hpp>
@@ -15,17 +16,26 @@ namespace ndb
     class engine_connection;
 
     template<class Database>
-    class sqlite_query
+    class native_query<Database, ndb::sqlite>
     {
     public:
-        using Engine = typename Database::engine;
+        using Engine = ndb::sqlite;
+        using statement_type = std::string;
 
-        sqlite_query() = default;
+        native_query() = default;
 
-        sqlite_query(typename Engine::statement_type str_statement) :
-            statement_{ nullptr }
+        native_query(statement_type str_statement) :
+        statement_{ nullptr }
         {
             prepare(std::move(str_statement));
+        }
+
+        native_query(const native_query&) = delete;
+        native_query& operator=(const native_query&) = delete;
+
+        ~native_query()
+        {
+            sqlite3_finalize(statement_);
         }
 
         void bind_clear()
@@ -34,11 +44,18 @@ namespace ndb
             sqlite3_clear_bindings(statement_);
         }
 
-        void prepare(typename Engine::statement_type str_statement)
+        template<class Expr>
+        void append(const Expr& expr)
         {
-            #ifdef NDB_DEBUG_QUERY
-                std::cout << "[ndb:debug_query]" << str_statement << std::endl;
-            #endif
+            constexpr auto native_expr = ndb::native_expression<Expr, Engine>{};
+            str_statement_ += std::string(native_expr.data());
+        }
+
+        void prepare(statement_type str_statement)
+        {
+#ifdef NDB_DEBUG_QUERY
+            std::cout << "[ndb:debug_query]" << str_statement << std::endl;
+#endif
 
             sqlite3_finalize(statement_);
             str_statement_ = std::move(str_statement);
@@ -53,18 +70,10 @@ namespace ndb
             }
         }
 
-        ~sqlite_query()
-        {
-            sqlite3_finalize(statement_);
-        }
-
-        sqlite_query(const sqlite_query&) = delete;
-        sqlite_query& operator=(const sqlite_query&) = delete;
-
         template<class T>
         void bind_value(const T& value)
         {
-            using storage_type = ndb::storage_type_t<typename Database::engine, ndb_type_t<T, Database>>;
+            using storage_type = ndb::storage_type_t<Engine, ndb_type_t<T, Database>>;
 
             if constexpr (std::is_same_v<int_, storage_type>) sqlite3_bind_int(statement_, bind_index_, static_cast<cpp_type_t<int_, Database>>(value));
             else if constexpr (std::is_same_v<int64_, storage_type>) sqlite3_bind_int64(statement_, bind_index_, static_cast<cpp_type_t<int64_, Database>>(value));
@@ -177,9 +186,13 @@ namespace ndb
 
     private:
         sqlite3_stmt* statement_;
-        typename Engine::statement_type str_statement_;
+        statement_type str_statement_;
         int bind_index_;
     };
+
+    template<class Database>
+    using sqlite_query = native_query<Database, ndb::sqlite>;
+
 } // ndb
 
-#endif // ENGINE_SQLITE_STATEMENT_H_NDB
+#endif // ENGINE_SQLITE_QUERY_H_NDB
