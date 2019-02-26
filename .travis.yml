@@ -47,5 +47,5 @@ addons:
 
 script:
   - cmake -DCMAKE_C_COMPILER=${C_COMPILER} -DCMAKE_CXX_COMPILER=${C_COMPILER} -DNDB_ENGINE_SQLITE=ON -DNDB_ENGINE_POSTGRE=OFF -DNDB_BUILD_TEST=ON -DCMAKE_BUILD_TYPE=Release
-  - cmake --build --config Release .
+  - cmake --build . --config Release
   - ctest -C Release
