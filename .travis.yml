@@ -3,7 +3,7 @@ services: docker
 matrix:
   include:
     - os: linux
-      dist: trusty
+      dist: xenial
     - os: windows
       dist: 1803-containers
       env: VERSION=1.11 VARIANT=windows/windowsservercore-1803
@@ -20,8 +20,6 @@ addons:
     sources:
       - ubuntu-toolchain-r-test
     packages:
-      - gcc-7
-      - g++-7
       - cmake3
       - libmongo-client-dev
       - libmongo-client0
@@ -29,8 +27,10 @@ addons:
       - libpq5
 
 install:
-    - export CC=gcc-7
-    - export CXX=g++-7
 
 script:
+  - export CC=gcc-7
+  - export CXX=g++-7
   - cmake -DNDB_ENGINE_SQLITE=ON -DNDB_ENGINE_POSTGRE=OFF -DNDB_BUILD_TEST=ON -DCMAKE_BUILD_TYPE=Release
+  - make
+  - make test
