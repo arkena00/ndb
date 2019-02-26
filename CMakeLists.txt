@@ -46,7 +46,7 @@ set(CMAKE_CXX_STANDARD 17)
 
 if (MSVC)
     set(COMPILER_DIRNAME msvc)
-    add_compile_options(/wd4710 /wd4251 /std:c++17 /we4309)
+    add_compile_options(/wd4710 /wd4251 /we4309)
 endif()
 
 if (MINGW)
@@ -100,10 +100,7 @@ if (MINGW)
 endif()
 
 if (UNIX AND NOT ANDROID)
-    add_compile_options(-std=c++17)
     set(NDB_LIB stdc++fs pthread dl)
-
-
 endif()
 
 #-------------------------------------------------------
