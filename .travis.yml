@@ -1,5 +1,16 @@
-dist: trusty
+services: docker
+
+matrix:
+  include:
+    - os: linux
+      dist: trusty
+    - os: windows
+      dist: 1803-containers
+      env: VERSION=1.11 VARIANT=windows/windowsservercore-1803
+
+
 sudo: required
+
 language:
   - cpp
 compiler:
@@ -22,8 +33,4 @@ install:
     - export CXX=g++-7
 
 script:
-  - export CC=gcc-7
-  - export CXX=g++-7
   - cmake -DNDB_ENGINE_SQLITE=ON -DNDB_ENGINE_POSTGRE=ON -DNDB_BUILD_TEST=ON -DCMAKE_BUILD_TYPE=Release
-  - make
-  - make test
