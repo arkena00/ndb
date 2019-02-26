@@ -11,7 +11,8 @@ matrix:
           packages:
             - gcc-7
             - g++-7
-      env: CC=gcc-7 CXX=g++-7
+      env:
+        - C_COMPILER=gcc-7 CXX_COMPILER=g++-7
 
     - os: linux
       dist: xenial
@@ -21,7 +22,8 @@ matrix:
             - llvm-toolchain-xenial-6.0
           packages:
             - clang-6.0
-      env: CC=clang-6.0 CXX=clang++-6.0
+      env:
+        - C_COMPILER=clang-6.0 CXX_COMPILER=clang++-6.0
 
     - os: windows
       dist: 1803-containers
@@ -44,6 +46,6 @@ addons:
       - libpq5
 
 script:
-  - cmake -DNDB_ENGINE_SQLITE=ON -DNDB_ENGINE_POSTGRE=OFF -DNDB_BUILD_TEST=ON -DCMAKE_BUILD_TYPE=Release
+  - cmake -DCMAKE_C_COMPILER=${C_COMPILER} -DCMAKE_CXX_COMPILER=${C_COMPILER} -DNDB_ENGINE_SQLITE=ON -DNDB_ENGINE_POSTGRE=OFF -DNDB_BUILD_TEST=ON -DCMAKE_BUILD_TYPE=Release
   - cmake --build .
-  - ctest
+  - ctest -C Release
