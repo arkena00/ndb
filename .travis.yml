@@ -4,9 +4,10 @@ matrix:
   include:
     - os: linux
       dist: xenial
+      env: MAKE_PROGRAM=make
     - os: windows
       dist: 1803-containers
-      env: VERSION=1.11 VARIANT=windows/windowsservercore-1803
+      env: VERSION=1.11 VARIANT=windows/windowsservercore-1803 MAKE_PROGRAM=msbuild
 
 
 sudo: required
@@ -20,7 +21,6 @@ addons:
     sources:
       - ubuntu-toolchain-r-test
     packages:
-      - cmake3
       - libmongo-client-dev
       - libmongo-client0
       - libpq-dev
@@ -28,9 +28,20 @@ addons:
 
 install:
 
+before_script:
+  - |
+    (
+      if [ "$TRAVIS_OS_NAME" = 'windows' ]; then
+        # TODO make the tests run successfully on Windows too!
+        docker run --rm "$image" go version
+        docker run --rm "$image" git --version
+      else
+        ~/official-images/test/run.sh "$image"
+      fi
+    )
+
 script:
   - export CC=gcc-7
   - export CXX=g++-7
   - cmake -DNDB_ENGINE_SQLITE=ON -DNDB_ENGINE_POSTGRE=OFF -DNDB_BUILD_TEST=ON -DCMAKE_BUILD_TYPE=Release
-  - make
-  - make test
+  - ^MAKE_PROGRAM
