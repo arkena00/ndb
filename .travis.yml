@@ -4,18 +4,37 @@ matrix:
   include:
     - os: linux
       dist: xenial
-      env: MAKE_PROGRAM=make
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - gcc-7
+            - g++-7
+      env:
+        - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7"
+
+    - os: linux
+      dist: xenial
+      addons:
+        apt:
+          sources:
+            - llvm-toolchain-xenial-6.0
+          packages:
+            - clang-6.0
+      env:
+        - MATRIX_EVAL="CC clang-6.0 && CXX=clang++-6.0"
+
     - os: windows
       dist: 1803-containers
-      env: VERSION=1.11 VARIANT=windows/windowsservercore-1803 MAKE_PROGRAM=msbuild
+      env: VERSION=1.11 VARIANT=windows/windowsservercore-1803
 
 
 sudo: required
 
 language:
   - cpp
-compiler:
-  - gcc
+
 addons:
   apt:
     sources:
@@ -26,11 +45,12 @@ addons:
       - libpq-dev
       - libpq5
 
-install:
+before_install:
+  - eval "${MATRIX_EVAL}"
 
 before_script:
 
 
 script:
   - cmake -DNDB_ENGINE_SQLITE=ON -DNDB_ENGINE_POSTGRE=OFF -DNDB_BUILD_TEST=ON -DCMAKE_BUILD_TYPE=Release
-  - "$MAKE_PROGRAM"
+  - cmake --build .
