@@ -32,7 +32,5 @@ before_script:
 
 
 script:
-  - export CC=gcc-7
-  - export CXX=g++-7
   - cmake -DNDB_ENGINE_SQLITE=ON -DNDB_ENGINE_POSTGRE=OFF -DNDB_BUILD_TEST=ON -DCMAKE_BUILD_TYPE=Release
-  - $MAKE_PROGRAM
+  - "$MAKE_PROGRAM"
