@@ -32,6 +32,8 @@ matrix:
       dist: 1803-containers
       env: VERSION=1.11 VARIANT=windows/windowsservercore-1803
 
+    - os: osx
+      osx_image: xcode10.1
 
 sudo: required
 
@@ -48,7 +50,15 @@ addons:
       - libpq-dev
       - libpq5
 
+  homebrew:
+    packages:
+      - postgresql
+
+
+install:
+  - if [ $TRAVIS_OS_NAME = windows ]; then choco install postgresql10 --force --params '/Password:ads'; fi
+
 script:
-  - cmake -DCMAKE_C_COMPILER=${C_COMPILER} -DCMAKE_CXX_COMPILER=${CXX_COMPILER} -DNDB_ENGINE_SQLITE=ON -DNDB_ENGINE_POSTGRE=ON -DNDB_BUILD_TEST=ON -DCMAKE_BUILD_TYPE=Release
+  - cmake -DCMAKE_C_COMPILER=${C_COMPILER} -DCMAKE_CXX_COMPILER=${CXX_COMPILER} -DNDB_ENGINE_SQLITE=ON -DNDB_ENGINE_POSTGRE=ON -NDB_PQ_PATH= -DNDB_BUILD_TEST=ON -DCMAKE_BUILD_TYPE=Release
   - cmake --build . --config Release
   - ctest -C Release
