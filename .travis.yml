@@ -21,7 +21,7 @@ matrix:
           sources:
             - llvm-toolchain-xenial-8
           packages:
-            - clang-6.0
+            - clang-8
       env:
         - C_COMPILER=clang-8 CXX_COMPILER=clang++-8
 
