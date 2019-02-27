@@ -57,7 +57,7 @@ addons:
 
 install:
   - if [ $TRAVIS_OS_NAME = windows ]; then choco install postgresql10 --force --params '/Password:ads'; fi
-  - if [ $TRAVIS_OS_NAME = windows ]; then dir "/c/Program Files/PostgreSQL/10" ; fi
+  - if [ $TRAVIS_OS_NAME = windows ]; then cat "CMakeFiles/CMakeOutput.log" ; fi
   - if [ $TRAVIS_OS_NAME = osx ]; then pg_ctl -D /usr/local/var/postgres start; fi
 
 script:
