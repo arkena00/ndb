@@ -57,6 +57,7 @@ addons:
 
 install:
   - if [ $TRAVIS_OS_NAME = windows ]; then choco install postgresql10 --force --params '/Password:ads'; fi
+  - if [ $TRAVIS_OS_NAME = windows ]; then dir "%SystemDrive%\Program Files\PostgreSQL\10.6"; fi
 
 script:
   - cmake -DCMAKE_C_COMPILER=${C_COMPILER} -DCMAKE_CXX_COMPILER=${CXX_COMPILER} -DNDB_ENGINE_SQLITE=ON -DNDB_ENGINE_POSTGRE=ON -DNDB_PQ_PATH="%SystemDrive%\Program Files\PostgreSQL\10.6" -DNDB_BUILD_TEST=ON -DCMAKE_BUILD_TYPE=Release
