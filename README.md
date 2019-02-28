@@ -1,12 +1,13 @@
 # Neuroshok Database Interface
 
-| Master | Unix ![](https://travis-ci.org/ads00/ndb.svg?branch=master)|
-|--------|------------------------------------------------------------|
-| Dev    | Unix ![](https://travis-ci.org/ads00/ndb.svg?branch=dev)   | 
+|        | gcc8.1 / clang8.0 / msvc19.16                         |
+|--------|-------------------------------------------------------|
+| Master | ![](https://travis-ci.org/ads00/ndb.svg?branch=master)|
+| Dev    | ![](https://travis-ci.org/ads00/ndb.svg?branch=dev)   |
 
-**ndb** is a generic interface to connect to any databases. 
+**ndb** is a generic interface to connect to any databases.
 Querys are written in pure C++ and can be executed on different database engines just by changing one parameter.
-Database model is defined and accessible compile time. 
+Database model is defined and accessible compile time.
 
 # Features
 - **Header only** interface
@@ -14,7 +15,7 @@ Database model is defined and accessible compile time.
 - Support **any** type of **databases**
 - **Easy** to add **new engines**
 - **Compile-time** generation for **SQL expressions**
-- **Customizable** **types** conversion 
+- **Customizable** **types** conversion
 - **Field access by C++** structure
 - **Database generation** with macros
 
