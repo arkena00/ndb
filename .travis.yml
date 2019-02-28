@@ -57,7 +57,7 @@ addons:
 
 install:
   - if [ $TRAVIS_OS_NAME = windows ]; then choco install postgresql10 --force --params '/Password:ads'; fi
-  - if [ $TRAVIS_OS_NAME = windows ]; then mkdir "/c/Program Files/PostgreSQL/10/include/postgresql"; mv "/c/Program Files/PostgreSQL/10/include/" "/c/Program Files/PostgreSQL/10/tmp_include" mv "/c/Program Files/PostgreSQL/10/tmp_include/" "/c/Program Files/PostgreSQL/10/include/postgresql" ; fi
+  - if [ $TRAVIS_OS_NAME = windows ]; then mkdir "/c/Program Files/PostgreSQL/10/include/postgresql"; mv "/c/Program Files/PostgreSQL/10/include/" "/c/Program Files/PostgreSQL/10/tmp_include"; mv "/c/Program Files/PostgreSQL/10/tmp_include/" "/c/Program Files/PostgreSQL/10/include/postgresql" ; fi
   - if [ $TRAVIS_OS_NAME = osx ]; then pg_ctl -D /usr/local/var/postgres start; fi
 
 script:
