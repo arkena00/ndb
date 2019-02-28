@@ -1,8 +1,9 @@
 # Neuroshok Database Interface
+|        | gcc8.1 / clang8.0 / msvc19.16                         |
+|--------|-------------------------------------------------------|
+| Master | ![](https://travis-ci.org/ads00/ndb.svg?branch=master)|
+| Dev    | ![](https://travis-ci.org/ads00/ndb.svg?branch=dev)   |
 
-| Master | Unix ![](https://travis-ci.org/ads00/ndb.svg?branch=master)|
-|--------|------------------------------------------------------------|
-| Dev    | Unix ![](https://travis-ci.org/ads00/ndb.svg?branch=dev)   | 
 
 **ndb** is a generic interface to connect to any databases. 
 Querys are written in pure C++ and can be executed on different database engines just by changing one parameter.
@@ -20,7 +21,7 @@ Database model is defined and accessible compile time.
 
 ## Current support
 - Expressions based on **SQL** and **BSON**
-- **Sqlite**, **MySQL** and **MongoDB**.
+- **Sqlite**, **PostgreSQL** and **MongoDB**.
 
 # How to use
 Choose the branch to clone (master or dev)
