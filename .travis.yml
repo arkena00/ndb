@@ -32,9 +32,6 @@ matrix:
       dist: 1803-containers
       env: VERSION=1.11 VARIANT=windows/windowsservercore-1803
 
-    - os: osx
-      osx_image: xcode10.1
-
 sudo: required
 
 language:
@@ -49,11 +46,6 @@ addons:
       - libmongo-client0
       - libpq-dev
       - libpq5
-
-  homebrew:
-    packages:
-      - postgresql
-
 
 install:
   - if [ $TRAVIS_OS_NAME = windows ]; then choco install postgresql10 --force --params '/Password:ads'; fi
