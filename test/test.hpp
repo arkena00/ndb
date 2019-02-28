@@ -18,7 +18,14 @@
     #define TEST_MONGO
 #endif
 
-#define TEST_ENGINE TEST_SQLITE TEST_MONGO
+#ifdef NDB_ENGINE_POSTGRE
+    #include <ndb/engine/postgre/postgre.hpp>
+    #define TEST_POSTGRE ,ndb::postgre
+#else
+    #define TEST_POSTGRE
+#endif
+
+#define TEST_ENGINE TEST_SQLITE TEST_MONGO TEST_POSTGRE
 
 
 
