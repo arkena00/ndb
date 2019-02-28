@@ -5,13 +5,13 @@
 | Master | ![](https://travis-ci.org/ads00/ndb.svg?branch=master)|
 | Dev    | ![](https://travis-ci.org/ads00/ndb.svg?branch=dev)   |
 
-**ndb** is a generic interface to connect to any databases.
-Querys are written in pure C++ and can be executed on different database engines just by changing one parameter.
-Database model is defined and accessible compile time.
+**ndb** is a generic interface to connect to any database.
+Queries are written in pure C++ and can be executed on different database engines just by changing one parameter.
+Database model is defined and accessible at compile time.
 
 # Features
 - **Header only** interface
-- Full **C++** and **generic** querys
+- Full **C++** and **generic** queries
 - Support **any** type of **databases**
 - **Easy** to add **new engines**
 - **Compile-time** generation for **SQL expressions**
@@ -27,7 +27,7 @@ Database model is defined and accessible compile time.
 Choose the branch to clone (master or dev)
 
 ```sh
-ads@NK:/home/ads$ git clone --recurse-submodules -b [branch] https://github.com/ads00/ndb.git
+ads@NK:/home/ads$ git clone -b [branch] https://github.com/ads00/ndb.git
 ```
 ## Build (optional)
 Create build directory
@@ -54,10 +54,9 @@ ads@NK:/home/ads/ndb/build$ make
 add_subdirectory(${PATH_TO_NDB}/ndb ${THIRD_PARTY_ROOT}/ndb/cmake-build)
 target_link_libraries(my_target lib_ndb)
 ```
-> Remember, it's importent to enable options like engines **before** adding the subdirectory. Indeed, you need to include libraries of the engine you use.
 
 ### Manual
-Add paths to ndb headers and your customs engine builds
+Add paths to ndb headers and your custom engine builds
 
 # Overview
 ## Database
@@ -78,7 +77,7 @@ ndb_project(my_project,
 )
 ```
 
-## Querys
+## Queries
 ```cpp
 ndb::query<dbs::zeta>() << ( movie.id, movie.image ); // get
 ndb::query<dbs::zeta>() << ( movie.id == a && movie.name == b ); // get by condition
