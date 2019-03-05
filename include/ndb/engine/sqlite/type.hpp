@@ -26,8 +26,8 @@ namespace ndb
 
     // storage types
     template<> struct storage_type<sqlite, int_> { using type = int64_; };
+    template<> struct storage_type<sqlite, float_> { using type = double_; };
     template<> struct storage_type<sqlite, datetime_> { using type = string_; };
-
 
     template<class Database>
     struct engine_types<sqlite, Database>
