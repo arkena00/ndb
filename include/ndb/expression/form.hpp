@@ -63,9 +63,9 @@ namespace ndb
         template<class Type, class Native_expression, class T1, class T2>
         static constexpr void make(Native_expression& ne)
         {
-            T1::template make<Engine>(ne);
+            std::decay_t<T1>::template make<Engine>(ne);
             ne.append(expression_code<Type, Engine, Category>::value);
-            T2::template make<Engine>(ne);
+            std::decay_t<T2>::template make<Engine>(ne);
         }
     };
 
@@ -76,8 +76,8 @@ namespace ndb
         static constexpr void make(Native_expression& ne)
         {
             ne.append(expression_code<Type, Engine, Category>::value);
-            T1::template make<Engine>(ne);
-            T2::template make<Engine>(ne);
+            std::decay_t<T1>::template make<Engine>(ne);
+            std::decay_t<T2>::template make<Engine>(ne);
         }
     };
 
