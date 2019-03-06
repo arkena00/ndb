@@ -150,6 +150,6 @@ namespace ndb
     std::string sqlite::to_string(const Expr&)
     {
         constexpr auto str_query = ndb::native_expression<Expr, ndb::sqlite>{};
-        return str_query.c_str();
+        return str_query.data();
     }
 } // ndb
