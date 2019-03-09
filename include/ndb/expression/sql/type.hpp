@@ -163,6 +163,22 @@ namespace ndb
         }
     };
 
+    // field alias
+    template<class Engine>
+    struct expression_type<expressions::alias_, Engine, expression_categories::sql>
+    {
+        template<class Native_expression, class Expr, class Alias_value>
+        static constexpr void make(Native_expression& ne)
+        {
+            std::decay_t<Expr>::template make<Engine>(ne);
+            ne.append(expression_code<expressions::alias_, Engine, Native_expression::category>::value);
+            ne.append("`");
+            ne.append("A");
+            ne.append(Alias_value{} + '0');
+            ne.append("`");
+        }
+    };
+
     template<class Engine>
     struct expression_type<expressions::table_, Engine, expression_categories::sql>
     {

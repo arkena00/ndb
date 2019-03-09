@@ -42,6 +42,19 @@ namespace ndb
         struct table_ : basic_expression_type<>{ static constexpr bool is_scalar = true; };
         struct value_ : basic_expression_type<>{ static constexpr bool is_scalar = true; };
 
+        struct alias_ : basic_expression_type<>
+        {
+            static constexpr bool is_scalar = true;
+
+            template<unsigned int Alias_id, class Expr>
+            constexpr auto operator()(std::integral_constant<unsigned int, Alias_id>, const Expr& expr) const
+            {
+                using alias_type = std::integral_constant<unsigned int, Alias_id>;
+                return ndb::expression<alias_, decltype(expr), alias_type> { std::move(expr), alias_type{} };
+            }
+        };
+        static constexpr ndb::expression<alias_> as{};
+
         // command
         struct get_ : basic_expression_type<>
         {
@@ -118,7 +131,7 @@ namespace ndb
             {
                 //auto expr = ((ndb::expr_make(ts), ...));
                 auto expr = ndb::expression<ndb::expressions::table_, Ts>{ ts };
-                return ndb::expression<source_, decltype(expr)> { expr };
+                return ndb::expression<source_, decltype(expr)> { std::move(expr) };
             }
         };
         static constexpr ndb::expression<source_> source;
@@ -140,6 +153,19 @@ namespace ndb
 
         struct logical_or_ : basic_expression_type<expression_forms::a_op_b>{};
         static constexpr ndb::expression<logical_or_> logical_or;
+
+        // function
+        struct count_ : basic_expression_type<expression_forms::functional_args>
+        {
+            template<class T>
+            constexpr auto operator()(const T& t) const
+            {
+                auto expr_field = ndb::expression<ndb::expressions::field_, T>{ t };
+                return ndb::expression<count_, decltype(expr_field)> { expr_field };
+            }
+        };
+        static constexpr ndb::expression<count_> count;
+
     } // expression
 
     using namespace expressions;

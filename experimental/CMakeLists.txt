@@ -18,6 +18,7 @@ exp_make(main)
 exp_make(query)
 exp_make(cx_deduction)
 exp_make(postgre)
+exp_make(alias)
 
 
 
