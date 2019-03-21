@@ -13,11 +13,18 @@ namespace ndb
     {
         enum class group { command, scalar };
 
-        template<expression_forms Form = expression_forms::op_args>
+        template<expression_forms Form = expression_forms::op_args, class Expression_type = void>
         struct basic_expression_type
         {
             static constexpr auto form = Form;
             static constexpr bool is_scalar = false;
+
+            template<class... Ts>
+            constexpr auto operator()(Ts&&... t) const
+            {
+                auto expr = (ndb::expr_make(t), ...);
+                return ndb::expression<Expression_type, decltype(expr)> { std::move(expr) };
+            }
         };
 
         struct statement_ : basic_expression_type<expression_forms::none>{};
@@ -147,6 +154,15 @@ namespace ndb
         static constexpr ndb::expression<filter_> filter;
 
 
+        struct sort_ : basic_expression_type<expression_forms::op_args, sort_>{};
+        static constexpr ndb::expression<sort_> sort;
+
+        struct asc_ : basic_expression_type<expression_forms::arg_op, asc_>{};
+        static constexpr ndb::expression<asc_> asc;
+        struct desc_ : basic_expression_type<expression_forms::arg_op, desc_>{};
+        static constexpr ndb::expression<desc_> desc;
+
+
         // operation
         struct logical_and_ : basic_expression_type<expression_forms::a_op_b>{};
         static constexpr ndb::expression<logical_and_> logical_and;
@@ -155,6 +171,8 @@ namespace ndb
         static constexpr ndb::expression<logical_or_> logical_or;
 
         // function
+        // expression_type
+        // count_ : function_expression<return_type, form = f>
         struct count_ : basic_expression_type<expression_forms::functional_args>
         {
             template<class T>
@@ -165,6 +183,8 @@ namespace ndb
             }
         };
         static constexpr ndb::expression<count_> count;
+
+        // lower(movie.name) : function_expression<ndb::string_ // expr
 
     } // expression
 
