@@ -1,7 +1,7 @@
 #ifndef EXPRESSION_SQL_TYPE_NDB
 #define EXPRESSION_SQL_TYPE_NDB
 
-#include <ndb/expression/type.hpp>
+#include <ndb/expression/basic.hpp>
 #include <ndb/statement.hpp>
 #include <iostream>
 #include <ndb/expression/deduction.hpp>

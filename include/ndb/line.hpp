@@ -3,7 +3,7 @@
 
 #include <ndb/engine/type.hpp>
 #include <ndb/error.hpp>
-#include <ndb/expression/type.hpp>
+#include <ndb/expression/basic.hpp>
 #include <ndb/type.hpp>
 #include <ndb/utility.hpp>
 #include <ndb/value.hpp>
@@ -61,6 +61,8 @@ namespace ndb
             if (!aliases_index_.count(Alias_id)) ndb_error("Alias does not exist in the result, check the select clause");
             size_t aliases_index = aliases_index_.at(Alias_id);
             const ndb::value<Database>& alias_value = aliases_.at(aliases_index);
+
+            // Aliased_expr::type::output_type
 
             return alias_value.template get<int64_t>();
         }

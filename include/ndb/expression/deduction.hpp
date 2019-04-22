@@ -3,7 +3,7 @@
 
 #include <ndb/utility.hpp>
 #include <ndb/cx_error.hpp>
-#include <ndb/expression/type.hpp>
+#include <ndb/expression/basic.hpp>
 
 namespace ndb
 {

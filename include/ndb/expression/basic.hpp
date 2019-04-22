@@ -1,5 +1,5 @@
-#ifndef EXPRESSION_TYPE_NDB
-#define EXPRESSION_TYPE_NDB
+#ifndef EXPRESSION_BASIC_NDB
+#define EXPRESSION_BASIC_NDB
 
 #include <ndb/expression/form.hpp>
 #include <ndb/expression.hpp>
@@ -13,12 +13,26 @@ namespace ndb
     {
         enum class group { command, scalar };
 
-        template<expression_forms Form = expression_forms::op_args, class Expression_type = void>
-        struct basic_expression_type
+        //! @param Return_type used by alias system to get the return type of an expression
+        //! @param Expression_type used to create default operator()
+        template<expression_forms Form = expression_forms::op_args, class Return_type = void>
+        struct basic_expression
         {
             static constexpr auto form = Form;
             static constexpr bool is_scalar = false;
+            using return_type = Return_type;
+        };
 
+        //! basic_expression with default operator()
+        //! @param Expression_type used to create default operator()
+        template<class Expression_type, expression_forms Form = expression_forms::op_args, class Return_type = void>
+        struct basic_expression_op
+        {
+            static constexpr auto form = Form;
+            static constexpr bool is_scalar = false;
+            using return_type = Return_type;
+
+            //! default operator when expr(...) is called
             template<class... Ts>
             constexpr auto operator()(Ts&&... t) const
             {
@@ -27,29 +41,30 @@ namespace ndb
             }
         };
 
-        struct statement_ : basic_expression_type<expression_forms::none>{};
 
-        struct substatement_ : basic_expression_type<expression_forms::brace>{};
+        struct statement_ : basic_expression<expression_forms::none>{};
 
-        struct list_ : basic_expression_type<expression_forms::a_op_b>{};
-        struct function_ : basic_expression_type<>{};
+        struct substatement_ : basic_expression<expression_forms::brace>{};
+
+        struct list_ : basic_expression<expression_forms::a_op_b>{};
+        struct function_ : basic_expression<>{};
 
         // filter
-        struct range_ : basic_expression_type<>{};
-        struct assign_ : basic_expression_type<expression_forms::a_op_b>{};
-        struct equal_ : basic_expression_type<expression_forms::a_op_b>{};
+        struct range_ : basic_expression<>{};
+        struct assign_ : basic_expression<expression_forms::a_op_b>{};
+        struct equal_ : basic_expression<expression_forms::a_op_b>{};
 
         // scalar
-        struct all_ : basic_expression_type<>{};
+        struct all_ : basic_expression<>{};
         static constexpr ndb::expression<all_> all;
 
-        struct table_all_ : basic_expression_type<expression_forms::none>{ static constexpr bool is_scalar = true; };
+        struct table_all_ : basic_expression<expression_forms::none>{ static constexpr bool is_scalar = true; };
 
-        struct field_ : basic_expression_type<>{ static constexpr bool is_scalar = true; };
-        struct table_ : basic_expression_type<>{ static constexpr bool is_scalar = true; };
-        struct value_ : basic_expression_type<>{ static constexpr bool is_scalar = true; };
+        struct field_ : basic_expression<>{ static constexpr bool is_scalar = true; };
+        struct table_ : basic_expression<>{ static constexpr bool is_scalar = true; };
+        struct value_ : basic_expression<>{ static constexpr bool is_scalar = true; };
 
-        struct alias_ : basic_expression_type<>
+        struct alias_ : basic_expression<>
         {
             static constexpr bool is_scalar = true;
 
@@ -63,7 +78,7 @@ namespace ndb
         static constexpr ndb::expression<alias_> as{};
 
         // command
-        struct get_ : basic_expression_type<>
+        struct get_ : basic_expression<>
         {
             constexpr auto operator()() const
             {
@@ -81,7 +96,7 @@ namespace ndb
         };
         static constexpr ndb::expression<get_> get;
 
-        struct set_ : basic_expression_type<>
+        struct set_ : basic_expression<>
         {
             template<class... Ts>
             constexpr auto operator()(Ts&&... t) const
@@ -93,7 +108,7 @@ namespace ndb
         };
         static constexpr ndb::expression<set_> set;
 
-        struct add_ : basic_expression_type<>
+        struct add_ : basic_expression<>
         {
             template<class... Ts>
             constexpr auto operator()(Ts&&... t) const
@@ -105,7 +120,7 @@ namespace ndb
         };
         static constexpr ndb::expression<add_> add;
 
-        struct add_ignore_ : basic_expression_type<>
+        struct add_ignore_ : basic_expression<>
         {
             template<class... Ts>
             constexpr auto operator()(Ts&&... t) const
@@ -116,10 +131,10 @@ namespace ndb
         };
         static constexpr ndb::expression<add_ignore_> add_ignore;
 
-        struct del_ : basic_expression_type<>{};
+        struct del_ : basic_expression<>{};
         static constexpr ndb::expression<del_> del;
 
-        struct clear_ : basic_expression_type<>
+        struct clear_ : basic_expression<>
         {
             template<class... Ts>
             constexpr auto operator()(Ts&&... t) const
@@ -131,7 +146,7 @@ namespace ndb
         };
 
         // clause
-        struct source_ : basic_expression_type<>
+        struct source_ : basic_expression<>
         {
             template<class Ts>
             constexpr auto operator()(const Ts& ts) const
@@ -143,7 +158,7 @@ namespace ndb
         };
         static constexpr ndb::expression<source_> source;
 
-        struct filter_ : basic_expression_type<>
+        struct filter_ : basic_expression<>
         {
             template<class T>
             constexpr auto operator()(const T& t) const
@@ -154,26 +169,26 @@ namespace ndb
         static constexpr ndb::expression<filter_> filter;
 
 
-        struct sort_ : basic_expression_type<expression_forms::op_args, sort_>{};
+        struct sort_ : basic_expression_op<sort_, expression_forms::op_args>{};
         static constexpr ndb::expression<sort_> sort;
 
-        struct asc_ : basic_expression_type<expression_forms::arg_op, asc_>{};
+        struct asc_ : basic_expression_op<asc_, expression_forms::arg_op>{};
         static constexpr ndb::expression<asc_> asc;
-        struct desc_ : basic_expression_type<expression_forms::arg_op, desc_>{};
+        struct desc_ : basic_expression_op<desc_, expression_forms::arg_op>{};
         static constexpr ndb::expression<desc_> desc;
 
 
         // operation
-        struct logical_and_ : basic_expression_type<expression_forms::a_op_b>{};
+        struct logical_and_ : basic_expression<expression_forms::a_op_b>{};
         static constexpr ndb::expression<logical_and_> logical_and;
 
-        struct logical_or_ : basic_expression_type<expression_forms::a_op_b>{};
+        struct logical_or_ : basic_expression<expression_forms::a_op_b>{};
         static constexpr ndb::expression<logical_or_> logical_or;
 
         // function
         // expression_type
         // count_ : function_expression<return_type, form = f>
-        struct count_ : basic_expression_type<expression_forms::functional_args>
+        struct count_ : basic_expression<expression_forms::functional_args>
         {
             template<class T>
             constexpr auto operator()(const T& t) const
@@ -211,4 +226,4 @@ namespace ndb
     };
 } // ndb
 
-#endif // EXPRESSION_TYPE_NDB
+#endif // EXPRESSION_BASIC_NDB
