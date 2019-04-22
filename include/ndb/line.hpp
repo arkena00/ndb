@@ -62,9 +62,9 @@ namespace ndb
             size_t aliases_index = aliases_index_.at(Alias_id);
             const ndb::value<Database>& alias_value = aliases_.at(aliases_index);
 
-            // Aliased_expr::type::output_type
+            using Aliased_expr_return_type = cpp_type_t<typename std::decay_t<Aliased_expr>::type::return_type, Database>;
 
-            return alias_value.template get<int64_t>();
+            return alias_value.template get<Aliased_expr_return_type>();
         }
 
         template<class Field>

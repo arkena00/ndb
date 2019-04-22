@@ -188,7 +188,7 @@ namespace ndb
         // function
         // expression_type
         // count_ : function_expression<return_type, form = f>
-        struct count_ : basic_expression<expression_forms::functional_args>
+        struct count_ : basic_expression<expression_forms::functional_args, int64_>
         {
             template<class T>
             constexpr auto operator()(const T& t) const
