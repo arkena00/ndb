@@ -2,6 +2,8 @@
 #define STATEMENT_NDB
 
 #include <ndb/expression.hpp>
+#include <ndb/expression/basic.hpp>
+#include <ndb/expression/native.hpp>
 
 namespace ndb
 {

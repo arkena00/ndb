@@ -1,6 +1,7 @@
 #include <ndb/error.hpp>
 #include <ndb/engine/sqlite/connection.hpp>
 #include <ndb/utility.hpp>
+#include <ndb/prepared_query.hpp>
 
 namespace ndb
 {
@@ -58,5 +59,8 @@ namespace ndb
 
         // create model
         make<Database>();
+
+        // create prepared queries
+        prepared_query<Database>::make();
     }
 } // ndb

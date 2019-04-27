@@ -3,6 +3,7 @@
 
 #include <ndb/expression/form.hpp>
 #include <ndb/expression.hpp>
+#include <ndb/type.hpp>
 
 namespace ndb
 {
