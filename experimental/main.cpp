@@ -131,6 +131,43 @@ int main()
 
         // ndb::apply<Database>::set<Table>(item_id);
 
+        ndb_pquery(library, get_movie, movie_::id_, movie_::name_) << (movie.id == _1 && movie.name == _2);
+        ndb_pquery(db, CreateSpaceship, name, script, owner_id, spaceship_hull_id, last_update_date) + (_1 = _, _2 = _, _3 = _, _4 = _, _5 = _);
+
+        namespace queries
+        {
+            statement* st_get_movie;
+            auto get_movie(int _1, std::string _2)
+            {
+                bind_(st_get_movie, [values])
+                exec(stmt);
+                sqlite3_reset(stmt);
+            }
+        }
+
+        struct query_registrer
+        {
+            static std::vector<pquery> pquerys_;
+
+            auto operator<<(Expr expr)
+            {
+                str_query = engine.native_query(expr);
+                sqlite3_prepare_v2(connection<Database>().database(), str_query.c_str(), -1, &st_get_movie, nullptr)
+            }
+        };
+
+        {
+            int _1;
+            std::string _2;
+            query_registrer() << Q;
+        }
+
+        ndb_pquery(library, get_movie, movie.id, movie.name) << (movie.id == _ && movie.name == _);
+        ndb_pquery(library, get_movie, movie.id, movie.name) << (_1 == v1 && _2 == v2);
+
+        ndb::querys::get_movie(32, 2)
+
+        constexpr auto xpr =  ndb::statement << ndb::get() << ndb::source(movie) << ndb::filter(movie.id == _1);
 
         constexpr auto expr = ndb::statement << ndb::del << ndb::source(movie) << ndb::filter(movie.id == 3);
 
