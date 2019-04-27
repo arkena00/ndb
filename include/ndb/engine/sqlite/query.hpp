@@ -25,10 +25,16 @@ namespace ndb
         native_query() = default;
 
         native_query(statement_type str_statement) :
-        statement_{ nullptr }
+            statement_{ nullptr }
         {
             prepare(std::move(str_statement));
         }
+
+        native_query(native_query&& other) noexcept :
+            statement_ { std::exchange(other.statement_, nullptr) }
+            , str_statement_{ std::move(other.str_statement_) }
+            , bind_index_{ other.bind_index_ }
+        {}
 
         native_query(const native_query&) = delete;
         native_query& operator=(const native_query&) = delete;
