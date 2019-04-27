@@ -3,7 +3,7 @@
 
 namespace ndb
 {
-    template<class Database, class Engine>
+    template<class Database, class Engine = typename Database::engine>
     class native_query;
 } // ndb
 
