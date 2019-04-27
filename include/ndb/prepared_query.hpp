@@ -20,6 +20,7 @@ auto FUNCTION(const Ts&... ts) \
     return q.exec(); \
 } \
 namespace internal { extern int FUNCTION##_init; } \
+constexpr int _ = 0; \
 int internal::FUNCTION##_init = ndb::prepare_proxy<Database>{#FUNCTION}
 
 

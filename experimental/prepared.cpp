@@ -35,7 +35,10 @@ using namespace std::chrono_literals;
 namespace queries
 {
     using Database = dbs::library;
-
+    
+    ndb_prepare(get_movie) << (ndb::get()
+        << ndb::source(movie)
+        << ndb::filter(movie.duration == _ || movie.name == _));
 }
 
 /*
