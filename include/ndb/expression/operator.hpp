@@ -38,6 +38,14 @@ namespace ndb
         return ndb::expression<ndb::expressions::logical_and_, decltype(expr_l), decltype(expr_r)> { std::move(expr_l), std::move(expr_r) };
     }
 
+    template<class L, class R, class = ndb::enable_expression<L, R>>
+    constexpr const auto operator||(L&& l, R&& r)
+    {
+        auto expr_l = ndb::expr_make(std::forward<L>(l));
+        auto expr_r = ndb::expr_make(std::forward<R>(r));
+        return ndb::expression<ndb::expressions::logical_or_, decltype(expr_l), decltype(expr_r)> { std::move(expr_l), std::move(expr_r) };
+    }
+
     template<class... Ls, class R>
     constexpr const auto operator<<(ndb::expression<Ls...> l, R&& r)
     {
