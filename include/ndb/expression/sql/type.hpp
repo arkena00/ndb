@@ -115,10 +115,7 @@ namespace ndb
         template<class Native_expression, class... Args>
         static constexpr void make(Native_expression& s)
         {
-            // normal compiler
             (Args::template make<Engine>(s), ...);
-            // msvc fix
-            //internal::msvc_fix_fold<Args...>::template make<Engine>(s);
         }
     };
 /*
