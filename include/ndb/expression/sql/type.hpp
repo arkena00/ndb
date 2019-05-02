@@ -51,8 +51,7 @@ namespace ndb
             using Table = ndb::deductions::table<Expr>;
 
             ne.append(expression_code<expressions::add_, Engine, Native_expression::category>::value);
-            ne.append("T");
-            ne.append(ndb::table_id<Table> + '0');
+            ne.append(ndb::table_name<Table>);
             ne.append("(");
 
             internal::expr_builder<Engine, internal::expr_build_type<expressions::add_>, Expr>::template process<0>(ne);
@@ -74,8 +73,7 @@ namespace ndb
             using Table = ndb::deductions::table<Expr>;
 
             ne.append(expression_code<expressions::add_ignore_, Engine, Native_expression::category>::value);
-            ne.append("T");
-            ne.append(ndb::table_id<Table> + '0');
+            ne.append(ndb::table_name<Table>);
             ne.append("(");
 
             internal::expr_builder<Engine, internal::expr_build_type<expressions::add_>, Expr>::template process<0>(ne);
@@ -99,8 +97,7 @@ namespace ndb
             using Table = ndb::deductions::table<Expr>;
 
             ne.append("UPDATE ");
-            ne.append("T");
-            ne.append(ndb::table_id<Table> + '0');
+            ne.append(ndb::table_name<Table>);
             ne.append(" SET ");
 
             Expr::template make<Engine>(ne);
@@ -140,8 +137,7 @@ namespace ndb
         template<class Native_expression, class Table>
         static constexpr void make(Native_expression& ne)
         {
-            ne.append("T");
-            ne.append('0' + ndb::table_id<Table>);
+            ne.append(ndb::table_name<Table>);
             ne.append(".*");
         }
     };
@@ -155,8 +151,7 @@ namespace ndb
         template<class Native_expression, class Field>
         static constexpr void make(Native_expression& s)
         {
-            s.append("F");
-            s.append('0' + ndb::field_id<Field>);
+            s.append(ndb::field_name<Field>);
         }
     };
 
@@ -170,8 +165,7 @@ namespace ndb
             std::decay_t<Expr>::template make<Engine>(ne);
             ne.append(expression_code<expressions::alias_, Engine, Native_expression::category>::value);
             ne.append("`");
-            ne.append("A");
-            ne.append(Alias_value{} + '0');
+            ne.append(ndb::cx_string<'A', static_cast<unsigned int>(Alias_value{})>);
             ne.append("`");
         }
     };
@@ -182,8 +176,7 @@ namespace ndb
         template<class Native_expression, class Table>
         static constexpr void make(Native_expression& s)
         {
-            s.append("T");
-            s.append('0' + ndb::table_id<Table>);
+            s.append(ndb::table_name<Table>);
         }
     };
 

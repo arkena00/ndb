@@ -128,7 +128,7 @@ namespace ndb
                     const char* field_name = sqlite3_column_name(statement_, field_it);
                     int field_id = -1;
                     char field_type = field_name[0];
-                    if (field_type == 'F') field_id = std::stoi(std::string(field_name + 1));
+                    if (field_type == ndb::id<ndb::field>) field_id = std::stoi(std::string(field_name + 1));
 
                     // field is an alias
                     if (field_type == 'A') field_id = std::stoi(std::string(field_name + 1));

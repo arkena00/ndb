@@ -18,7 +18,7 @@ namespace ndb
     public:
         void add(char field_type, int field_id, ndb::value<Database> field_value)
         {
-            if (field_type == 'F')
+            if (field_type == ndb::id<ndb::field>)
             {
                 // value accessible by field
                 if (field_id >= 0) value_index_.emplace(field_id, static_cast<unsigned int>(values_.size()));

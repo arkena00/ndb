@@ -131,7 +131,7 @@ namespace ndb
                     {
                         if constexpr (decltype(i){} != 0) output += ",";
                         using Field = std::decay_t<decltype(type)>;
-                        output += "F" + std::to_string(ndb::field_id<Field>);
+                        output += ndb::field_name<Field>;
                     });
 
                     output += ")"; // unique(
