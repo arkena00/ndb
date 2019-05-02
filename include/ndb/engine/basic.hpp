@@ -4,7 +4,6 @@
 #include <ndb/engine/connection_param.hpp>
 #include <ndb/engine/sqlite/connection.hpp>
 
-#include <ndb/prepared_query.hpp>
 #include <unordered_map>
 
 namespace ndb
