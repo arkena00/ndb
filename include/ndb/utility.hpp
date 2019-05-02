@@ -137,15 +137,6 @@ namespace ndb
     template<class T>
     static constexpr bool is_expression = internal::is_base_of<ndb::expression_base, std::decay_t<T>>::value;
 
-    template<class Field>
-    constexpr unsigned char field_id = index_of<std::decay_t<Field>, typename std::decay_t<Field>::table::Detail_::entity>::value;
-
-    template<class Table>
-    constexpr unsigned char table_id = index_of<std::decay_t<Table>, typename Table::model::Detail_::entity>::value;
-
-    template<class Database>
-    constexpr unsigned char database_id = index_of<std::decay_t<Database>, typename Database::group::Detail_::entity>::value;
-
 /////////////////////////////////////////////////////////////////////////////////
 ////////////////////////           EXPRESSION            ////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
@@ -307,23 +298,6 @@ namespace ndb
 
 
         return output;
-    }
-
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////             NAMES              ////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-    template<class T>
-    std::string name()
-    {
-        if constexpr (ndb::is_field<T>) return "F" + std::to_string(ndb::field_id<T>);
-        else if constexpr (ndb::is_table<T>) return "T" + std::to_string(ndb::table_id<T>);
-        else if constexpr (ndb::is_database<T>) return std::string(T::group::name) + "_D" + std::to_string(ndb::database_id<T>);
-    }
-
-    template<class T>
-    std::string name(const T&)
-    {
-        return name<T>();
     }
 } // ndb
 
