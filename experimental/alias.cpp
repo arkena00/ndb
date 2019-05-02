@@ -58,8 +58,8 @@ int main()
         } alias;*/
 
 
-        ndb_aliasn(0, count_id, ndb::count(movie.id));
-        ndb_aliasn(1, count_name, ndb::count(movie.name));
+        ndb_alias(count_id, ndb::count(movie.id));
+        ndb_alias(count_name, ndb::count(movie.name));
 
         /*
         ndb_aliasn(0, count_id, ndb::count(movie.id));
@@ -86,8 +86,8 @@ int main()
             std::cout << "movie.id : " << line[movie.id] << std::endl;
             std::cout << "movie.name : " << line[movie.name] << std::endl;
             std::cout << "movie.duration : " << line[movie.duration].count() << " Hours" << std::endl;
-            std::cout << "alias.count : " << line[count_name] << std::endl;
-            //std::cout << "alias.count_2 : " << line[alias.count_2] << " Count" << std::endl;
+            std::cout << "count_id : " << line[count_id] << std::endl;
+            std::cout << "count_name : " << line[count_name] << std::endl;
         }
     }
     catch (const std::exception& e) { std::cout << e.what(); }
