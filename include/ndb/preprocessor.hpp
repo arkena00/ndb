@@ -217,6 +217,12 @@ static constexpr const ::ndb::models::MODEL_NAME##_ MODEL_NAME = {}; \
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////        EXPRESSION ALIASES      ////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
+//! aliases are scoped
+
+//! alias using current line
+#define ndb_alias(VAR_NAME, EXPR) auto VAR_NAME = ndb::as(std::integral_constant<unsigned int , __LINE__>{}, EXPR)
+
+//! alias with specified index
 #define ndb_aliasn(ID, VAR_NAME, EXPR) auto VAR_NAME = ndb::as(std::integral_constant<unsigned int , ID>{}, EXPR)
 
 ////////////////////////////////////////////////////////////////////////////////
