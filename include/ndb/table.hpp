@@ -3,6 +3,8 @@
 
 //! \brief table for database model
 
+#include <ndb/option.hpp>
+
 #include <cstddef>
 
 namespace ndb

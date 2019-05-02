@@ -1,5 +1,6 @@
 #include <ndb/error.hpp>
 #include <ndb/engine/sqlite/connection.hpp>
+#include <ndb/id.hpp>
 #include <ndb/utility.hpp>
 #include <ndb/prepared_query.hpp>
 
