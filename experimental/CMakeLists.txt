@@ -20,7 +20,8 @@ exp_make(cx_deduction)
 exp_make(postgre)
 exp_make(alias)
 exp_make(prepared)
-
+exp_make(graph)
+exp_make(persistent)
 
 
 
