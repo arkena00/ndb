@@ -41,15 +41,15 @@ namespace ndb
     constexpr const char* field_name = ndb::cx_string<ndb::id<ndb::field>, ndb::field_id<std::decay_t<Field>>>;
 
     template<class T>
-    const char* name()
+    auto name()
     {
         if constexpr (ndb::is_field<T>) return ndb::field_name<T>;
         else if constexpr (ndb::is_table<T>) return ndb::table_name<T>;
-        else if constexpr (ndb::is_database<T>) return ndb::database_name<T>;
+        else if constexpr (ndb::is_database<T>) return std::string(T::group::name) + ndb::database_name<T>;
     }
 
     template<class T>
-    const char* name(const T&)
+    auto name(const T&)
     {
         return name<T>();
     }
