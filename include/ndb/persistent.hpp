@@ -1,6 +1,7 @@
 #ifndef PERSISTENT_H_NDB
 #define PERSISTENT_H_NDB
 
+#include <ndb/engine/connection_param.hpp>
 #include <ndb/preprocessor.hpp>
 #include <ndb/query.hpp>
 
@@ -8,7 +9,7 @@
 
 ndb_table(ndb_persistent_table
     , ndb_field(key, std::string, ndb::size<255>, ndb::option<ndb::field_option::unique>)
-    , ndb_field(value, std::string, ndb::size<255>)
+    , ndb_field(value, std::vector<char>)
 )
 
 ndb_model(ndb_persistent_model, ndb_persistent_table)
@@ -21,19 +22,21 @@ namespace ndb
 {
     class persistent_group
     {
+        using Database = ndb::databases::ndb_persistent::ndb_persistent_database_;
+
       public:
-        persistent_group(const persistent_group* parent_group, std::string name)
+        persistent_group(const persistent_group* parent_group, std::string name, const ndb::connection_param& cp = {})
             : name_{ std::move(name) }
             , path_{ parent_group ? (parent_group->path() + "." + name_) : name_ }
         {
             // connect when root is instantiated
             if (parent_group == nullptr)
             {
-                ndb::connect<ndb::databases::ndb_persistent::ndb_persistent_database_>();
+                ndb::connect<Database>(cp);
             }
         }
 
-        persistent_group(std::string name) : persistent_group(nullptr, std::move(name)) {}
+        persistent_group(std::string name, const ndb::connection_param& cp = {}) : persistent_group(nullptr, std::move(name), cp) {}
 
         const std::string& name() const { return name_; }
         const std::string& path() const { return path_; }
@@ -61,10 +64,18 @@ namespace ndb
                        << ndb::filter(ndb::models::ndb_persistent_model.ndb_persistent_table.key == path_));
             if (res.has_result())
             {
-                value_ = res[0][ndb::models::ndb_persistent_model.ndb_persistent_table.value];
+                std::vector<char> data = res[0][ndb::models::ndb_persistent_model.ndb_persistent_table.value];
+
+                if constexpr (!std::is_fundamental_v<T>)
+                {
+                    value_ = T{ data.begin(), data.end() };
+                }
+                else
+                {
+                    value_ = *reinterpret_cast<T*>(data.data());
+                }
             }
-            else
-                value_ = default_value_;
+            else value_ = default_value_;
         }
 
         operator T() const { return value_; }
@@ -81,8 +92,23 @@ namespace ndb
                 return;
 
             value_ = std::move(value);
+
+            std::vector<char> data;
+
+            if constexpr (!std::is_fundamental_v<T>)
+            {
+                data.resize(value_.size());
+                std::copy(value_.begin(), value_.end(), data.begin());
+            }
+            else
+            {
+                data.resize(sizeof(T));
+                auto begin = reinterpret_cast<char*>(&value_);
+                std::copy(begin, begin + data.size(), data.begin());
+            }
+
             ndb::query<Database>()
-            << (ndb::add_ignore(ndb::models::ndb_persistent_model.ndb_persistent_table.key = path_, ndb::models::ndb_persistent_model.ndb_persistent_table.value = value_));
+            << (ndb::add_ignore(ndb::models::ndb_persistent_model.ndb_persistent_table.key = path_, ndb::models::ndb_persistent_model.ndb_persistent_table.value = data));
         }
 
       private:
