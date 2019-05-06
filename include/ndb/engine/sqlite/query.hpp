@@ -95,7 +95,7 @@ namespace ndb
                     sqlite3_bind_text16(statement_, bind_index_, data, -1, SQLITE_TRANSIENT);
                 else ncx_error(T, "unsupported string format");
             }
-            else if constexpr (std::is_same_v<byte_array_, storage_type>) sqlite3_bind_blob(statement_, bind_index_, ndb::type_data(value), value.size(), SQLITE_TRANSIENT);
+            else if constexpr (std::is_same_v<byte_array_, storage_type>) sqlite3_bind_blob(statement_, bind_index_, ndb::type_data(value), static_cast<int>(value.size()), SQLITE_TRANSIENT);
             else ncx_error(T, "type unknown, add a custom type or use an engine type");
             bind_index_++;
         }
