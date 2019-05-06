@@ -36,8 +36,8 @@ namespace ndb
     template<class Database>
     ndb::engine_connection<Engine>& basic_engine<Engine>::connection() const
     {
-        if (!connections_.count(ndb::database_id<Database>)) ndb_error("database connection not found : D" + std::to_string(ndb::database_id<Database>));
-        return *connections_.at(ndb::database_id<Database>).get();
+        if (!connections_.count(ndb::name<Database>())) ndb_error("database connection not found : " + ndb::name<Database>());
+        return *connections_.at(ndb::name<Database>()).get();
     }
 
     template<class Engine>
@@ -56,7 +56,7 @@ namespace ndb
 
         // create connection
         auto conn = basic_connection<Engine>::make(std::move(params));
-        connections_.emplace(ndb::database_id<Database>, std::move(conn));
+        connections_.emplace(ndb::name<Database>(), std::move(conn));
 
         // create model
         make<Database>();

@@ -11,7 +11,7 @@ namespace ndb
     template<class Engine>
     class basic_engine
     {
-    public:
+      public:
         static Engine& instance();
 
         template<class Database>
@@ -20,7 +20,7 @@ namespace ndb
         template<class Database>
         inline ndb::engine_connection<Engine>& connection() const;
 
-    protected:
+      protected:
         basic_engine();
         ~basic_engine();
 
@@ -30,10 +30,10 @@ namespace ndb
         template<class Database>
         inline void make();
 
-    private:
+      private:
         static Engine* instance_;
 
-        std::unordered_map<int, std::unique_ptr<ndb::engine_connection<Engine>>> connections_;
+        std::unordered_map<std::string, std::unique_ptr<ndb::engine_connection<Engine>>> connections_;
     };
 } // ndb
 
