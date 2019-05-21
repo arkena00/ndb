@@ -22,6 +22,7 @@ exp_make(alias)
 exp_make(prepared)
 exp_make(graph)
 exp_make(persistent)
+exp_make(orm)
 
 
 
