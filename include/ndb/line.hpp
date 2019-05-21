@@ -16,18 +16,22 @@ namespace ndb
     class line
     {
     public:
-        void add(char field_type, int field_id, ndb::value<Database> field_value)
+        void add(std::string field_name, ndb::value<Database> field_value)
         {
-            if (field_type == ndb::id<ndb::field>)
+            char field_type = field_name[0];
+
+            // TxxFxx : result is a field
+            if (field_type == ndb::id<ndb::table>)
             {
-                // value accessible by field
-                if (field_id >= 0) value_index_.emplace(field_id, static_cast<unsigned int>(values_.size()));
+                value_index_.emplace(std::move(field_name), static_cast<unsigned int>(values_.size()));
                 values_.emplace_back(std::move(field_value));
             }
+
+            // Axx : result is an alias
             if (field_type == 'A')
             {
-                // value accessible by field
-                if (field_id >= 0) aliases_index_.emplace(field_id, static_cast<unsigned int>(aliases_.size()));
+                unsigned int field_id = std::stoi(field_name.substr(1));
+                aliases_index_.emplace(field_id, static_cast<unsigned int>(aliases_.size()));
                 aliases_.emplace_back(std::move(field_value));
             }
         }
@@ -40,8 +44,8 @@ namespace ndb
         template<class Field, class Field_value_type = typename Field::value_type>
         auto get(const Field& f, Field_value_type value_if_null)
         {
-            if (!value_index_.count(ndb::field_id<Field>)) ndb_error("Field does not exist in the result, check the select clause");
-            size_t value_index = value_index_.at(ndb::field_id<Field>);
+            if (!value_index_.count(ndb::field_name<Field>)) ndb_error("Field does not exist in the result, check the select clause");
+            size_t value_index = value_index_.at(ndb::field_name<Field>);
             const ndb::value<Database>& value = values_.at(value_index);
 
             if (value.is_null()) return value_if_null;
@@ -70,8 +74,8 @@ namespace ndb
         template<class Field>
         typename Field::value_type operator[](const Field&) const
         {
-            if (!value_index_.count(ndb::field_id<Field>)) ndb_error("Field does not exist in the result, check the select clause");
-            size_t value_index = value_index_.at(ndb::field_id<Field>);
+            if (!value_index_.count(ndb::field_name<Field>)) ndb_error("Field does not exist in the result, check the select clause");
+            size_t value_index = value_index_.at(ndb::field_name<Field>);
             const ndb::value<Database>& value = values_.at(value_index);
 
             return value.template decode<Field>();
@@ -79,7 +83,7 @@ namespace ndb
 
     private:
         std::vector<ndb::value<Database>> values_;
-        std::unordered_map<unsigned int, unsigned int> value_index_;
+        std::unordered_map<std::string, unsigned int> value_index_;
 
         std::vector<ndb::value<Database>> aliases_;
         std::unordered_map<unsigned int, unsigned int> aliases_index_;

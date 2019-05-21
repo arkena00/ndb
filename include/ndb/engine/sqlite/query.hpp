@@ -125,13 +125,7 @@ namespace ndb
                 for(int field_it = 0; field_it < field_count; field_it++)
                 {
                     //const char* table_name = sqlite3_column_table_name(statement, field_it);
-                    const char* field_name = sqlite3_column_name(statement_, field_it);
-                    int field_id = -1;
-                    char field_type = field_name[0];
-                    if (field_type == ndb::id<ndb::field>) field_id = std::stoi(std::string(field_name + 1));
-
-                    // field is an alias
-                    if (field_type == 'A') field_id = std::stoi(std::string(field_name + 1));
+                    auto field_name = std::string{ sqlite3_column_name(statement_, field_it) };
 
                     int field_type_id = sqlite3_column_type(statement_, field_it);
                     sqlite3_value* field_value = sqlite3_column_value(statement_, field_it);
@@ -142,25 +136,25 @@ namespace ndb
                     switch(field_type_id)
                     {
                         case ndb::engine_type_id<sqlite, int64_>::value:
-                            line.add(field_type, field_id, ndb::type_make<cpp_type_t<int64_, Database>>(sqlite3_value_int64(field_value)));
+                            line.add(field_name, ndb::type_make<cpp_type_t<int64_, Database>>(sqlite3_value_int64(field_value)));
                             break;
 
                         case ndb::engine_type_id<sqlite, double_>::value:
-                            line.add(field_type, field_id, ndb::type_make<cpp_type_t<double_, Database>>(sqlite3_value_double(field_value)));
+                            line.add(field_name, ndb::type_make<cpp_type_t<double_, Database>>(sqlite3_value_double(field_value)));
                             break;
 
                         case ndb::engine_type_id<sqlite, string_>::value:
-                            line.add(field_type, field_id, ndb::type_make<cpp_type_t<string_, Database>>(reinterpret_cast<const char*>(sqlite3_value_text(field_value))));
+                            line.add(field_name, ndb::type_make<cpp_type_t<string_, Database>>(reinterpret_cast<const char*>(sqlite3_value_text(field_value))));
                             break;
 
                         case ndb::engine_type_id<sqlite, byte_array_>::value:
                             data = reinterpret_cast<const char*>(sqlite3_value_blob(field_value));
                             data_size = sqlite3_value_bytes(field_value);
-                            line.add(field_type, field_id, ndb::type_make<cpp_type_t<byte_array_, Database>>(data, data_size));
+                            line.add(field_name, ndb::type_make<cpp_type_t<byte_array_, Database>>(data, data_size));
                             break;
 
                         case ndb::engine_type_id<sqlite, null_>::value:
-                            line.add(field_type, field_id, ndb::null_type{} );
+                            line.add(field_name, ndb::null_type{} );
                             break;
 
                         default:

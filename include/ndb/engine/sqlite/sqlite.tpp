@@ -67,7 +67,7 @@ namespace ndb
         {
             using Table = std::decay_t<decltype(table)>;
 
-            output += "\ncreate table if not exists `T" + std::to_string(ndb::table_id<Table>) + "` (";
+            output += "\ncreate table if not exists `" + std::string(ndb::table_name<Table>) + "` (";
 
             ndb::for_each_entity(table, [&output](auto&& i, auto&& field)
             {
@@ -76,7 +76,7 @@ namespace ndb
                 if constexpr (decltype(i){} != 0) output += ",";
 
                 // field id
-                output += "\nF" + std::to_string(ndb::field_id<Field>);
+                output += "\n" + std::string(ndb::field_name<Field>);
                 bool need_size = false;
 
                 // field type
