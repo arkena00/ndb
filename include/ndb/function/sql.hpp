@@ -15,7 +15,7 @@ namespace ndb::functions
         static auto process()
         {
             const auto& engine = ndb::engine<Engine>::get();
-            auto q = "DELETE FROM `" + std::to_string(ndb::table_name<Table>) + "`";
+            auto q = "DELETE FROM `" + std::string{ ndb::table_name<Table> } + "`";
             return engine.template exec<Database>(q);
         }
     };
@@ -25,7 +25,7 @@ namespace ndb::functions
     {
         static auto process()
         {
-            return "DROP DATABASE `D" + std::to_string(ndb::database_id<Database>) + "`";
+            return "DROP DATABASE `" + std::string{ ndb::database_name<Database> } + "`";
         }
     };
 } // ndb::functions
