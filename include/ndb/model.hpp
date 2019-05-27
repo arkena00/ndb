@@ -18,10 +18,11 @@ namespace ndb
 
     };
 
-    template<class Model_table, class... Options>
+    template<class Model_tables, class Model_edges = void, class... Options>
     struct model_detail
     {
-        using entity = Model_table;
+        using entity = Model_tables;
+        using edges = Model_edges;
     };
 } // ndb
 

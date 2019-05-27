@@ -8,6 +8,14 @@
 
 namespace ndb
 {
+    /*
+    template<class Database, class Source, class Edge, class Target>
+    auto add_edge(Source&& source, Edge&& edge, Target&& target)
+    {
+
+        return ndb::query<Database>() << (ndb::add());
+    }*/
+
     template<class Database, class Table>
     auto oget(Table&& table)
     {

@@ -14,7 +14,7 @@ namespace ndb
     {
     public:
         static constexpr auto category = expression_categories::sql;
-        static constexpr auto capacity = 100;
+        static constexpr auto capacity = 1000;
 
         constexpr native_expression() :
             size_{ 0 },

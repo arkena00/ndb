@@ -143,6 +143,51 @@ namespace ndb
     };
 
     ////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////            RELATION            ////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////
+    template<class Engine>
+    struct expression_type<expressions::edge_, Engine, expression_categories::sql>
+    {
+        template<class Native_expression, class Source, class Target, class Connection>
+        static constexpr void make(Native_expression& ne)
+        {
+            ne.append(" FROM ");
+            ne.append(ndb::table_name<Source>);
+            ne.append(" INNER JOIN ");
+            ne.append(ndb::table_name<Target>);
+            ne.append(" ON ");
+            std::decay_t<Connection>::template make<Engine>(ne);
+        }
+    };
+
+    template<class Engine>
+    struct expression_type<expressions::arc_, Engine, expression_categories::sql>
+    {
+        template<class Native_expression, class Source, class Edge, class Target>
+        static constexpr void make(Native_expression& ne)
+        {
+            ne.append(" FROM ");
+            ne.append(ndb::table_name<Source>);
+            ne.append(" INNER JOIN ");
+            ne.append(ndb::edge_name<Edge>);
+            ne.append(" ON ");
+            ne.append(ndb::field_name<std::decay_t<Edge>::source_field>);
+            ne.append(" = ");
+            ne.append(ndb::edge_name<Edge>);
+            ne.append(ndb::field_name<std::decay_t<Edge>::source_field>);
+
+            ne.append(" INNER JOIN ");
+            ne.append(ndb::table_name<Target>);
+            ne.append(" ON ");
+            ne.append(ndb::field_name<std::decay_t<Edge>::target_field>);
+            ne.append(" = ");
+            ne.append(ndb::edge_name<Edge>);
+            ne.append(ndb::field_name<std::decay_t<Edge>::target_field>);
+        }
+    };
+
+
+    ////////////////////////////////////////////////////////////////////////////////
     ////////////////////////             SCALAR             ////////////////////////
     ////////////////////////////////////////////////////////////////////////////////
     template<class Engine>

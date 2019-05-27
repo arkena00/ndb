@@ -159,6 +159,31 @@ namespace ndb
         };
         static constexpr ndb::expression<source_> source;
 
+        // relation
+        struct edge_ : basic_expression<>
+        {
+            static constexpr bool is_scalar = true;
+
+            template<class Source, class Target, class Connection>
+            constexpr auto operator()(const Source& s, const Target& t, const Connection& c) const
+            {
+                return ndb::expression<edge_, decltype(s), decltype(t), decltype(c)> { s, t, c };
+            }
+        };
+        static constexpr ndb::expression<edge_> edge;
+
+        struct arc_ : basic_expression<>
+        {
+            static constexpr bool is_scalar = true;
+
+            template<class Source, class Edge, class Target>
+            constexpr auto operator()(const Source& s, const Edge& e, const Target& t) const
+            {
+                return ndb::expression<arc_, decltype(s), decltype(e), decltype(t)> { s, e, t };
+            }
+        };
+        static constexpr ndb::expression<arc_> arc;
+
         struct filter_ : basic_expression<>
         {
             template<class T>

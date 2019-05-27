@@ -63,6 +63,19 @@ namespace ndb
 
         std::string output;
 
+        if constexpr (!std::is_same_v<Model::Detail_::edges, void>)
+        {
+            ndb::for_each<Model::Detail_::edges>([&output](auto, auto&& edge)
+            {
+                using Edge = std::decay_t<decltype(edge)>;
+
+                output += "\ncreate table if not exists `" + std::string(ndb::edge_name<Edge>) + "` (";
+                output += "\n" + std::string(ndb::edge_name<Edge>) + std::string(ndb::field_name<Edge::source_field>) + " integer, ";
+                output += "\n" + std::string(ndb::edge_name<Edge>) + std::string(ndb::field_name<Edge::target_field>) + " integer ";
+                output += ");";
+            });
+        }
+
         ndb::for_each_entity<Model>([this, &output](auto&&, auto&& table)
         {
             using Table = std::decay_t<decltype(table)>;

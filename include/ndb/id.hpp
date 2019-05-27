@@ -39,6 +39,8 @@ namespace ndb
     constexpr const char* table_name = ndb::cx_string<ndb::id<ndb::table>, ndb::table_id<std::decay_t<Table>>>;
     template<class Field>
     constexpr const char* field_name = ndb::cx_string<ndb::id<ndb::table>, ndb::table_id<typename std::decay_t<Field>::table>, ndb::id<ndb::field>, ndb::field_id<std::decay_t<Field>>>;
+    template<class T, class Edge = std::decay_t<T>>
+    constexpr const char* edge_name = ndb::cx_string<ndb::id<ndb::table>, ndb::table_id<Edge::source_table>, ndb::id<ndb::table>, ndb::table_id<Edge::target_table>>;
 
     template<class T>
     auto name()

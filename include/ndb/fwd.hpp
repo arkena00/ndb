@@ -3,7 +3,7 @@
 
 namespace ndb
 {
-    template<class Model_table, class... Options>
+    template<class Model_tables, class Model_edges, class... Options>
     struct model_detail;
 
     struct field_base;
