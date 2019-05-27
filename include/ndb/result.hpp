@@ -30,12 +30,12 @@ namespace ndb
 
         void add(T l)
         {
-            line_list_.push_back(std::move(l));
+            lines_.push_back(std::move(l));
         }
 
         size_t size() const
         {
-            return line_list_.size();
+            return lines_.size();
         }
 
         bool has_result() const
@@ -45,21 +45,22 @@ namespace ndb
 
         T& operator[](int index)
         {
-            return line_list_.at(index);
+            if (index >= lines_.size()) ndb_error("result index out of range");
+            return lines_.at(index);
         }
 
         // structured binding
         template<int i>
         auto get()
         {
-            return line_list_[0];
+            return operator[](0);
         }
 
-        iterator begin() { return line_list_.begin(); }
-        iterator end() { return line_list_.end(); }
+        iterator begin() { return lines_.begin(); }
+        iterator end() { return lines_.end(); }
 
     private:
-        std::vector<T> line_list_;
+        std::vector<T> lines_;
     };
 
     template<class Database>
