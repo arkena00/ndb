@@ -63,7 +63,7 @@ namespace ndb
 
         std::string output;
 
-        if constexpr (!std::is_same_v<Model::Detail_::edges, void>)
+        if constexpr (!std::is_same_v<typename Model::Detail_::edges, void>)
         {
             ndb::for_each<Model::Detail_::edges>([&output](auto, auto&& edge)
             {
