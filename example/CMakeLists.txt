@@ -15,4 +15,5 @@ function(example_make target_file)
 endfunction()
 
 example_make(basic)
+example_make(object)
 example_make(object_query)
