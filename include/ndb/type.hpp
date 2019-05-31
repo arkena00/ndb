@@ -17,14 +17,15 @@ namespace ndb
     {
         struct null_ : proxy_type_base{};
         struct custom_ : proxy_type_base{};
+        struct oid_ : proxy_type_base{};
         struct bool_ : proxy_type_base{};
         struct int_ : proxy_type_base{};
         struct int64_ : proxy_type_base{};
         struct float_ : proxy_type_base{};
         struct double_ : proxy_type_base{};
         struct string_ : proxy_type_base{};
-        struct datetime_ : proxy_type_base{};
         struct byte_array_ : proxy_type_base{};
+        struct datetime_ : proxy_type_base{};
     } // types
     using namespace ::ndb::types;
 
@@ -33,15 +34,16 @@ namespace ndb
 
     using ndb_types_t = ndb_types
     <
+        null_,
+        oid_,
         bool_,
-        byte_array_,
-        datetime_,
-        double_,
-        float_,
         int_,
         int64_,
-        null_,
-        string_
+        float_,
+        double_,
+        string_,
+        byte_array_,
+        datetime_
     >;
 
     // get a type from a scope
