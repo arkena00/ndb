@@ -1,14 +1,26 @@
 #include <ndb/initializer.hpp>
-#include <ndb/engine/sqlite/sqlite.hpp> // engine
-#include <ndb/preprocessor.hpp> // database macros
-#include <ndb/function.hpp> // ndb::clear
-#include <ndb/query.hpp> // query and expression
+#include <ndb/engine/sqlite/sqlite.hpp>
+#include <ndb/preprocessor.hpp>
+#include <ndb/function.hpp>
+#include <ndb/query.hpp>
 
-// oid field is generated
+/// cf. example/basic.cpp
+
 ndb_object(movie,
           ndb_field(name, std::string, ndb::size<255>),
           ndb_field(duration, std::chrono::duration<double, std::ratio<3600>>)
 )
+/// ndb_object generate the code
+namespace ndb::objects
+{
+    struct movie
+    {
+        ndb::type_get<::ndb::oid_> oid; /// defined by ndb_internal_type_map(oid_, int64_t); (cf. example/type.cpp)
+        std::string name;
+        std::chrono::duration<double, std::ratio<3600>> duration;
+    };
+} // ndb::objects
+
 
 ndb_model(library, movie)
 
@@ -23,13 +35,14 @@ namespace dbs
 }
 
 /// user type movie inherit from ndb::object using dbs::library database and ndb::objects::movie data
-/// ndb::objects::movie data are accessible according to inheritance visibility (id, name and duration)
+/// ndb::objects::movie data are accessible according to inheritance visibility (oid, name and duration)
 class movie : public ndb::object<dbs::library, ndb::objects::movie>
 {
     ndb_access; // give access to ndb
 
 public:
-    movie(std::string display_mode){}
+    // custom constructor
+    movie(std::string image_path) {}
 
     void display()
     {
@@ -38,9 +51,15 @@ public:
 
     void edit()
     {
+        // edit ndb::objects::movie data
         name += "_edited";
     }
 };
+
+/// functions used for database objects IO operations : load, unload, store
+/// all those functions throw exceptions on errors and are immediate
+
+/// ndb::object_state(T&) is used to know the state in database of the object
 
 int main()
 {
@@ -53,26 +72,34 @@ int main()
         ndb::connect<dbs::library>();
         ndb::clear<dbs::library>(library.movie);
 
-        ::movie interstellar{ "params" }; // object state : uninitialized
+        /// create a movie object with uninitialized object_state (interstellar.oid is invalid)
+        ::movie interstellar{ "img_path" };
         interstellar.name = "Interstellar";
         interstellar.duration = 2.49h;
-        ndb::store(interstellar); // object state : stored
+        // store the object into the database (interstellar.oid is valid)
+        ndb::store(interstellar); // object_state : stored
 
-        ::movie movie{"params"};
-        ndb::load(movie, interstellar.oid); // object state : loaded
+        /// create a movie object with uninitialized object_state (movie.oid is invalid)
+        ::movie movie{"img_path"};
+        // load data from database
+        ndb::load(movie, interstellar.oid); // object_state : loaded
         movie.display();
         movie.edit();
-        ndb::store(movie); // object state : updated
+        // movie is loaded, store will update movie data into the database
+        ndb::store(movie); // object_state : updated
 
-        auto edited_movie = ndb::make<::movie>(movie.oid, "params"); // make ::movie and load it
+        /// make an edited_movie object (create instance then ndb::load the instance)
+        auto edited_movie = ndb::make<::movie>(interstellar.oid, "img_path");
         edited_movie.display();
 
-        /// unload the object from database, object remains valid but state is set to unloaded
+        /// delete interstellar data from database, object remains valid but state is set to unloaded
         ndb::unload(interstellar); // object state : unloaded
         interstellar.display();
 
-        /// error : object with object_id intersteallar.id does not exist
+        /// exception : object with object_id interstellar.oid does not exist
         // auto unloaded_movie = ndb::make<::movie>(interstellar.id, "params");
+
+        /// /!\  if multiple objects share the same oid, only the object making the last operation will have a valid state
     }
     catch (const std::exception& e) { std::cout << e.what(); }
 
