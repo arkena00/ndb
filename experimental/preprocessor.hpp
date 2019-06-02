@@ -44,7 +44,6 @@ BOOST_PP_LIST_FOR_EACH_I( \
 #define ndb_internal_make_field_filter_ndb_field(...) BOOST_PP_REM
 #define ndb_internal_make_field_filter_ndb_option(...) BOOST_PP_TUPLE_EAT
 
-#define ndb_internal_make_field_filter_args(PARAM, FUNCTION) (PARAM, FUNCTION)
 
 #ifdef _MSC_VER
     #define ndb_internal_make_field(r, TABLE, i, PARAM) BOOST_PP_CAT(ndb_internal_make_field_filter(PARAM, ndb_internal_make_field_impl), (TABLE, ndb_internal_unpack(PARAM)))
@@ -73,30 +72,18 @@ typename ::ndb::tables::TABLE_NAME<void>::FIELD_NAME##_::value_type FIELD_NAME;
 // make object result encoder
 #define ndb_internal_make_object_result_encoder_impl(TABLE_NAME, FIELD_NAME, ...) \
 object.FIELD_NAME = line[::ndb::tables::TABLE_NAME<void>::FIELD_NAME];
-#define ndb_internal_make_object_result_encoder_impl_args(TABLE, PARAM) (TABLE, ndb_internal_unpack(PARAM))
 
 #define ndb_internal_make_object_member_assign_impl(TABLE_NAME, FIELD_NAME, ...) obj.FIELD_NAME = res[0][model.TABLE_NAME.FIELD_NAME];
-#define ndb_internal_make_object_member_assign_impl_args(TABLE, PARAM) (TABLE, ndb_internal_unpack(PARAM))
-
 
 #define ndb_internal_empty(a, b, c)
 // ignore the first comma
 #define ndb_internal_make_object_expr_assign_fields_impl(i, TABLE_NAME, FIELD_NAME) BOOST_PP_COMMA_IF(BOOST_PP_NOT_EQUAL(i, 1)) model.TABLE_NAME.FIELD_NAME = obj.FIELD_NAME
 // ignore the first field (oid field) in object set/add
-#define ndb_internal_make_object_expr_assign_impl(i, TABLE_NAME, FIELD_NAME, ...) BOOST_PP_IF(BOOST_PP_EQUAL(i, 0), ndb_internal_empty,  ndb_internal_make_object_expr_assign_fields_impl) (i, TABLE_NAME, FIELD_NAME)
-#define ndb_internal_make_object_expr_assign_impl_args(i, TABLE, PARAM) (i, TABLE, ndb_internal_unpack(PARAM))
+#define ndb_internal_make_object_expr_assign_impl(i, TABLE_NAME, FIELD_NAME, ...)  BOOST_PP_IF(BOOST_PP_EQUAL(i, 0), ndb_internal_empty, ndb_internal_make_object_expr_assign_fields_impl) (i, TABLE_NAME, FIELD_NAME)
 
-
-
-#ifdef _MSC_VER
-    #define ndb_internal_make_object_result_encoder(r, TABLE, i, PARAM) BOOST_PP_CAT(ndb_internal_make_field_filter(PARAM, ndb_internal_make_object_result_encoder_impl), (TABLE, ndb_internal_unpack(PARAM)))
-    #define ndb_internal_make_object_member_assign(r, TABLE, i, PARAM) BOOST_PP_CAT( ndb_internal_make_field_filter(PARAM, ndb_internal_make_object_member_assign_impl), (TABLE, PARAM) )
-    #define ndb_internal_make_object_expr_assign(r, TABLE, i, PARAM) BOOST_PP_CAT( ndb_internal_make_field_filter(PARAM, ndb_internal_make_object_expr_assign_impl), (i, TABLE, PARAM) )
-#else
-    #define ndb_internal_make_object_result_encoder(r, TABLE, i, PARAM) BOOST_PP_EXPAND( ndb_internal_make_field_filter(PARAM, ndb_internal_make_object_result_encoder_impl) ndb_internal_make_object_result_encoder_impl_args(TABLE, PARAM) )
-    #define ndb_internal_make_object_member_assign(r, TABLE, i, PARAM) BOOST_PP_EXPAND( ndb_internal_make_field_filter(PARAM, ndb_internal_make_object_member_assign_impl) ndb_internal_make_object_member_assign_impl_args(TABLE, PARAM) )
-    #define ndb_internal_make_object_expr_assign(r, TABLE, i, PARAM) BOOST_PP_EXPAND( ndb_internal_make_field_filter(PARAM, ndb_internal_make_object_expr_assign_impl) ndb_internal_make_object_expr_assign_impl_args(i, TABLE, PARAM) )
-#endif
+#define ndb_internal_make_object_result_encoder(r, TABLE, i, PARAM) ndb_internal_make_field_filter(PARAM, ndb_internal_make_object_result_encoder_impl) (TABLE, BOOST_PP_VARIADIC_ELEM(0, ndb_internal_unpack(PARAM)))
+#define ndb_internal_make_object_member_assign(r, TABLE, i, PARAM) ndb_internal_make_field_filter(PARAM, ndb_internal_make_object_member_assign_impl) (TABLE, BOOST_PP_VARIADIC_ELEM(0, ndb_internal_unpack(PARAM)))
+#define ndb_internal_make_object_expr_assign(r, TABLE, i, PARAM) ndb_internal_make_field_filter(PARAM, ndb_internal_make_object_expr_assign_impl) (i, TABLE, BOOST_PP_VARIADIC_ELEM(0, ndb_internal_unpack(PARAM)))
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////             TABLE              ////////////////////////
@@ -150,7 +137,7 @@ namespace ndb { \
     }; \
 }
 
-#define ndb_object(TABLE_NAME, ...) ndb_internal_object_impl(TABLE_NAME, ndb_field_id, __VA_ARGS__)
+#define ndb_object(TABLE_NAME, ...) ndb_internal_object_impl(TABLE_NAME, ndb_field_oid, __VA_ARGS__)
 
 #define ndb_internal_object_impl(TABLE_NAME, ...) namespace ndb::objects { struct TABLE_NAME; } namespace ndb::tables { \
     template<class Model> struct TABLE_NAME : ::ndb::table<Model> { \
@@ -194,15 +181,15 @@ namespace ndb::internal \
     template<class Database> \
     struct object_get<Database, ndb::objects::TABLE_NAME> \
     { \
-        static auto process(int oid, ndb::objects::TABLE_NAME& obj) \
+        static auto process(ndb::cpp_type_t<oid_, Database> oid, ndb::objects::TABLE_NAME& obj) \
         { \
             constexpr typename Database::model model{}; \
-            auto res = ndb::query<Database>() << (ndb::get() << ndb::source(model.TABLE_NAME) << ndb::filter(model.TABLE_NAME.id == oid)); \
+            auto res = ndb::query<Database>() << (ndb::get() << ndb::source(model.TABLE_NAME) << ndb::filter(model.TABLE_NAME.oid == oid)); \
             if (res.has_result()) { ndb_internal_for_each_fields(TABLE_NAME, ndb_internal_make_object_member_assign, __VA_ARGS__) } \
             else ndb_error("object_get error with oid : " + std::to_string(oid)) \
             return obj; \
         } \
-        static auto process(int oid) \
+        static auto process(ndb::cpp_type_t<oid_, Database> oid) \
         { \
             ndb::objects::TABLE_NAME obj; \
             return process(oid, obj); \
@@ -217,7 +204,7 @@ namespace ndb::internal \
             constexpr typename Database::model model{}; \
             ndb::query<Database>() << (ndb::set( \
             ndb_internal_for_each_fields(TABLE_NAME, ndb_internal_make_object_expr_assign, __VA_ARGS__) \
-            ) << ndb::filter(model.TABLE_NAME.id == obj.id)); \
+            ) << ndb::filter(model.TABLE_NAME.oid == obj.oid)); \
         } \
     }; \
  \
@@ -228,8 +215,8 @@ namespace ndb::internal \
         { \
             constexpr typename Database::model model{}; \
             ndb::query<Database>() << ndb::add( ndb_internal_for_each_fields(TABLE_NAME, ndb_internal_make_object_expr_assign, __VA_ARGS__) ); \
-            obj.id = ndb::last_id<Database>(); \
-            return obj.id; \
+            obj.oid = ndb::last_id<Database>(); \
+            return obj.oid; \
         } \
     }; \
  \
@@ -239,7 +226,7 @@ namespace ndb::internal \
         static void process(ndb::objects::TABLE_NAME& obj) \
         { \
             constexpr typename Database::model model{}; \
-            ndb::query<Database>() << (ndb::del << ndb::source(model.TABLE_NAME) << ndb::filter(model.TABLE_NAME.id == obj.id)); \
+            ndb::query<Database>() << (ndb::del << ndb::source(model.TABLE_NAME) << ndb::filter(model.TABLE_NAME.oid == obj.oid)); \
         } \
     }; \
 } // ndb::internal
@@ -321,11 +308,13 @@ static constexpr const ::ndb::models::MODEL_NAME##_ MODEL_NAME = {}; \
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////          MACRO ALIASES         ////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-#define ndb_field_id ndb_field(id, ::ndb::type_get< ::ndb::int64_>, ::ndb::option<ndb::field_option::oid>)
+#define ndb_field_id ndb_field(id, ::ndb::type_get<::ndb::int64_>, ::ndb::option<ndb::field_option::oid>)
+#define ndb_field_oid ndb_field(oid, ::ndb::type_get<::ndb::oid_>, ::ndb::option<ndb::field_option::oid>) // new macro for object id
 
 ndb_object(movie_obj
 , ndb_field(name, std::string)
 , ndb_field(duration, int)
+, ndb_option(ndb::table_option::unique<name_>)
 )
 
 /*
