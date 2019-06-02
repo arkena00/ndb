@@ -88,9 +88,9 @@ int main()
         // movie is loaded, store will update movie data into the database
         ndb::store(movie); // object_state : updated
 
-        /// make an edited_movie object (create instance then ndb::load the instance)
-        auto edited_movie = ndb::make<::movie>(interstellar.oid, "img_path");
-        edited_movie.display();
+        /// make an updated_movie object (create instance then ndb::load the instance)
+        auto updated_movie = ndb::make<::movie>(interstellar.oid, "img_path");
+        updated_movie.display();
 
         /// delete interstellar data from database, object remains valid but state is set to unloaded
         ndb::unload(interstellar); // object state : unloaded
