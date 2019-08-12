@@ -10,34 +10,37 @@ set(CMAKE_CXX_STANDARD 17)
 function(benchmark_make target_file)
     set(targetname ${target_file})
 
+    add_executable(bench_${targetname} ${targetname}.cpp instance.cpp)
+    target_link_libraries(bench_${targetname} lib_ndb)
+    add_dependencies(bench_${targetname} lib_ndb)
 
-
-    #add_executable(${targetname} ${target_file}.cpp)
-    target_link_libraries(${targetname} lib_ndb)
-    #target_precompiled_header(${targetname}  include/ndb/line.hpp REUSE ndb_pch)
-    add_dependencies(${targetname} lib_ndb)
+    #target_sources(${targetname} PUBLIC instance.cpp)
 endfunction()
 
 
-set(BENCH 1)
+benchmark_make(ndb_query)
 
+add_executable(bench_sqlite sqlite.cpp)
+target_link_libraries(bench_sqlite lib_ndb)
+
+set(BENCH 0)
 
 if(BENCH)
     include(${THIRD_PARTY_ROOT}/metabench/metabench.cmake)
 
 
-    metabench_add_dataset(bench_base "base.cpp" "(0...10).step(1)" NAME Macros DB)
-    benchmark_make(bench_base)
+    metabench_add_dataset(bench_native_query "native_query.cpp" "(0...2).step(1)" NAME native_query)
+    benchmark_make(bench_native_query)
 
-    metabench_add_dataset(bench_main "main.cpp" "(0...10).step(1)" NAME C++ DB)
-    benchmark_make(bench_main)
+    metabench_add_dataset(bench_ndb_query "ndb_query.cpp" "(0...2).step(1)" NAME ndb_query)
+    benchmark_make(bench_ndb_query)
 
-    metabench_add_chart(benchmark_pch
-            TITLE "Macros test"
+    metabench_add_chart(benchmark_ndb_query
+            TITLE "benchmark_ndb_query"
             SUBTITLE ""
             XLABEL ""
             YLABEL "Time"
-            DATASETS bench_base bench_main)
+            DATASETS bench_native_query bench_ndb_query)
 endif()
 
 
