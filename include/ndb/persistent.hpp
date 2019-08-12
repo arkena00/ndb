@@ -108,7 +108,7 @@ namespace ndb
             }
 
             ndb::query<Database>()
-            << (ndb::add_ignore(ndb::models::ndb_persistent_model.ndb_persistent_table.key = path_, ndb::models::ndb_persistent_model.ndb_persistent_table.value = data));
+            << (ndb::add_replace(ndb::models::ndb_persistent_model.ndb_persistent_table.key = path_, ndb::models::ndb_persistent_model.ndb_persistent_table.value = data));
         }
 
       private:
