@@ -1,15 +1,8 @@
-    namespace ndb::internal
-    {
-        template<class Database, class T>
-        struct object_get;
-    } // internal
-
 #include <ndb/initializer.hpp>
 #include <ndb/engine/sqlite/sqlite.hpp> // engine
 #include <ndb/preprocessor.hpp> // database macros
 #include <ndb/function.hpp> // ndb::clear
 #include <ndb/query.hpp> // query and expression
-#include <ndb/object.hpp>
 
 struct page { page(std::string n) : name{n}{} std::string name; virtual std::string info() {  return name + "\\n"; } public: page() = default; };
 struct web_page : public page
@@ -32,9 +25,7 @@ namespace ndb
 }
 
 // database
-ndb_table(
-    page
-    , ndb_field_id
+ndb_object(page
     , ndb_field(name, std::string)
     , ndb_field(type, page_type)
 )
@@ -52,8 +43,7 @@ ndb_table(
     , ndb_field(target_id, int)
 )
 
-ndb_table(movie,
-  ndb_field_id,
+ndb_object(movie,
   ndb_field(name, std::string, ndb::size<255>)
 )
 
@@ -79,49 +69,6 @@ namespace dbs
 
 namespace ndb
 {
-    namespace internal
-    {
-        template<class Database>
-        struct object_get<Database, ndb::objects::movie>
-        {
-            static auto process(int oid)
-            {
-                constexpr typename Database::model model{};
-                auto res = ndb::query<Database>() << (ndb::get(model.movie.name) << ndb::source(model.movie) << ndb::filter(model.movie.id == oid));
-
-                ndb::objects::movie obj;
-                if (res.has_result())
-                {
-                    obj.name = res[0][model.movie.name];
-                }
-                return obj;
-            }
-
-            static auto process(int oid, ndb::objects::movie& obj)
-            {
-                constexpr typename Database::model model{};
-                auto res = ndb::query<Database>() << (ndb::get() << ndb::source(model.movie) << ndb::filter(model.movie.id == oid));
-                if (res.has_result())
-                {
-                    obj.id = res[0][model.movie.id];
-                    obj.name = res[0][model.movie.name];
-                }
-                else ndb_error("object_get error");
-                return obj;
-            }
-        };
-    } // internal
-
-
-    template<class Database>
-    void object_add(const ndb::objects::movie& m)
-    {
-        constexpr typename Database::model model{};
-        ndb::query<Database>() << ndb::add(model.movie.name = m.name);
-        auto pid = ndb::last_id<Database>();
-    }
-
-
 /*
     template<class Database>
     void object_add(const page& wp)
@@ -158,13 +105,22 @@ namespace ndb
 
 } // ndb
 
-struct movie : ndb::object<dbs::graph, ndb::objects::movie>
+
+class movie : public ndb::object<dbs::graph, ndb::objects::movie>
 {
+    ndb_access;
+
+public:
     movie(std::string display_mode){}
 
     void display()
     {
-        std::cout << id << "_" << name;
+        std::cout << id << "_" << name << std::endl;
+    }
+
+    void edit()
+    {
+        name += "_edited";
     }
 };
 
@@ -178,14 +134,27 @@ int main()
         ndb::initializer<ndb::sqlite> init;
         ndb::connect<dbs::graph>();
 
-        ndb::objects::movie m;
-        m.name = "stargate";
-        //ndb::object_add<dbs::graph>(m);
-        //auto movie_data = ndb::object_get<dbs::graph, ndb::objects::movie>(2);
-
+        /*
         auto movie = ndb::make<::movie>(2, "mode");
         movie.display();
-        std::cout << ndb::is_loaded(movie);
+        movie.edit();
+        ndb::store(movie);
+
+        ::movie movie2{"mode"};
+        movie2.name = "contact";
+        ndb::store(movie2);
+        movie2.display();
+
+        ::movie contact{"mode"};
+        ndb::load(contact, movie2.id);
+        movie2.display();*/
+
+
+        auto movie = ndb::make<::movie>(2, "mode");
+        movie.id = 99;
+        ndb::store(movie);
+
+
 
 /*
         web_page wp{"aze"};
