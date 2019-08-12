@@ -5,6 +5,8 @@
 #include <ndb/cx_error.hpp>
 #include <ndb/expression/basic.hpp>
 
+#include <iostream>
+
 namespace ndb
 {
     namespace deductions

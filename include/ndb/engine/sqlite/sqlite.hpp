@@ -34,10 +34,10 @@ namespace ndb
         inline auto exec(const native_query<Database, sqlite>& query) const;
 
         template<class Database, class Query_option, class Expr>
-        inline auto exec(const Expr& expr) const;
+        auto exec(const Expr& expr) const;
 
         template<class Database>
-        inline void make();
+        void make();
 
         template<class Database>
         auto last_id() const

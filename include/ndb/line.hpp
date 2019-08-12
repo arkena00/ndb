@@ -4,6 +4,7 @@
 #include <ndb/engine/type.hpp>
 #include <ndb/error.hpp>
 #include <ndb/expression/basic.hpp>
+#include <ndb/id.hpp>
 #include <ndb/type.hpp>
 #include <ndb/utility.hpp>
 #include <ndb/value.hpp>

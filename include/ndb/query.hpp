@@ -1,11 +1,13 @@
 #ifndef QUERY_H_NDB
 #define QUERY_H_NDB
 
-#include <ndb/setup.hpp>
-#include <ndb/expression.hpp>
 #include <ndb/engine.hpp>
-#include <ndb/result.hpp>
+#include <ndb/expression.hpp>
+#include <ndb/expression/operator.hpp>
 #include <ndb/option.hpp>
+#include <ndb/result.hpp>
+#include <ndb/setup.hpp>
+#include <ndb/statement.hpp>
 
 namespace ndb
 {
