@@ -21,14 +21,14 @@ ndb_table(music,
 )
 ndb_model(library, movie, music)
 
-ndb_project(my_project,
+ndb_project(example_basic,
             ndb_database(library, library, ndb::sqlite)
 )
 
 // alias
 namespace dbs
 {
-    using library = ndb::databases::my_project::library_;
+    using library = ndb::databases::example_basic::library_;
 }
 
 int main()
