@@ -27,6 +27,7 @@ option(NDB_ENGINE_POSTGRE "Build postgresql" ${NDB_ENGINE_POSTGRE})
 option(NDB_BUILD_EXP "Build experimentals" ${NDB_BUILD_EXP})
 option(NDB_BUILD_TEST "Build tests" ${NDB_BUILD_TEST})
 option(NDB_BUILD_EXAMPLE "Build examples" ${NDB_BUILD_EXAMPLE})
+option(NDB_BUILD_BENCHMARK "Build benchmarks" ${NDB_BUILD_BENCHMARK})
 
 # display config
 message("SQLITE : ${NDB_ENGINE_SQLITE}")
@@ -120,7 +121,6 @@ target_include_directories(lib_ndb INTERFACE
         ${NDB_ENGINE_INCLUDE})
 target_link_libraries(lib_ndb INTERFACE ${NDB_ENGINE_LIB} ${NDB_LIB})
 
-
 #-------------------------------------------------------
 #                        SUBDIRS
 #-------------------------------------------------------
@@ -132,4 +132,7 @@ if (NDB_BUILD_TEST)
 endif()
 if (NDB_BUILD_EXAMPLE)
     add_subdirectory(example)
+endif()
+if (NDB_BUILD_BENCHMARK)
+    add_subdirectory(benchmark)
 endif()
