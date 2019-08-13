@@ -94,7 +94,7 @@ typename ::ndb::tables::TABLE_NAME<void>::FIELD_NAME##_::value_type FIELD_NAME;
 
 // make object result encoder
 #define ndb_internal_make_object_result_encoder_impl(TABLE_NAME, FIELD_NAME, ...) \
-object.FIELD_NAME = line[::ndb::tables::TABLE_NAME<void>::FIELD_NAME];
+object.FIELD_NAME = line[model.TABLE_NAME.FIELD_NAME];
 
 #define ndb_internal_make_object_member_assign_impl(TABLE_NAME, FIELD_NAME, ...) obj.FIELD_NAME = res[0][model.TABLE_NAME.FIELD_NAME];
 
@@ -148,11 +148,12 @@ namespace ndb::objects \
     }; \
 } \
 namespace ndb { \
-    template<class Engine> \
-    struct result_encoder< ::ndb::objects::TABLE_NAME, Engine > \
+    template<class Database> \
+    struct result_encoder< ::ndb::objects::TABLE_NAME, Database > \
     { \
-        static auto decode(const ::ndb::line<Engine>& line) \
+        static auto decode(const ::ndb::line<Database>& line) \
         { \
+            constexpr typename Database::model model{}; \
             ::ndb::objects::TABLE_NAME object; \
                 ndb_internal_for_each_fields(TABLE_NAME, ndb_internal_make_object_result_encoder, __VA_ARGS__) \
             return object; \
