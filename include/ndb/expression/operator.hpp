@@ -62,7 +62,6 @@ namespace ndb
         auto expr_r = ndb::expr_make(std::forward<R>(r));
         return ndb::expression<ndb::statement_, Ls..., decltype(expr_r)> { std::tuple_cat(l.args(), std::forward_as_tuple(std::move(expr_r))) };
     }
-
 } // ndb
 
 //expression_construct<statement, T>

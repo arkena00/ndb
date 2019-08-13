@@ -90,8 +90,7 @@ namespace ndb
             template<class... Ts>
             constexpr auto operator()(Ts&&... t) const
             {
-                // msvc fix : use (( )) to compile
-                auto expr = ((ndb::expr_make(t), ...));
+                auto expr = (ndb::expr_make(t), ...);
                 return ndb::expression<get_, decltype(expr)> { std::move(expr) };
             }
         };
@@ -102,8 +101,7 @@ namespace ndb
             template<class... Ts>
             constexpr auto operator()(Ts&&... t) const
             {
-                // msvc fix : use (( )) to compile
-                auto expr = ((ndb::expr_make(t), ...));
+                auto expr = (ndb::expr_make(t), ...);
                 return ndb::expression<set_, decltype(expr)> { std::move(expr) };
             }
         };
@@ -114,8 +112,7 @@ namespace ndb
             template<class... Ts>
             constexpr auto operator()(Ts&&... t) const
             {
-                // msvc fix : use (( )) to compile
-                auto expr = ((ndb::expr_make(t), ...));
+                auto expr = (ndb::expr_make(t), ...);
                 return ndb::expression<add_, decltype(expr)> { std::move(expr) };
             }
         };
@@ -151,8 +148,7 @@ namespace ndb
             template<class... Ts>
             constexpr auto operator()(Ts&&... t) const
             {
-                // msvc fix : use (( )) to compile
-                auto expr = ((ndb::expr_make(t), ...));
+                auto expr = (ndb::expr_make(t), ...);
                 return ndb::expression<add_, decltype(expr)> { std::move(expr) };
             }
         };
