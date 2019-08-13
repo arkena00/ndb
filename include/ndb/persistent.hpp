@@ -52,6 +52,8 @@ namespace ndb
         using Database = ndb::databases::ndb_persistent::ndb_persistent_database_;
 
       public:
+        using value_type = T;
+
         persistent(const persistent_group* group, std::string name, const T& default_value = T{})
             : name_{ std::move(name) }
             , path_{ group->path() + "." + name_ }
