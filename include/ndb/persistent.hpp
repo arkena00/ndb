@@ -20,8 +20,21 @@ ndb_project(ndb_persistent
 
 namespace ndb
 {
+    template<class T>
+    class persistent;
+
     class persistent_group
     {
+        template<class T> friend class persistent;
+
+        using view_type = std::vector<std::variant<
+            ndb::persistent<bool>*
+            , ndb::persistent<int>*
+            , ndb::persistent<double>*
+            , ndb::persistent<std::string>*
+            >>;
+        inline static view_type view_;
+
         using Database = ndb::databases::ndb_persistent::ndb_persistent_database_;
 
       public:
@@ -38,6 +51,7 @@ namespace ndb
 
         persistent_group(std::string name, const ndb::connection_param& cp = {}) : persistent_group(nullptr, std::move(name), cp) {}
 
+        const view_type& list() const { return view_; }
         const std::string& name() const { return name_; }
         const std::string& path() const { return path_; }
 
@@ -60,6 +74,8 @@ namespace ndb
             , value_{}
             , default_value_{ default_value }
         {
+            persistent_group::view_.push_back(this);
+
             auto res = ndb::query<Database>()
                        << (ndb::get(ndb::models::ndb_persistent_model.ndb_persistent_table.value)
                        << ndb::source(ndb::models::ndb_persistent_model.ndb_persistent_table)
