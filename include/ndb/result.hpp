@@ -7,18 +7,21 @@
 
 namespace ndb
 {
-    template<class T, class Engine>
-    struct result_encoder;
-
-    // nop encoder
-    template<class Database>
-    struct result_encoder<ndb::line<Database>, Database>
+    namespace internal
     {
-        static auto& decode(const ndb::line<Database>& line)
+        template<class T, class Engine>
+        struct result_encoder;
+
+        // nop encoder
+        template<class Database>
+        struct result_encoder<ndb::line<Database>, Database>
         {
-            return line;
-        }
-    };
+            static auto& decode(const ndb::line<Database>& line)
+            {
+                return line;
+            }
+        };
+    } // internal
 
     template<class Engine, class T = ndb::line<Engine>>
     class result

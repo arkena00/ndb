@@ -164,7 +164,7 @@ namespace ndb
 
                 if (field_count > 0)
                 {
-                    auto result_entity = ndb::result_encoder<Result_type, Database>::decode(line);
+                    auto result_entity = ndb::internal::result_encoder<Result_type, Database>::decode(line);
                     result.add(std::move(result_entity));
                 }
                 step = sqlite3_step(statement_);

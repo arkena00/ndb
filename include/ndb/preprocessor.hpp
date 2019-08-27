@@ -147,7 +147,7 @@ namespace ndb::objects \
         ndb_internal_for_each_fields(TABLE_NAME, ndb_internal_make_object_field, __VA_ARGS__) \
     }; \
 } \
-namespace ndb { \
+namespace ndb::internal { \
     template<class Database> \
     struct result_encoder< ::ndb::objects::TABLE_NAME, Database > \
     { \
@@ -187,12 +187,13 @@ namespace ndb::objects \
         ndb_internal_for_each_fields(TABLE_NAME, ndb_internal_make_object_field, __VA_ARGS__) \
     }; \
 } \
-namespace ndb { \
-    template<class Engine> \
-    struct result_encoder< ::ndb::objects::TABLE_NAME, Engine > \
+namespace ndb::internal { \
+    template<class Database> \
+    struct result_encoder< ::ndb::objects::TABLE_NAME, Database > \
     { \
-        static auto decode(const ::ndb::line<Engine>& line) \
+        static auto decode(const ::ndb::line<Database>& line) \
         { \
+            constexpr typename Database::model model{}; \
             ::ndb::objects::TABLE_NAME object; \
                 ndb_internal_for_each_fields(TABLE_NAME, ndb_internal_make_object_result_encoder, __VA_ARGS__) \
             return object; \
