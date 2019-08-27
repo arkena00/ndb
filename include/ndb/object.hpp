@@ -27,7 +27,6 @@ namespace ndb
 
             static object_states state(T& t) { return t.ndb_internal_state_; }
             static void set_state(T& t, object_states state) { t.ndb_internal_state_ = state; }
-            static bool is_loaded(const T& t) { return (int)t.ndb_internal_state_ & (int)object_states::loaded; }
         };
     } // internal
 
@@ -70,9 +69,27 @@ namespace ndb
     }
 
     template<class T>
+    bool has_state(T& obj, ndb::object_states state)
+    {
+        return (int)internal::object_access<T>::state(obj) == (int)state;
+    }
+
+    template<class T>
     bool is_loaded(const T& t)
     {
-        return internal::object_access<T>::is_loaded(t);
+        return ndb::has_state(t, object_states::loaded);
+    }
+
+    template<class T>
+    bool is_valid(const T& t)
+    {
+        return !ndb::has_state(t, ndb::object_states::uninitialized);
+    }
+
+    template<class T>
+    bool is_saved(const T& t)
+    {
+        return !ndb::has_state(t, ndb::object_states::uninitialized) && !ndb::has_state(t, ndb::object_states::unloaded);
     }
 
     template<class T>
