@@ -1,6 +1,8 @@
 #ifndef INCLUDE_NDB_OBJECT_HPP_NDB
 #define INCLUDE_NDB_OBJECT_HPP_NDB
 
+#include <ndb/type.hpp>
+
 #define ndb_access template<class> friend struct ::ndb::internal::object_access
 
 namespace ndb
