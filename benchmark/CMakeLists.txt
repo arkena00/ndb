@@ -22,26 +22,3 @@ benchmark_make(ndb_query)
 
 add_executable(bench_sqlite sqlite.cpp)
 target_link_libraries(bench_sqlite lib_ndb)
-
-set(BENCH 0)
-
-if(BENCH)
-    include(${THIRD_PARTY_ROOT}/metabench/metabench.cmake)
-
-
-    metabench_add_dataset(bench_native_query "native_query.cpp" "(0...2).step(1)" NAME native_query)
-    benchmark_make(bench_native_query)
-
-    metabench_add_dataset(bench_ndb_query "ndb_query.cpp" "(0...2).step(1)" NAME ndb_query)
-    benchmark_make(bench_ndb_query)
-
-    metabench_add_chart(benchmark_ndb_query
-            TITLE "benchmark_ndb_query"
-            SUBTITLE ""
-            XLABEL ""
-            YLABEL "Time"
-            DATASETS bench_native_query bench_ndb_query)
-endif()
-
-
-
