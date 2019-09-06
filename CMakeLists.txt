@@ -30,6 +30,9 @@ option(NDB_BUILD_EXAMPLE "Build examples" ${NDB_BUILD_EXAMPLE})
 option(NDB_BUILD_BENCHMARK "Build benchmarks" ${NDB_BUILD_BENCHMARK})
 
 # display config
+if(STZ_FILESYSTEM)
+    message("STZ_FILESYSTEM : ${STZ_FILESYSTEM}")
+endif()
 message("SQLITE : ${NDB_ENGINE_SQLITE}")
 message("MONGO : ${NDB_ENGINE_MONGO}")
 message("POSTGRESQL : ${NDB_ENGINE_POSTGRE}")
@@ -40,86 +43,49 @@ message("BUILD_EXAMPLE : ${NDB_BUILD_EXAMPLE}")
 add_library(lib_ndb INTERFACE)
 
 #-------------------------------------------------------
-#                      COMPILER
-#-------------------------------------------------------
-set(CMAKE_BUILD_TYPE Release)
-set(CMAKE_CXX_STANDARD 17)
-
-if (MSVC)
-    set(COMPILER_DIRNAME msvc)
-    add_compile_options(/wd4710 /wd4251 /we4309)
-endif()
-
-if (MINGW)
-    set(COMPILER_DIRNAME mingw)
-    set(NDB_LIB stdc++fs)
-
-    #[[add_compile_options(-Waligned-new
-            -Wall
-            -Walloc-zero
-            -Walloca
-            -Warray-bounds=2
-            -Wcast-align
-            -Wcast-qual
-            -Wconditionally-supported
-            -Wdisabled-optimization
-            -Wdouble-promotion
-            -Wduplicated-branches
-            -Wduplicated-cond
-            -Wextra
-            -Wfloat-conversion
-            -Wfloat-equal
-            -Wformat-overflow
-            -Wformat-security
-            -Wformat-signedness
-            -Wformat=2
-            -Wlogical-op
-            -Wmissing-declarations
-            -Wmissing-include-dirs
-            -Wnon-virtual-dtor
-            -Wnull-dereference
-            -Wold-style-cast
-            -Wopenmp-simd
-            -Woverloaded-virtual
-            -Wpacked
-            -Wredundant-decls
-            -Wshadow=compatible-local
-            -Wsized-deallocation
-            -Wstrict-null-sentinel
-            -Wsuggest-attribute=noreturn
-            -Wsuggest-override
-            -Wtrampolines
-            -Wundef
-            -Wuninitialized
-            -Wunused-macros
-            -Wuseless-cast
-            -Wvector-operation-performance
-            -Wvla
-            -Wzero-as-null-pointer-constant
-            -fsized-deallocation
-            -pedantic)]]
-endif()
-
-if (UNIX AND NOT ANDROID)
-    set(NDB_LIB stdc++fs pthread dl)
-endif()
-
-#-------------------------------------------------------
 #                       ENGINE
 #-------------------------------------------------------
 include(third_party/sqlite.cmake)
 include(third_party/postgre.cmake)
 include(third_party/mongo.cmake)
 
+#-------------------------------------------------------
+#                      COMPILER
+#-------------------------------------------------------
+set(CMAKE_BUILD_TYPE Release)
+set(CMAKE_CXX_STANDARD 17)
+
+if (MSVC)
+    add_compile_options(/wd4710 /wd4251 /we4309)
+endif()
+
+if (MINGW)
+    set(NDB_LIB stdc++fs)
+endif()
+
+if (UNIX AND NOT ANDROID)
+    set(NDB_LIB stdc++fs pthread dl)
+endif()
+
+# generic
+# include
+set(NDB_INCLUDE include
+        ${THIRD_PARTY_ROOT}/boost
+        ${NDB_ENGINE_INCLUDE})
+
+# use third_party filesystem
+if(STZ_FILESYSTEM)
+    set(NDB_DEFINITION -DSTZ_FILESYSTEM)
+    list(APPEND NDB_INCLUDE ${THIRD_PARTY_ROOT}/stz)
+endif()
+
 
 #-------------------------------------------------------
 #                     NDB INTERFACE
 #-------------------------------------------------------
-target_include_directories(lib_ndb INTERFACE
-        include
-        ${THIRD_PARTY_ROOT}/boost
-        ${NDB_ENGINE_INCLUDE})
+target_include_directories(lib_ndb INTERFACE ${NDB_INCLUDE})
 target_link_libraries(lib_ndb INTERFACE ${NDB_ENGINE_LIB} ${NDB_LIB})
+target_compile_definitions(lib_ndb INTERFACE ${NDB_DEFINITION})
 
 #-------------------------------------------------------
 #                        SUBDIRS

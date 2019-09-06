@@ -1,0 +1,18 @@
+#ifndef INCLUDE_STZ_FILESYSTEM_HPP_NDB
+#define INCLUDE_STZ_FILESYSTEM_HPP_NDB
+
+#if !defined(STZ_FILESYSTEM)
+    #include <filesystem>
+    namespace stz
+    {
+        namespace filesystem = std::filesystem;
+    } // stz
+#else
+    #include <stz/filesystem.hpp>
+    namespace stz
+    {
+        namespace filesystem = ghc::filesystem;
+    } // stz
+#endif
+
+#endif // INCLUDE_STZ_FILESYSTEM_HPP_NDB
