@@ -1,4 +1,4 @@
-﻿cmake_minimum_required(VERSION 3.7)
+cmake_minimum_required(VERSION 3.7)
 if (POLICY CMP0077)
     cmake_policy(SET CMP0077 OLD) # remove cmake option warning
 endif()
@@ -64,7 +64,10 @@ if (MINGW)
 endif()
 
 if (UNIX AND NOT ANDROID)
-    set(NDB_LIB stdc++fs pthread dl)
+    set(NDB_LIB pthread dl)
+    if (NOT STZ_FILESYSTEM)
+        set(NDB_LIB "${NDB_LIB} stdc++fs")
+    endif()
 endif()
 
 # generic

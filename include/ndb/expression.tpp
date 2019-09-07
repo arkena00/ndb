@@ -60,7 +60,7 @@ namespace ndb
         {
             return ndb::expression<ndb::expressions::field_, T>{ std::forward<T>(v) };
         }
-        else if constexpr (ndb::is_table<T>) return ndb::expression<ndb::expressions::table_, T> {};
+        else if constexpr (ndb::is_table<T>) return ndb::expression<ndb::expressions::table_, T> { std::forward<T>(v) };
             // return value expression
         else return ndb::expression<expressions::value_, T> { std::forward<T>(v) };
     }
