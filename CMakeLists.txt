@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.7)
+﻿cmake_minimum_required(VERSION 3.7)
 if (POLICY CMP0077)
     cmake_policy(SET CMP0077 OLD) # remove cmake option warning
 endif()
@@ -9,6 +9,7 @@ enable_testing()
 message("--------------------------------------------------------
                          NDB
 --------------------------------------------------------")
+include(third_party/compiler_option.cmake)
 
 # config file for custom variables
 include(config.cmake OPTIONAL)
@@ -41,6 +42,7 @@ message("BUILD_TEST : ${NDB_BUILD_TEST}")
 message("BUILD_EXAMPLE : ${NDB_BUILD_EXAMPLE}")
 
 add_library(lib_ndb INTERFACE)
+#jln_target_interface(lib_ndb INTERFACE PEDANTIC on)
 
 #-------------------------------------------------------
 #                       ENGINE
