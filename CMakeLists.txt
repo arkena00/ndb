@@ -67,9 +67,6 @@ endif()
 
 if (UNIX AND NOT ANDROID)
     set(NDB_LIB pthread dl)
-    if (NOT STZ_FILESYSTEM)
-        set(NDB_LIB "${NDB_LIB} stdc++fs")
-    endif()
 endif()
 
 # generic
