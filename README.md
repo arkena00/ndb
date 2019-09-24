@@ -2,8 +2,8 @@
 
 |        | gcc8.1 / clang8.0 / msvc19.16                         |
 |--------|-------------------------------------------------------|
-| Master | ![](https://travis-ci.org/ads00/ndb.svg?branch=master)|
-| Dev    | ![](https://travis-ci.org/ads00/ndb.svg?branch=dev)   |
+| Master | ![](https://travis-ci.com/ads00/ndb.svg?branch=master)|
+| Dev    | ![](https://travis-ci.com/ads00/ndb.svg?branch=dev)   |
 
 **ndb** is a generic interface to connect to any database.
 Queries are written in pure C++ and can be executed on different database engines just by changing one parameter.
