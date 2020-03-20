@@ -44,16 +44,17 @@ namespace ndb
     template<class Object>
     using oid_t = ndb::cpp_type_t<oid_, typename internal::object_access<Object>::database>;
 
+    /*
     template<class Database, class T>
     auto object_get(ndb::cpp_type_t<oid_, Database> oid)
     {
         return internal::object_get<Database, T>(oid);
-    }
+    }*/
 
-    template<class Database, class T>
+    template<class Database, class Object_type, class T>
     auto object_get(ndb::cpp_type_t<oid_, Database> oid, T& obj)
     {
-        return internal::object_get<Database, T>::process(oid, obj);
+        return internal::object_get<Database, Object_type>::process(oid, obj);
     }
 
     template<class Database, class T>
@@ -97,8 +98,32 @@ namespace ndb
     {
         using Database = typename internal::object_access<T>::database;
         using Object_type = typename internal::object_access<T>::object_type;
-        ndb::object_get<Database, Object_type>(oid, internal::object_access<T>::template cast<Object_type>(obj));
-        internal::object_access<T>::set_state(obj, object_states::loaded);
+        ndb::object_get<Database, Object_type>(oid, internal::object_access<T>::template cast<ndb::object<Database, Object_type>>(obj));
+    }
+
+    namespace internal
+    {
+        template<class Container>
+        struct load;
+
+        template<template<class...> class Container, class T, class... Ts>
+        struct load<Container<T, Ts...>>
+        {
+            template<class T, class... Args>
+            static void process(Container<T, Ts...>& container, Args&&... args)
+            {
+                using Database = typename internal::object_access<T>::database;
+                using Object_type = typename internal::object_access<T>::object_type;
+
+                ::ndb::internal::object_get<Database, Object_type>::template process<T>(container, std::forward<Args>(args)...);
+            }
+        };
+    } // internal
+
+    template<class T, class... Args>
+    void load_bulk(T& v, Args&&... args)
+    {
+        internal::load<T>::process(v, std::forward<Args>(args)...);
     }
 
     /// Remove the object data from database, object is in unloaded state
@@ -107,7 +132,7 @@ namespace ndb
     {
         using Database = typename internal::object_access<T>::database;
         using Object_type = typename internal::object_access<T>::object_type;
-        ndb::object_del<Database, Object_type>(internal::object_access<T>::template cast<Object_type>(obj));
+        ndb::object_del<Database, Object_type>(internal::object_access<T>::template cast<ndb::object<Database, Object_type>>(obj));
         internal::object_access<T>::set_state(obj, object_states::unloaded);
     }
 

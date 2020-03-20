@@ -96,7 +96,7 @@ typename ::ndb::tables::TABLE_NAME<void>::FIELD_NAME##_::value_type FIELD_NAME;
 #define ndb_internal_make_object_result_encoder_impl(TABLE_NAME, FIELD_NAME, ...) \
 object.FIELD_NAME = line[model.TABLE_NAME.FIELD_NAME];
 
-#define ndb_internal_make_object_member_assign_impl(TABLE_NAME, FIELD_NAME, ...) obj.FIELD_NAME = res[0][model.TABLE_NAME.FIELD_NAME];
+#define ndb_internal_make_object_member_assign_impl(TABLE_NAME, FIELD_NAME, ...) obj.FIELD_NAME = res[result_index][model.TABLE_NAME.FIELD_NAME];
 
 #define ndb_internal_empty(a, b, c)
 // ignore the first comma
@@ -206,13 +206,30 @@ namespace ndb::internal \
     template<class Database> \
     struct object_get<Database, ndb::objects::TABLE_NAME> \
     { \
-        static auto process(ndb::cpp_type_t<oid_, Database> oid, ndb::objects::TABLE_NAME& obj) \
+        template<class T> \
+        static void process(ndb::cpp_type_t<oid_, Database> oid, T& obj) \
         { \
             constexpr typename Database::model model{}; \
+            const int result_index = 0; \
             auto res = ndb::query<Database>() << (ndb::get() << ndb::source(model.TABLE_NAME) << ndb::filter(model.TABLE_NAME.oid == oid)); \
-            if (res.has_result()) { ndb_internal_for_each_fields(TABLE_NAME, ndb_internal_make_object_member_assign, __VA_ARGS__) } \
-            else ndb_error("object_get error with oid : " + std::to_string(oid)) \
-            return obj; \
+            if (res.has_result()) { \
+                ndb_internal_for_each_fields(TABLE_NAME, ndb_internal_make_object_member_assign, __VA_ARGS__) \
+                internal::object_access<T>::set_state(obj, object_states::loaded); \
+            } \
+        } \
+        /* process Container */ \
+        template<class Object, class Container, class... Args> \
+        static void process(Container& container, Args&&... args) \
+        { \
+            constexpr typename Database::model model{}; \
+            auto res = ndb::query<Database>() << (ndb::get() << ndb::source(model.TABLE_NAME)); \
+            for (int result_index = 0; result_index < res.size(); ++result_index) \
+            { \
+                Object obj{ std::forward<Args>(args)... }; \
+                ndb_internal_for_each_fields(TABLE_NAME, ndb_internal_make_object_member_assign, __VA_ARGS__); \
+                internal::object_access<Object>::set_state(obj, object_states::loaded); \
+                container.push_back(std::move(obj)); \
+            } \
         } \
         static auto process(ndb::cpp_type_t<oid_, Database> oid) \
         { \
