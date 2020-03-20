@@ -102,6 +102,16 @@ int main()
         // auto unloaded_movie = ndb::make<::movie>(interstellar.id, "params");
 
         /// /!\  if multiple objects share the same oid, only the object making the last operation will have a valid state
+
+        /// bulk operation
+        std::cout << std::endl;
+        ndb::query<dbs::library>() << ndb::add(library.movie.name = std::string("movie1"), library.movie.duration = 2.1h);
+        ndb::query<dbs::library>() << ndb::add(library.movie.name = std::string("movie2"), library.movie.duration = 2.2h);
+        ndb::query<dbs::library>() << ndb::add(library.movie.name = std::string("movie3"), library.movie.duration = 2.3h);
+
+        std::vector<::movie> movies;
+        ndb::load_bulk(movies, "ctor_param_for_all_records");
+        for (auto& m : movies) m.display();
     }
     catch (const std::exception& e) { std::cout << e.what(); }
 
