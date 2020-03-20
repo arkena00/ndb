@@ -109,7 +109,7 @@ namespace ndb
         template<template<class...> class Container, class T, class... Ts>
         struct load<Container<T, Ts...>>
         {
-            template<class T, class... Args>
+            template<class... Args>
             static void process(Container<T, Ts...>& container, Args&&... args)
             {
                 using Database = typename internal::object_access<T>::database;
