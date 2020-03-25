@@ -43,6 +43,13 @@ namespace ndb
                 using result = typename extract_expr<Args..., Exprs...>::result;
             };
 
+            // alias
+            template<class Alias_expr, class Alias_type, class... Exprs>
+            struct extract<ndb::expression<ndb::expressions::alias_, Alias_expr, Alias_type>, Exprs...>
+            {
+                using result = typename extract_expr<std::decay_t<Alias_expr>>::result;
+            };
+
             // field found
             template<class Field, class... Exprs>
             struct extract<ndb::expression<ndb::expressions::field_, Field>, Exprs...>
