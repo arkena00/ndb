@@ -76,9 +76,9 @@ namespace ndb
     }
 
     template<class T>
-    bool is_loaded(const T& t)
+    bool is_stored(const T& t)
     {
-        return ndb::has_state(t, object_states::loaded);
+        return ndb::has_state(t, object_states::loaded) || ndb::has_state(t, object_states::stored) || ndb::has_state(t, object_states::updated);
     }
 
     template<class T>
@@ -142,7 +142,7 @@ namespace ndb
         using Database = typename internal::object_access<T>::database;
         using Object_type = typename internal::object_access<T>::object_type;
 
-        if (ndb::is_loaded(obj))
+        if (ndb::is_stored(obj))
         {
             internal::object_set<Database, Object_type>::process(internal::object_access<T>::template cast<Object_type>(obj));
             internal::object_access<T>::set_state(obj, object_states::updated);
