@@ -30,7 +30,7 @@ auto FUNCTION( ndb_internal_for_each_fields(FUNCTION, ndb_internal_make_prepared
 } \
 namespace internal::ID { \
 ndb_internal_for_each_fields(FUNCTION, ndb_internal_make_prepared_placeholder, __VA_ARGS__) \
-auto query = []() noexcept { return ndb::prepare_proxy<dbs::library>{ BOOST_PP_STRINGIZE(ID) }; }; \
+auto query = []() noexcept { return ndb::prepare_proxy<DATABASE>{ BOOST_PP_STRINGIZE(ID) }; }; \
 } namespace internal::ID
 
 
