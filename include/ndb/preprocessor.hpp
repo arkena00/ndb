@@ -7,7 +7,9 @@
 #include <boost/preprocessor/cat.hpp>
 #include <boost/preprocessor/list/for_each.hpp>
 #include <boost/preprocessor/list/for_each_i.hpp>
+#include <boost/preprocessor/stringize.hpp>
 #include <boost/preprocessor/variadic/to_list.hpp>
+
 
 #include <ndb/expression.hpp>
 #include <ndb/expression/basic.hpp>

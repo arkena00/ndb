@@ -7,21 +7,31 @@
 #include <string>
 #include <unordered_map>
 
-// TODO: add compile time type check on function parameters
 //! prepare macros, Database type must be defined
-//! usage : ndb_prepare(get_movie) << (ndb::get() << ndb::source(movie) << ndb::filter(movie.duration == _));
-#define ndb_prepare(FUNCTION) \
-template<class... Ts> \
-auto FUNCTION(const Ts&... ts) \
+//! require one macro per line to enable overloads
+//! usage : ndb_prepare(dbs::library, get_movie, movie.duration) { ndb_pquery << (ndb::get() << ndb::source(movie) << ndb::filter(movie.duration == _0)); }
+
+
+#define ndb_internal_make_prepared_placeholder(r, FUNCTION, i, FIELD) [[maybe_unused]] decltype(FIELD)::value_type _##i{};
+#define ndb_internal_make_prepared_params(r, FUNCTION, i, FIELD) BOOST_PP_COMMA_IF(BOOST_PP_NOT_EQUAL(i, 0)) const typename decltype(FIELD)::value_type& p##i
+#define ndb_internal_make_prepared_bind(r, FUNCTION, i, FIELD) q.bind(p##i);
+#define ndb_pquery [[maybe_unused]] auto ndb_unused = query()
+
+
+#define ndb_prepare(DATABASE, FUNCTION, ...) ndb_prepare_impl(BOOST_PP_CAT(FUNCTION, __LINE__), DATABASE, FUNCTION, __VA_ARGS__)
+
+#define ndb_prepare_impl(ID, DATABASE, FUNCTION, ...) \
+auto FUNCTION( ndb_internal_for_each_fields(FUNCTION, ndb_internal_make_prepared_params, __VA_ARGS__) ) \
 { \
-    auto& q = ndb::prepared_query<Database>::get(#FUNCTION); \
-    (q.bind(ts), ...); \
+    auto& q = ndb::prepared_query<DATABASE>::get( BOOST_PP_STRINGIZE(ID) ); \
+    ndb_internal_for_each_fields(FUNCTION, ndb_internal_make_prepared_bind, __VA_ARGS__) \
  \
     return q.exec(); \
 } \
-namespace internal { extern int FUNCTION##_init; } \
-constexpr int _ = 0; \
-int internal::FUNCTION##_init = ndb::prepare_proxy<Database>{#FUNCTION}
+namespace internal::ID { \
+ndb_internal_for_each_fields(FUNCTION, ndb_internal_make_prepared_placeholder, __VA_ARGS__) \
+auto query = []() noexcept { return ndb::prepare_proxy<dbs::library>{ BOOST_PP_STRINGIZE(ID) }; }; \
+} namespace internal::ID
 
 
 namespace ndb
@@ -84,7 +94,7 @@ namespace ndb
     template<class Database>
     struct prepare_proxy
     {
-        constexpr prepare_proxy(const char* name) : name_{ name } {}
+        constexpr explicit prepare_proxy(const char* name) : name_{ name } {}
 
         template<class E>
         int operator<<(E&& e)
