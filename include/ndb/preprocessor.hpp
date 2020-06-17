@@ -1,15 +1,15 @@
 #ifndef NDB_PREPROCESSOR_HPP
 #define NDB_PREPROCESSOR_HPP
 
-#include <boost/preprocessor/punctuation/comma_if.hpp>
-#include <boost/preprocessor/comparison/equal.hpp>
-#include <boost/preprocessor/facilities/expand.hpp>
 #include <boost/preprocessor/cat.hpp>
+#include <boost/preprocessor/comparison/equal.hpp>
+#include <boost/preprocessor/facilities/empty.hpp>
+#include <boost/preprocessor/facilities/expand.hpp>
 #include <boost/preprocessor/list/for_each.hpp>
 #include <boost/preprocessor/list/for_each_i.hpp>
+#include <boost/preprocessor/punctuation/comma_if.hpp>
 #include <boost/preprocessor/stringize.hpp>
 #include <boost/preprocessor/variadic/to_list.hpp>
-
 
 #include <ndb/expression.hpp>
 #include <ndb/expression/basic.hpp>

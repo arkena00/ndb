@@ -65,6 +65,20 @@ namespace ndb
         struct table_ : basic_expression<>{ static constexpr bool is_scalar = true; };
         struct value_ : basic_expression<>{ static constexpr bool is_scalar = true; };
 
+        struct constant_ : basic_expression<>
+        {
+            static constexpr bool is_scalar = true;
+
+            template<class T>
+            constexpr auto operator()(const T& v) const
+            {
+                return ndb::expression<constant_, decltype(v)> { v };
+            }
+        };
+
+        static constexpr ndb::expression<constant_> constant;
+
+
         struct alias_ : basic_expression<>
         {
             static constexpr bool is_scalar = true;

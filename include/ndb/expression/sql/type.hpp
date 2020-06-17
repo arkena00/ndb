@@ -258,6 +258,16 @@ namespace ndb
         }
     };
 
+    template<class Engine>
+    struct expression_type<expressions::constant_, Engine, expression_categories::sql>
+    {
+        template<class Native_expression, class Constant>
+        static constexpr void make(Native_expression& s)
+        {
+            s.append("constant");
+        }
+    };
+
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////////            OPERATOR            ////////////////////////
     ////////////////////////////////////////////////////////////////////////////////

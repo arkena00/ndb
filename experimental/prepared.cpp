@@ -30,14 +30,14 @@ namespace dbs
 using namespace std::chrono_literals;
 
 
-
 namespace queries
 {
     const auto& movie = ndb::models::library.movie;
 
-    ndb_prepare(dbs::library, get_movie, movie.duration) { ndb_pquery << (ndb::get() << ndb::source(movie) << ndb::filter(movie.duration == _0)); }
-    ndb_prepare(dbs::library, get_movie, movie.name) { ndb_pquery << (ndb::get() << ndb::source(movie) << ndb::filter(movie.name == _0)); }
-    ndb_prepare(dbs::library, get_movie, movie.id, movie.name) { ndb_pquery << (ndb::get() << ndb::source(movie) << ndb::filter(movie.name == _1 && movie.id == _0)); }
+    ndb_prepare(dbs::library, get_movies) { ndb_pquery << (ndb::get() << ndb::source(movie) << ndb::filter(movie.id == ndb::constant(1))); }
+    //ndb_prepare(dbs::library, get_movie, movie.duration) { ndb_pquery << (ndb::get() << ndb::source(movie) << ndb::filter(movie.duration == _0)); }
+    //ndb_prepare(dbs::library, get_movie, movie.name) { ndb_pquery << (ndb::get() << ndb::source(movie) << ndb::filter(movie.name == _0)); }
+    //ndb_prepare(dbs::library, get_movie, movie.id, movie.name) { ndb_pquery << (ndb::get() << ndb::source(movie) << ndb::filter(movie.name == _1 && movie.id == _0)); }
 }
 
 /*
@@ -74,10 +74,10 @@ int main()
         ndb::connect<dbs::library>();
         ndb::clear<dbs::library>(movie);
 
-        ndb::query<dbs::library>() + (movie.name = std::string("Interstellar"), movie.duration = 2.49h);
-        ndb::query<dbs::library>() + (movie.name = std::string("Watchmen"), movie.duration = 3.30h);
+        //ndb::query<dbs::library>() + (movie.name = std::string("Interstellar"), movie.duration = 2.49h);
+        //ndb::query<dbs::library>() + (movie.name = std::string("Watchmen"), movie.duration = 3.30h);
 
-        for (auto& line : queries::get_movie(2.49h))
+        for (auto& line : queries::get_movies())
         {
             std::cout << "movie.id : " << line[movie.id] << std::endl;
             std::cout << "movie.name : " << line[movie.name] << std::endl;
