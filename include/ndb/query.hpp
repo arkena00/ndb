@@ -52,7 +52,7 @@ namespace ndb
         constexpr auto operator-(T&& t)
         {
             const auto& engine = ndb::engine<Engine>::get();
-            auto expr = ndb::statement << ndb::del << ndb::expr_make(t);
+            auto expr = ndb::statement << ndb::expressions::del(ndb::expr_make(t));
 
             return engine.template exec<Database, Option>(std::move(expr));
         }
