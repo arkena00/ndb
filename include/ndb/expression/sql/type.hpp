@@ -253,8 +253,9 @@ namespace ndb
         template<class Native_expression, class Field>
         static constexpr void make(Native_expression& s)
         {
-            s.append("$");
-            s.add_value();
+            // todo the syntax $N is limited to 9, fix it or use '?'
+            s.append("?");
+            //s.add_value();
         }
     };
 
